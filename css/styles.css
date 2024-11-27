@@ -3,7 +3,7 @@ body {
     margin: 0;
     padding: 0;
     background-color: #4b0082;
-    color: white;
+    color: white !important;
 }
 
 header {
@@ -32,7 +32,7 @@ main {
 }
 
 main h1, main p {
-    color: inherit;
+    color: white !important;
 }
 
 footer {
