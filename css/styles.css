@@ -44,3 +44,43 @@ footer {
     width: 100%;
     bottom: 0;
 }
+
+.pyramid-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.pyramid {
+    position: relative;
+    width: 0;
+    height: 0;
+    transform-style: preserve-3d;
+    transform: rotateX(-30deg) rotateY(45deg);
+}
+
+.pyramid .face {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid #fff;
+    opacity: 0.9;
+}
+
+.pyramid .front {
+    transform: translateZ(50px);
+}
+
+.pyramid .back {
+    transform: rotateY(180deg) translateZ(50px);
+}
+
+.pyramid .left {
+    transform: rotateY(-90deg) translateZ(50px);
+}
+
+.pyramid .right {
+    transform: rotateY(90deg) translateZ(50px);
+}
