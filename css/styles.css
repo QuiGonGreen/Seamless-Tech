@@ -31,6 +31,10 @@ main {
     padding: 2rem;
 }
 
+main h1, main p {
+    color: inherit;
+}
+
 footer {
     background-color: #301934;
     color: white;
