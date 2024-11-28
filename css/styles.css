@@ -53,8 +53,8 @@ footer {
 }
 
 .tile {
-    width: 200px;
-    height: 200px;
+    width: 220px; /* Slightly larger than the image */
+    height: 220px; /* Slightly larger than the image */
     background-color: #ff0000; /* Red */
     border: 2px solid #fff;
     display: flex;
