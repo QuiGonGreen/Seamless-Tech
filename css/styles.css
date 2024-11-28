@@ -45,50 +45,6 @@ footer {
     bottom: 0;
 }
 
-.pyramid-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-}
-
-.pyramid {
-    position: relative;
-    width: 0;
-    height: 0;
-    transform-style: preserve-3d;
-    transform: rotateX(-30deg) rotateY(45deg);
-}
-
-.pyramid .face {
-    position: absolute;
-    width: 100px;
-    height: 100px;
-    background: rgba(255, 255, 255, 0.9); /* Change this to a solid color */
-    border: 1px solid #fff;
-    opacity: 0.9;
-}
-
-.pyramid .front {
-    transform: translateZ(50px);
-    background: #ff0000; /* Red */
-}
-
-.pyramid .back {
-    transform: rotateY(180deg) translateZ(50px);
-    background: #00ff00; /* Green */
-}
-
-.pyramid .left {
-    transform: rotateY(-90deg) translateZ(50px);
-    background: #0000ff; /* Blue */
-}
-
-.pyramid .right {
-    transform: rotateY(90deg) translateZ(50px);
-    background: #ffff00; /* Yellow */
-}
-
 .tile-container {
     display: flex;
     justify-content: center;
@@ -101,4 +57,7 @@ footer {
     height: 200px;
     background-color: #ff0000; /* Red */
     border: 2px solid #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
