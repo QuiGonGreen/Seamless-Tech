@@ -88,3 +88,17 @@ footer {
     transform: rotateY(90deg) translateZ(50px);
     background: #ffff00; /* Yellow */
 }
+
+.tile-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.tile {
+    width: 200px;
+    height: 200px;
+    background-color: #ff0000; /* Red */
+    border: 2px solid #fff;
+}
