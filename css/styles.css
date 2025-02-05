@@ -1,24 +1,27 @@
 :root {
-    --primary-color: #2a2a2a;
-    --accent-color: #5865F2;
+    --primary-dark: #0d1117;
+    --accent-blue: #5865F2;
     --text-primary: #ffffff;
-    --github-dark: #0d1117;
+    --github-dark: #161b22;
     --discord-blurple: #5865F2;
 }
 
+/* Base Styles */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    font-family: 'Segoe UI', system-ui, sans-serif;
 }
 
 body {
-    background-color: var(--github-dark);
+    background-color: var(--primary-dark);
     color: var(--text-primary);
-    font-family: 'Segoe UI', sans-serif;
+    line-height: 1.6;
     overflow-x: hidden;
 }
 
+/* Navigation */
 .navbar {
     position: fixed;
     top: 0;
@@ -26,122 +29,161 @@ body {
     background: rgba(13, 17, 23, 0.95);
     backdrop-filter: blur(10px);
     z-index: 1000;
+    padding: 1rem 0;
 }
 
-.nav-content {
+.nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem 5%;
+    padding: 0 2rem;
 }
 
-.logo img {
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.logo {
     height: 40px;
-    margin-right: 15px;
 }
 
-.logo span {
-    font-size: 1.5rem;
-    font-weight: bold;
+.brand-name {
+    font-weight: 600;
+    font-size: 1.25rem;
 }
 
-.nav-links a {
+.nav-links {
+    display: flex;
+    gap: 2rem;
+}
+
+.nav-item {
     color: var(--text-primary);
     text-decoration: none;
-    margin-left: 2rem;
-    transition: color 0.3s;
+    transition: color 0.3s ease;
 }
 
-.nav-links a:hover {
-    color: var(--discord-blurple);
+.nav-item:hover {
+    color: var(--accent-blue);
 }
 
+/* Hero Section */
 .hero {
     height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     position: relative;
     overflow: hidden;
 }
 
-.webgl {
+.hero-background {
     position: absolute;
     top: 0;
     left: 0;
-    outline: none;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, #2a2a2a, #0d1117);
+    z-index: -1;
 }
 
 .hero-content {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
     text-align: center;
+    max-width: 800px;
+    padding: 2rem;
 }
 
-.hero-content h1 {
-    font-size: 4rem;
-    margin-bottom: 1rem;
-    background: linear-gradient(45deg, #fff, var(--discord-blurple));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+.hero-title {
+    font-size: 3.5rem;
+    margin-bottom: 1.5rem;
+    line-height: 1.2;
 }
 
-.scroll-section {
-    min-height: 100vh;
-    padding: 5rem 5%;
-    position: relative;
+.hero-subtitle {
+    font-size: 1.25rem;
+    color: #888;
+    margin-bottom: 2rem;
+}
+
+/* Solutions Section */
+.content-section {
+    padding: 8rem 2rem;
 }
 
 .section-container {
-    transform-style: preserve-3d;
-    perspective: 1000px;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
-.media-frame {
-    border: 3px solid var(--accent-color);
+.section-title {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 4rem;
+}
+
+.solution-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 3rem;
+}
+
+.solution-card {
+    background: var(--github-dark);
     border-radius: 15px;
-    transform: rotateY(-5deg) rotateX(2deg);
-    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
     overflow: hidden;
+    transition: transform 0.3s ease;
 }
 
-.scroll-video {
-    width: 100%;
-    height: auto;
+.solution-card:hover {
+    transform: translateY(-10px);
 }
 
-.pixel-section {
+.card-media {
+    height: 250px;
+    background: #000;
     position: relative;
-    padding: 5rem 0;
 }
 
-.pixel-grid {
-    position: absolute;
-    top: 0;
-    left: 0;
+.card-video {
     width: 100%;
     height: 100%;
-    pointer-events: none;
-    opacity: 0.1;
+    object-fit: cover;
 }
 
-footer {
-    background: var(--primary-color);
-    padding: 3rem 5%;
+.card-content {
+    padding: 2rem;
 }
 
+.card-content h3 {
+    margin-bottom: 1rem;
+    color: var(--accent-blue);
+}
+
+.card-cta {
+    display: inline-block;
+    margin-top: 1rem;
+    color: var(--accent-blue);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+/* Add remaining CSS styles for other sections... */
+
+/* Responsive Design */
 @media (max-width: 768px) {
+    .hero-title {
+        font-size: 2.5rem;
+    }
+    
     .nav-links {
         display: none;
     }
     
-    .hero-content h1 {
-        font-size: 2.5rem;
-    }
-    
-    .webgl {
-        display: none;
+    .solution-grid {
+        grid-template-columns: 1fr;
     }
 }
