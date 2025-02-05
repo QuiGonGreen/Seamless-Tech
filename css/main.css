@@ -1,189 +1,93 @@
 :root {
-    --primary-dark: #0d1117;
-    --accent-blue: #5865F2;
-    --text-primary: #ffffff;
-    --github-dark: #161b22;
-    --discord-blurple: #5865F2;
+    /* Updated Color Scheme */
+    --primary-dark: #2A0A3A;    /* Deep purple background */
+    --title-emerald: #1C6E4D;   /* Emerald green for titles */
+    --text-gold: #D4AF37;       /* Soft gold for body text */
+    --accent-purple: #4B2E5A;   /* Secondary purple for elements */
+    --hover-gold: #EBD99F;      /* Light gold for hover effects */
+    
+    /* Neutral Colors */
+    --pure-white: #FFFFFF;
+    --dark-shade: #1A0823;
 }
 
 /* Base Styles */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Segoe UI', system-ui, sans-serif;
-}
-
 body {
     background-color: var(--primary-dark);
-    color: var(--text-primary);
-    line-height: 1.6;
-    overflow-x: hidden;
+    color: var(--text-gold); /* Applies gold to all text */
+}
+
+/* Titles */
+h1, h2, h3, h4, h5, h6 {
+    color: var(--title-emerald);
+    font-weight: 600;
 }
 
 /* Navigation */
 .navbar {
-    position: fixed;
-    top: 0;
-    width: 100%;
-    background: rgba(13, 17, 23, 0.95);
-    backdrop-filter: blur(10px);
-    z-index: 1000;
-    padding: 1rem 0;
-}
-
-.nav-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 2rem;
-}
-
-.brand {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-}
-
-.logo {
-    height: 40px;
-}
-
-.brand-name {
-    font-weight: 600;
-    font-size: 1.25rem;
-}
-
-.nav-links {
-    display: flex;
-    gap: 2rem;
+    background: rgba(42, 10, 58, 0.95); /* Semi-transparent version of primary-dark */
 }
 
 .nav-item {
-    color: var(--text-primary);
-    text-decoration: none;
-    transition: color 0.3s ease;
+    color: var(--text-gold);
 }
 
 .nav-item:hover {
-    color: var(--accent-blue);
+    color: var(--hover-gold);
 }
 
 /* Hero Section */
-.hero {
-    height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    overflow: hidden;
-}
-
 .hero-background {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(45deg, #2a2a2a, #0d1117);
-    z-index: -1;
+    background: linear-gradient(
+        45deg, 
+        var(--dark-shade), 
+        var(--primary-dark)
+    );
 }
 
-.hero-content {
-    text-align: center;
-    max-width: 800px;
-    padding: 2rem;
-}
-
-.hero-title {
-    font-size: 3.5rem;
-    margin-bottom: 1.5rem;
-    line-height: 1.2;
-}
-
-.hero-subtitle {
-    font-size: 1.25rem;
-    color: #888;
-    margin-bottom: 2rem;
-}
-
-/* Solutions Section */
-.content-section {
-    padding: 8rem 2rem;
-}
-
-.section-container {
-    max-width: 1200px;
-    margin: 0 auto;
-}
-
-.section-title {
-    text-align: center;
-    font-size: 2.5rem;
-    margin-bottom: 4rem;
-}
-
-.solution-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 3rem;
-}
-
+/* Cards */
 .solution-card {
-    background: var(--github-dark);
-    border-radius: 15px;
-    overflow: hidden;
-    transition: transform 0.3s ease;
-}
-
-.solution-card:hover {
-    transform: translateY(-10px);
-}
-
-.card-media {
-    height: 250px;
-    background: #000;
-    position: relative;
-}
-
-.card-video {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.card-content {
-    padding: 2rem;
-}
-
-.card-content h3 {
-    margin-bottom: 1rem;
-    color: var(--accent-blue);
+    background: var(--accent-purple);
+    border: 1px solid var(--title-emerald);
 }
 
 .card-cta {
-    display: inline-block;
-    margin-top: 1rem;
-    color: var(--accent-blue);
-    text-decoration: none;
-    font-weight: 600;
+    color: var(--hover-gold);
 }
 
-/* Add remaining CSS styles for other sections... */
+/* Buttons */
+button, .card-cta {
+    background-color: var(--title-emerald);
+    color: var(--text-gold) !important;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
 
-/* Responsive Design */
-@media (max-width: 768px) {
-    .hero-title {
-        font-size: 2.5rem;
-    }
-    
-    .nav-links {
-        display: none;
-    }
-    
-    .solution-grid {
-        grid-template-columns: 1fr;
-    }
+button:hover, .card-cta:hover {
+    background-color: #134735; /* Darker emerald */
+    transform: translateY(-2px);
+}
+
+/* Contact Form */
+input, textarea {
+    background: var(--accent-purple) !important;
+    border: 1px solid var(--title-emerald) !important;
+    color: var(--text-gold) !important;
+}
+
+input::placeholder, textarea::placeholder {
+    color: var(--hover-gold) !important;
+    opacity: 0.7;
+}
+
+/* Social Icons */
+.social-links img {
+    filter: brightness(0) saturate(100%) invert(84%) sepia(39%) saturate(469%) hue-rotate(358deg) brightness(97%) contrast(87%);
+    transition: filter 0.3s ease;
+}
+
+.social-links img:hover {
+    filter: brightness(0) saturate(100%) invert(100%) sepia(100%) saturate(0%) hue-rotate(288deg) brightness(102%) contrast(102%);
 }
