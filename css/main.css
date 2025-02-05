@@ -1,66 +1,189 @@
-body {
-    font-family: Arial, sans-serif;
+:root {
+    --primary-dark: #0d1117;
+    --accent-blue: #5865F2;
+    --text-primary: #ffffff;
+    --github-dark: #161b22;
+    --discord-blurple: #5865F2;
+}
+
+/* Base Styles */
+* {
     margin: 0;
     padding: 0;
-    background-color: #4b0082;
-    color: white !important;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', system-ui, sans-serif;
 }
 
-header {
-    background-color: #301934;
-    color: white;
-    padding: 1rem;
+body {
+    background-color: var(--primary-dark);
+    color: var(--text-primary);
+    line-height: 1.6;
+    overflow-x: hidden;
 }
 
-nav ul {
-    list-style: none;
-    padding: 0;
+/* Navigation */
+.navbar {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background: rgba(13, 17, 23, 0.95);
+    backdrop-filter: blur(10px);
+    z-index: 1000;
+    padding: 1rem 0;
 }
 
-nav ul li {
-    display: inline;
-    margin-right: 1rem;
+.nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 2rem;
 }
 
-nav ul li a {
-    color: white;
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.logo {
+    height: 40px;
+}
+
+.brand-name {
+    font-weight: 600;
+    font-size: 1.25rem;
+}
+
+.nav-links {
+    display: flex;
+    gap: 2rem;
+}
+
+.nav-item {
+    color: var(--text-primary);
     text-decoration: none;
+    transition: color 0.3s ease;
 }
 
-main {
+.nav-item:hover {
+    color: var(--accent-blue);
+}
+
+/* Hero Section */
+.hero {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, #2a2a2a, #0d1117);
+    z-index: -1;
+}
+
+.hero-content {
+    text-align: center;
+    max-width: 800px;
     padding: 2rem;
 }
 
-main h1, main p {
-    color: white !important;
+.hero-title {
+    font-size: 3.5rem;
+    margin-bottom: 1.5rem;
+    line-height: 1.2;
 }
 
-footer {
-    background-color: #301934;
-    color: white;
+.hero-subtitle {
+    font-size: 1.25rem;
+    color: #888;
+    margin-bottom: 2rem;
+}
+
+/* Solutions Section */
+.content-section {
+    padding: 8rem 2rem;
+}
+
+.section-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.section-title {
     text-align: center;
-    padding: 1rem;
-    position: fixed;
+    font-size: 2.5rem;
+    margin-bottom: 4rem;
+}
+
+.solution-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 3rem;
+}
+
+.solution-card {
+    background: var(--github-dark);
+    border-radius: 15px;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+}
+
+.solution-card:hover {
+    transform: translateY(-10px);
+}
+
+.card-media {
+    height: 250px;
+    background: #000;
+    position: relative;
+}
+
+.card-video {
     width: 100%;
-    bottom: 0;
+    height: 100%;
+    object-fit: cover;
 }
 
-.tile-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
+.card-content {
+    padding: 2rem;
 }
 
-.image-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 20px;
+.card-content h3 {
+    margin-bottom: 1rem;
+    color: var(--accent-blue);
 }
 
-.image-container img {
-    max-width: 100%;
-    height: auto;
-    border: 2px solid #fff;
+.card-cta {
+    display: inline-block;
+    margin-top: 1rem;
+    color: var(--accent-blue);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+/* Add remaining CSS styles for other sections... */
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 2.5rem;
+    }
+    
+    .nav-links {
+        display: none;
+    }
+    
+    .solution-grid {
+        grid-template-columns: 1fr;
+    }
 }
