@@ -9,13 +9,13 @@ const renderer = new THREE.WebGLRenderer({
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-// Add ambient light for general illumination
-const ambientLight = new THREE.AmbientLight(0x404040, 2); // Soft white light
-scene.add(ambientLight);
+// Remove ambient light
+// const ambientLight = new THREE.AmbientLight(0x404040, 2); // Soft white light
+// scene.add(ambientLight);
 
-// Add a directional light to simulate sunlight
+// Add a directional light to simulate sunlight from the left side
 const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-directionalLight.position.set(5, 3, 5);
+directionalLight.position.set(-5, 3, 5); // Position the light to the left side
 scene.add(directionalLight);
 
 // Load Earth texture and create a sphere geometry
@@ -30,7 +30,16 @@ const earthMaterial = new THREE.MeshStandardMaterial({
 const earthMesh = new THREE.Mesh(earthGeometry, earthMaterial);
 scene.add(earthMesh);
 
-
+// Load atmosphere texture and create a sphere geometry for the atmosphere
+const atmosphereTexture = textureLoader.load('Images/earth_atmosphere.png');
+const atmosphereGeometry = new THREE.SphereGeometry(1.55, 32, 32);
+const atmosphereMaterial = new THREE.MeshBasicMaterial({
+    map: atmosphereTexture,
+    transparent: true,
+    opacity: 0.5
+});
+const atmosphereMesh = new THREE.Mesh(atmosphereGeometry, atmosphereMaterial);
+scene.add(atmosphereMesh);
 
 camera.position.z = 5;
 
@@ -38,7 +47,7 @@ camera.position.z = 5;
 function animate() {
     requestAnimationFrame(animate);
     earthMesh.rotation.y += 0.001; // Rotate Earth slowly
-    
+    atmosphereMesh.rotation.y += 0.001; // Rotate atmosphere slowly
     renderer.render(scene, camera);
 }
 
