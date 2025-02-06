@@ -48,6 +48,13 @@ const material = new THREE.ShaderMaterial({
 const logoMesh = new THREE.Mesh(geometry, material);
 scene.add(logoMesh);
 
+// Load a 3D model using GLTFLoader
+const loader = new THREE.GLTFLoader();
+loader.load('your-model.glb', (gltf) => {
+    console.log("Model Animations:", gltf.animations);
+    scene.add(gltf.scene);
+});
+
 camera.position.z = 5;
 
 // Animation loop
