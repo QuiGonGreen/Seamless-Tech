@@ -9,22 +9,51 @@ const renderer = new THREE.WebGLRenderer({
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-// Add floating geometry
-const geometry = new THREE.TorusGeometry(2, 0.5, 16, 100);
-const material = new THREE.MeshBasicMaterial({
-    color: 0x5865F2,
-    wireframe: true
+// Load the logo texture
+const textureLoader = new THREE.TextureLoader();
+const logoTexture = textureLoader.load('Images/logo.png');
+
+// Create a plane geometry for the logo
+const geometry = new THREE.PlaneGeometry(3, 3);
+
+// Create a shader material for the hologram effect
+const material = new THREE.ShaderMaterial({
+    uniforms: {
+        uTime: { value: 0 },
+        uTexture: { value: logoTexture }
+    },
+    vertexShader: `
+        varying vec2 vUv;
+        void main() {
+            vUv = uv;
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        }
+    `,
+    fragmentShader: `
+        uniform float uTime;
+        uniform sampler2D uTexture;
+        varying vec2 vUv;
+        void main() {
+            vec2 uv = vUv;
+            uv.y += sin(uv.x * 10.0 + uTime * 5.0) * 0.05;
+            vec4 color = texture2D(uTexture, uv);
+            float scanline = sin(uv.y * 100.0 + uTime * 10.0) * 0.1;
+            color.rgb += scanline;
+            gl_FragColor = color;
+        }
+    `,
+    transparent: true
 });
-const torus = new THREE.Mesh(geometry, material);
-scene.add(torus);
+
+const logoMesh = new THREE.Mesh(geometry, material);
+scene.add(logoMesh);
 
 camera.position.z = 5;
 
 // Animation loop
 function animate() {
     requestAnimationFrame(animate);
-    torus.rotation.x += 0.01;
-    torus.rotation.y += 0.005;
+    material.uniforms.uTime.value += 0.05;
     renderer.render(scene, camera);
 }
 
