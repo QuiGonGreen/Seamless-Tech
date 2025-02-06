@@ -30,16 +30,7 @@ const earthMaterial = new THREE.MeshStandardMaterial({
 const earthMesh = new THREE.Mesh(earthGeometry, earthMaterial);
 scene.add(earthMesh);
 
-// Load atmosphere texture and create a sphere geometry for the atmosphere
-const atmosphereTexture = textureLoader.load('Images/earth_atmosphere.png');
-const atmosphereGeometry = new THREE.SphereGeometry(1.55, 32, 32);
-const atmosphereMaterial = new THREE.MeshBasicMaterial({
-    map: atmosphereTexture,
-    transparent: true,
-    opacity: 0.5
-});
-const atmosphereMesh = new THREE.Mesh(atmosphereGeometry, atmosphereMaterial);
-scene.add(atmosphereMesh);
+
 
 camera.position.z = 5;
 
