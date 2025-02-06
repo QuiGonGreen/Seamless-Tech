@@ -92,7 +92,7 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: 0; /* Ensure z-index is set to 0 */
+    z-index: 1; /* Change z-index to 1 */
 }
 
 .hero-background {
@@ -102,7 +102,7 @@ body {
     width: 100%;
     height: 100%;
     background: linear-gradient(45deg, #2a2a2a, #0d1117);
-    z-index: 1; /* Change z-index to 1 */
+    z-index: 0; /* Change z-index to 0 */
 }
 
 .hero-content {
@@ -110,19 +110,7 @@ body {
     max-width: 800px;
     padding: 2rem;
     position: relative;
-    z-index: 2; /* Change z-index to 2 */
-}
-
-.hero-title {
-    font-size: 3.5rem;
-    margin-bottom: 1.5rem;
-    line-height: 1.2;
-}
-
-.hero-subtitle {
-    font-size: 1.25rem;
-    color: #888;
-    margin-bottom: 2rem;
+    z-index: 2; /* Ensure z-index is set to 2 */
 }
 
 /* Solutions Section */
