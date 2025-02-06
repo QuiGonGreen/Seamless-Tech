@@ -38,7 +38,7 @@ camera.position.z = 5;
 function animate() {
     requestAnimationFrame(animate);
     earthMesh.rotation.y += 0.001; // Rotate Earth slowly
-    atmosphereMesh.rotation.y += 0.001; // Rotate atmosphere slowly
+    
     renderer.render(scene, camera);
 }
 
