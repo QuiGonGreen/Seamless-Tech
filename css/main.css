@@ -71,6 +71,11 @@ body {
     color: var(--accent-blue);
 }
 
+.nav-item.active {
+    color: var(--accent-blue);
+    font-weight: bold;
+}
+
 /* Hero Section */
 .hero {
     height: 100vh;
