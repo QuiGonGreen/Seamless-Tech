@@ -9,16 +9,24 @@ const renderer = new THREE.WebGLRenderer({
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-// Add a light source to simulate sunlight
-const light = new THREE.DirectionalLight(0xffffff, 1);
-light.position.set(5, 3, 5);
-scene.add(light);
+// Add ambient light for general illumination
+const ambientLight = new THREE.AmbientLight(0x404040, 2); // Soft white light
+scene.add(ambientLight);
+
+// Add a directional light to simulate sunlight
+const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+directionalLight.position.set(5, 3, 5);
+scene.add(directionalLight);
 
 // Load Earth texture and create a sphere geometry
 const textureLoader = new THREE.TextureLoader();
 const earthTexture = textureLoader.load('Images/earth.jpg');
 const earthGeometry = new THREE.SphereGeometry(1.5, 32, 32);
-const earthMaterial = new THREE.MeshStandardMaterial({ map: earthTexture });
+const earthMaterial = new THREE.MeshStandardMaterial({ 
+    map: earthTexture,
+    roughness: 0.8,
+    metalness: 0.2
+});
 const earthMesh = new THREE.Mesh(earthGeometry, earthMaterial);
 scene.add(earthMesh);
 
