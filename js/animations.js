@@ -7,6 +7,9 @@ const renderer = new THREE.WebGLRenderer({
     antialias: true
 });
 
+// Device detection
+const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
@@ -20,18 +23,18 @@ const createNPOTTexture = (path) => {
     return texture;
 };
 
-// Improved lighting setup
-const directionalLight = new THREE.DirectionalLight(0xfff4e6, 2.5);
+// Lighting setup with mobile adjustments
+const directionalLight = new THREE.DirectionalLight(0xfff4e6, isMobile ? 3.5 : 2.5);
 directionalLight.position.set(5, 3, 2);
 directionalLight.castShadow = true;
 directionalLight.shadow.mapSize.width = 2048;
 directionalLight.shadow.mapSize.height = 2048;
 scene.add(directionalLight);
 
-const ambientLight = new THREE.AmbientLight(0x404040, 0.3);
+const ambientLight = new THREE.AmbientLight(0x404040, isMobile ? 0.5 : 0.3);
 scene.add(ambientLight);
 
-// Earth material with corrected texture handling
+// Earth material
 const earthMaterial = new THREE.MeshPhongMaterial({
     map: createNPOTTexture('Images/00_earthmap1k.jpg'),
     normalMap: createNPOTTexture('Images/01_earthbump1k.jpg'),
@@ -44,13 +47,13 @@ const earthMaterial = new THREE.MeshPhongMaterial({
     bumpScale: 0.04
 });
 
-// Earth mesh with corrected geometry
+// Earth mesh
 const earthGeometry = new THREE.SphereGeometry(2, 128, 128);
 const earthMesh = new THREE.Mesh(earthGeometry, earthMaterial);
 earthMesh.rotation.z = 0.41;
 scene.add(earthMesh);
 
-// Improved cloud material
+// Cloud material
 const cloudMaterial = new THREE.MeshStandardMaterial({
     map: textureLoader.load('Images/04_earthcloudmap.jpg'),
     alphaMap: textureLoader.load('Images/05_earthcloudmaptrans.jpg'),
@@ -66,7 +69,7 @@ const cloudGeometry = new THREE.SphereGeometry(2.02, 128, 128);
 const cloudMesh = new THREE.Mesh(cloudGeometry, cloudMaterial);
 scene.add(cloudMesh);
 
-// Atmosphere shader adjustments
+// Atmosphere shader
 const atmosphereMaterial = new THREE.ShaderMaterial({
     uniforms: {
         glowColor: { value: new THREE.Color(0x40E0D0) },
@@ -129,21 +132,19 @@ scene.add(stars);
 
 camera.position.z = 5;
 
-// Animation loop with dynamic lighting
+// Animation loop
 function animate() {
     requestAnimationFrame(animate);
     
     const time = Date.now() * 0.0005;
+    const rotationSpeed = isMobile ? 0.0005 : 0.0008;
     
-    // Smooth Earth rotation
-    earthMesh.rotation.y += 0.0008;
-    cloudMesh.rotation.y += 0.001;
+    earthMesh.rotation.y += rotationSpeed;
+    cloudMesh.rotation.y += rotationSpeed * 1.25;
     
-    // Dynamic light movement
     directionalLight.position.x = Math.sin(time) * 6;
     directionalLight.position.z = Math.cos(time) * 6;
     
-    // Update atmosphere shader
     atmosphereMaterial.uniforms.viewVector.value.copy(camera.position);
     
     renderer.render(scene, camera);
