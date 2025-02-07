@@ -117,6 +117,8 @@ body {
     background: linear-gradient(135deg, #50c878, #2e8b57); /* Metallic emerald green gradient */
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+    font-weight: bold;
+    text-shadow: 0 0 2px silver; /* Slim, silver border */
 }
 
 .Landing-subtitle {
@@ -126,6 +128,8 @@ body {
     background: linear-gradient(135deg, #50c878, #2e8b57); /* Metallic emerald green gradient */
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+    font-weight: bold;
+    text-shadow: 0 0 2px silver; /* Slim, silver border */
 }
 
 /* Solutions Section */
