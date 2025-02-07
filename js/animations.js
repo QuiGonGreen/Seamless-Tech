@@ -30,7 +30,7 @@ const earthMaterial = new THREE.MeshPhongMaterial({
     emissiveMap: textureLoader.load('Images/03_earthlights1k.jpg'),
     emissive: 0xffffff,
     emissiveIntensity: 1.2, // Increased night lights visibility
-    shininess: 40,
+    shininess: 20,
     specular: 0x333333
 });
 
