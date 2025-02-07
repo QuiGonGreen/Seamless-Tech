@@ -43,7 +43,7 @@ const cloudMaterial = new THREE.MeshStandardMaterial({
     map: textureLoader.load('Images/04_earthcloudmap.jpg'),
     alphaMap: textureLoader.load('Images/05_earthcloudmaptrans.jpg'),
     transparent: true,
-    opacity: 0.9,
+    opacity: 0.5, // Adjust opacity to make clouds more see-through
     metalness: 0.1,
     roughness: 0.8,
     depthWrite: false
