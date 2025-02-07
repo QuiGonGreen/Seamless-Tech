@@ -11,15 +11,16 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.sortObjects = true;
 
-// Enhanced lighting setup
-const ambientLight = new THREE.AmbientLight(0x404040, 2.5);
-scene.add(ambientLight);
-
-const directionalLight = new THREE.DirectionalLight(0xffffff, 3);
-directionalLight.position.set(-5, 5, 5);
+// Realistic sunlight setup
+const directionalLight = new THREE.DirectionalLight(0xfff4e6, 3.5);
+directionalLight.position.set(5, 0, 0); // Positioned to create day/night split
 scene.add(directionalLight);
 
-// Earth material
+// Minimal ambient light to prevent complete darkness
+const minimalAmbient = new THREE.AmbientLight(0x404040, 0.15);
+scene.add(minimalAmbient);
+
+// Earth material with enhanced night lights
 const textureLoader = new THREE.TextureLoader();
 const earthMaterial = new THREE.MeshPhongMaterial({
     map: textureLoader.load('Images/00_earthmap1k.jpg'),
@@ -27,9 +28,9 @@ const earthMaterial = new THREE.MeshPhongMaterial({
     specularMap: textureLoader.load('Images/02_earthspec1k.jpg'),
     emissiveMap: textureLoader.load('Images/03_earthlights1k.jpg'),
     emissive: 0xffffff,
-    emissiveIntensity: 0.3,
-    shininess: 25,
-    specular: 0x222222
+    emissiveIntensity: 0.8, // Enhanced city lights visibility
+    shininess: 35,
+    specular: 0x444444
 });
 
 // Earth mesh
@@ -43,7 +44,7 @@ const cloudMaterial = new THREE.MeshStandardMaterial({
     map: textureLoader.load('Images/04_earthcloudmap.jpg'),
     alphaMap: textureLoader.load('Images/05_earthcloudmaptrans.jpg'),
     transparent: true,
-    opacity: 0.5, // Adjust opacity to make clouds more see-through
+    opacity: 0.5,
     metalness: 0.1,
     roughness: 0.8,
     depthWrite: false
@@ -114,18 +115,16 @@ scene.add(stars);
 
 camera.position.z = 5;
 
-// Slowed animation loop
+// Animation loop
 function animate() {
     requestAnimationFrame(animate);
     
     const time = Date.now() * 0.0005;
     
-    // Reduced rotation speeds
-    earthMesh.rotation.y += 0.0008; // 60% slower
-    cloudMesh.rotation.y += 0.001;  // 60% slower
-    atmosphereMesh.rotation.y += 0.0004; // 60% slower
+    earthMesh.rotation.y += 0.0008;
+    cloudMesh.rotation.y += 0.001;
+    atmosphereMesh.rotation.y += 0.0004;
     
-    // Update atmosphere uniform
     atmosphereMaterial.uniforms.viewVector.value = camera.position;
     
     renderer.render(scene, camera);
