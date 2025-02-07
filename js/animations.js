@@ -29,7 +29,7 @@ const earthMaterial = new THREE.MeshPhongMaterial({
     emissiveIntensity: 0.2,
     shininess: 15,
     transparent: true,
-    opacity: 0.95
+    opacity: 1 // Set opacity to 1 or remove this line
 });
 
 // Earth mesh
