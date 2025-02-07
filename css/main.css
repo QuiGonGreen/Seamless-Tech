@@ -136,6 +136,9 @@ body {
     text-align: center;
     font-size: 2.5rem;
     margin-bottom: 4rem;
+    background: linear-gradient(135deg, #50c878, #2e8b57); /* Metallic emerald green gradient */
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 .solution-grid {
@@ -174,6 +177,12 @@ body {
 .card-content h3 {
     margin-bottom: 1rem;
     color: var(--accent-blue);
+}
+
+.solution-card p {
+    background: linear-gradient(135deg, #50c878, #2e8b57); /* Metallic emerald green gradient */
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 .card-cta {
