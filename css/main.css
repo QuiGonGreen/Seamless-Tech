@@ -122,14 +122,15 @@ body {
 }
 
 .Landing-subtitle {
-    font-size: 4rem; /* Match the size of Landing-title */
-    max-width: 600px;
+    font-size: 3rem; /* Reduce font size */
+    max-width: 1000px; /* Allow text to take up more space */
     margin: 0 auto;
     background: linear-gradient(135deg, #50c878, #2e8b57); /* Metallic emerald green gradient */
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     font-weight: bold;
     text-shadow: 0 0 4px black; /* Black text shadow */
+    line-height: 1.2; /* Reduce spacing */
 }
 
 /* Solutions Section */
