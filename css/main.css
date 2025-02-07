@@ -114,14 +114,18 @@ body {
     font-size: 4rem;
     margin-bottom: 1.5rem;
     line-height: 1.1;
-    color: #800080; /* Solid purple color */
+    background: linear-gradient(135deg, #50c878, #2e8b57); /* Metallic emerald green gradient */
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 .Landing-subtitle {
     font-size: 1.5rem;
     max-width: 600px;
     margin: 0 auto;
-    color: #800080; /* Solid purple color */
+    background: linear-gradient(135deg, #50c878, #2e8b57); /* Metallic emerald green gradient */
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 /* Solutions Section */
