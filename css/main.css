@@ -114,9 +114,7 @@ body {
     font-size: 4rem;
     margin-bottom: 1.5rem;
     line-height: 1.1;
-    background: linear-gradient(135deg, #50c878, #2e8b57); /* Metallic emerald green gradient */
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: #b8860b; /* Dull gold color */
     font-weight: bold;
     text-shadow: 0 0 4px black; /* Black text shadow */
 }
@@ -125,9 +123,7 @@ body {
     font-size: 3rem; /* Reduce font size */
     max-width: 1000px; /* Allow text to take up more space */
     margin: 0 auto;
-    background: linear-gradient(135deg, #50c878, #2e8b57); /* Metallic emerald green gradient */
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: #b8860b; /* Dull gold color */
     font-weight: bold;
     text-shadow: 0 0 4px black; /* Black text shadow */
     line-height: 1.2; /* Reduce spacing */
