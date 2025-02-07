@@ -82,8 +82,8 @@ body {
     font-weight: bold;
 }
 
-/* Hero Section */
-.hero {
+/* Landing Section */
+.Landing {
     height: 100vh;
     display: flex;
     align-items: center;
@@ -92,7 +92,7 @@ body {
     overflow: hidden;
 }
 
-.hero canvas.webgl {
+.Landing canvas.webgl {
     position: absolute;
     top: 0;
     left: 0;
@@ -101,7 +101,7 @@ body {
     z-index: 1;
 }
 
-.hero-content {
+.Landing-content {
     text-align: center;
     max-width: 800px;
     padding: 2rem;
@@ -110,14 +110,14 @@ body {
     text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
 }
 
-.hero-title {
+.Landing-title {
     font-size: 4rem;
     margin-bottom: 1.5rem;
     line-height: 1.1;
     color: #800080; /* Solid purple color */
 }
 
-.hero-subtitle {
+.Landing-subtitle {
     font-size: 1.5rem;
     max-width: 600px;
     margin: 0 auto;
@@ -199,7 +199,7 @@ body {
 
 /* Responsive Design */
 @media (max-width: 768px) {
-    .hero-title {
+    .Landing-title {
         font-size: 2.5rem;
     }
     
