@@ -118,7 +118,7 @@ body {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     font-weight: bold;
-    text-shadow: 0 0 2px silver; /* Slim, silver border */
+    text-shadow: 0 0 4px #6a0dad; /* Thicker, purple border */
 }
 
 .Landing-subtitle {
@@ -129,7 +129,7 @@ body {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     font-weight: bold;
-    text-shadow: 0 0 2px silver; /* Slim, silver border */
+    text-shadow: 0 0 4px #6a0dad; /* Thicker, purple border */
 }
 
 /* Solutions Section */
