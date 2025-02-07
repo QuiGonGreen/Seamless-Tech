@@ -54,9 +54,7 @@ body {
 .brand-name {
     font-weight: 600;
     font-size: 1.25rem;
-    background: linear-gradient(135deg, #50c878, #2e8b57); /* Metallic emerald green gradient */
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: #b8860b; /* Dull gold color */
 }
 
 .nav-links {
@@ -65,12 +63,9 @@ body {
 }
 
 .nav-item {
-    color: var(--text-primary);
+    color: #b8860b; /* Dull gold color */
     text-decoration: none;
     transition: color 0.3s ease;
-    background: linear-gradient(135deg, #50c878, #2e8b57); /* Metallic emerald green gradient */
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
 }
 
 .nav-item:hover {
