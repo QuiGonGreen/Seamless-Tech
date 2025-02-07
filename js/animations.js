@@ -51,6 +51,18 @@ const atmosphereMesh = new THREE.Mesh(
 );
 scene.add(atmosphereMesh);
 
+// Cloud layer
+const cloudMaterial = new THREE.MeshPhongMaterial({
+    map: textureLoader.load('Images/04_earthcloudmap.jpg'),
+    alphaMap: textureLoader.load('Images/05_earthcloudmaptrans.jpg'),
+    transparent: true,
+    opacity: 0.8
+});
+
+const cloudGeometry = new THREE.SphereGeometry(2.05, 64, 64);
+const cloudMesh = new THREE.Mesh(cloudGeometry, cloudMaterial);
+scene.add(cloudMesh);
+
 // Star background
 const starGeometry = new THREE.BufferGeometry();
 const starVertices = [];
@@ -72,6 +84,7 @@ function animate() {
     requestAnimationFrame(animate);
     earthMesh.rotation.y += 0.002;
     atmosphereMesh.rotation.y += 0.002;
+    cloudMesh.rotation.y += 0.001; // Rotate clouds slightly slower
     renderer.render(scene, camera);
 }
 
