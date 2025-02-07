@@ -65,6 +65,9 @@ body {
     color: var(--text-primary);
     text-decoration: none;
     transition: color 0.3s ease;
+    background: linear-gradient(135deg, #50c878, #2e8b57); /* Metallic emerald green gradient */
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 .nav-item:hover {
