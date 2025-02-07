@@ -17,10 +17,9 @@ scene.add(ambientLight);
 
 const directionalLight = new THREE.DirectionalLight(0xffffff, 3);
 directionalLight.position.set(-5, 5, 5);
-directionalLight.castShadow = true;
 scene.add(directionalLight);
 
-// Earth material with specular highlights
+// Earth material
 const textureLoader = new THREE.TextureLoader();
 const earthMaterial = new THREE.MeshPhongMaterial({
     map: textureLoader.load('Images/00_earthmap1k.jpg'),
@@ -33,13 +32,13 @@ const earthMaterial = new THREE.MeshPhongMaterial({
     specular: 0x222222
 });
 
-// Earth mesh with smooth rotation
+// Earth mesh
 const earthGeometry = new THREE.SphereGeometry(2, 128, 128);
 const earthMesh = new THREE.Mesh(earthGeometry, earthMaterial);
 earthMesh.rotation.z = 0.41;
 scene.add(earthMesh);
 
-// Dynamic cloud layer
+// Cloud layer
 const cloudMaterial = new THREE.MeshStandardMaterial({
     map: textureLoader.load('Images/04_earthcloudmap.jpg'),
     alphaMap: textureLoader.load('Images/05_earthcloudmaptrans.jpg'),
@@ -47,37 +46,52 @@ const cloudMaterial = new THREE.MeshStandardMaterial({
     opacity: 0.9,
     metalness: 0.1,
     roughness: 0.8,
-    depthWrite: false,
-    blending: THREE.CustomBlending,
-    blendSrc: THREE.SrcAlphaFactor,
-    blendDst: THREE.OneFactor
+    depthWrite: false
 });
 
 const cloudGeometry = new THREE.SphereGeometry(2.03, 128, 128);
 const cloudMesh = new THREE.Mesh(cloudGeometry, cloudMaterial);
-cloudMesh.renderOrder = 2; // Explicit render order
 scene.add(cloudMesh);
 
-// Teal atmosphere glow
-const atmosphereMaterial = new THREE.MeshPhysicalMaterial({
-    color: 0x40E0D0,
+// Border atmosphere effect
+const atmosphereMaterial = new THREE.ShaderMaterial({
+    uniforms: {
+        glowColor: { value: new THREE.Color(0x40E0D0) },
+        viewVector: { value: camera.position }
+    },
+    vertexShader: `
+        varying vec3 vNormal;
+        varying vec3 vViewDir;
+        void main() {
+            vNormal = normalize(normalMatrix * normal);
+            vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+            vViewDir = -normalize(mvPosition.xyz);
+            gl_Position = projectionMatrix * mvPosition;
+        }
+    `,
+    fragmentShader: `
+        uniform vec3 glowColor;
+        varying vec3 vNormal;
+        varying vec3 vViewDir;
+        void main() {
+            float intensity = 1.2 - dot(vNormal, vViewDir);
+            vec3 atmosphere = glowColor * pow(intensity, 3.0);
+            gl_FragColor = vec4(atmosphere, pow(intensity, 3.0) * 0.5);
+        }
+    `,
+    side: THREE.FrontSide,
     transparent: true,
-    opacity: 0.3,
-    side: THREE.DoubleSide,
-    metalness: 0.15,
-    roughness: 0.65,
     depthWrite: false,
-    transmission: 0.1 // Subtple light transmission
+    blending: THREE.AdditiveBlending
 });
 
 const atmosphereMesh = new THREE.Mesh(
     new THREE.SphereGeometry(2.08, 128, 128),
     atmosphereMaterial
 );
-atmosphereMesh.renderOrder = 1;
 scene.add(atmosphereMesh);
 
-// Starfield with twinkle effect
+// Star background
 const starGeometry = new THREE.BufferGeometry();
 const starVertices = [];
 for (let i = 0; i < 10000; i++) {
@@ -92,31 +106,27 @@ starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starVerti
 const starMaterial = new THREE.PointsMaterial({
     color: 0xFFFFFF,
     size: 0.65,
-    sizeAttenuation: true,
     depthWrite: false
 });
 
 const stars = new THREE.Points(starGeometry, starMaterial);
-stars.renderOrder = 0;
 scene.add(stars);
 
 camera.position.z = 5;
 
-// Smooth animation loop
+// Slowed animation loop
 function animate() {
     requestAnimationFrame(animate);
     
     const time = Date.now() * 0.0005;
     
-    earthMesh.rotation.y += 0.0018;
-    cloudMesh.rotation.y += 0.0023;
-    atmosphereMesh.rotation.y += 0.0009;
+    // Reduced rotation speeds
+    earthMesh.rotation.y += 0.0008; // 60% slower
+    cloudMesh.rotation.y += 0.001;  // 60% slower
+    atmosphereMesh.rotation.y += 0.0004; // 60% slower
     
-    // Subtle cloud opacity variation
-    cloudMaterial.opacity = 0.85 + Math.sin(time) * 0.05;
-    
-    // Gentle atmosphere pulsation
-    atmosphereMaterial.opacity = 0.28 + Math.sin(time * 0.8) * 0.02;
+    // Update atmosphere uniform
+    atmosphereMaterial.uniforms.viewVector.value = camera.position;
     
     renderer.render(scene, camera);
 }
