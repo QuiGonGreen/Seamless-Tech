@@ -29,6 +29,7 @@ const earthMaterial = new THREE.MeshPhongMaterial({
     shininess: 10
 });
 const earthMesh = new THREE.Mesh(earthGeometry, earthMaterial);
+earthMesh.rotation.z = 0.41; // Tilt the Earth
 scene.add(earthMesh);
 
 // Load atmosphere texture and create a sphere geometry for the atmosphere
@@ -40,6 +41,7 @@ const atmosphereMaterial = new THREE.MeshBasicMaterial({
     opacity: 0.5
 });
 const atmosphereMesh = new THREE.Mesh(atmosphereGeometry, atmosphereMaterial);
+atmosphereMesh.rotation.z = 0.41; // Tilt the atmosphere to match the Earth
 scene.add(atmosphereMesh);
 
 // Load starfield texture and create a sphere geometry for the background
