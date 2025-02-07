@@ -16,10 +16,10 @@ scene.add(directionalLight);
 
 // Load Earth texture and create a sphere geometry
 const textureLoader = new THREE.TextureLoader();
-const earthTexture = textureLoader.load('textures/00_earthmap1k.jpg');
-const earthNormalTexture = textureLoader.load('textures/01_earthbump1k.jpg');
-const earthSpecularTexture = textureLoader.load('textures/02_earthspec1k.jpg');
-const earthLightsTexture = textureLoader.load('textures/03_earthlights1k.jpg');
+const earthTexture = textureLoader.load('Images/00_earthmap1k.jpg');
+const earthNormalTexture = textureLoader.load('Images/01_earthbump1k.jpg');
+const earthSpecularTexture = textureLoader.load('Images/02_earthspec1k.jpg');
+const earthLightsTexture = textureLoader.load('Images/03_earthlights1k.jpg');
 const earthGeometry = new THREE.SphereGeometry(1.5, 32, 32);
 const earthMaterial = new THREE.MeshPhongMaterial({ 
     map: earthTexture,
@@ -32,7 +32,7 @@ const earthMesh = new THREE.Mesh(earthGeometry, earthMaterial);
 scene.add(earthMesh);
 
 // Load atmosphere texture and create a sphere geometry for the atmosphere
-const atmosphereTexture = textureLoader.load('textures/05_earthcloudmaptrans.jpg');
+const atmosphereTexture = textureLoader.load('Images/05_earthcloudmaptrans.jpg');
 const atmosphereGeometry = new THREE.SphereGeometry(1.55, 32, 32);
 const atmosphereMaterial = new THREE.MeshBasicMaterial({
     map: atmosphereTexture,
@@ -43,7 +43,7 @@ const atmosphereMesh = new THREE.Mesh(atmosphereGeometry, atmosphereMaterial);
 scene.add(atmosphereMesh);
 
 // Load starfield texture and create a sphere geometry for the background
-const starTexture = textureLoader.load('textures/stars/circle.png');
+const starTexture = textureLoader.load('Images/stars/circle.png');
 const starGeometry = new THREE.SphereGeometry(90, 64, 64);
 const starMaterial = new THREE.MeshBasicMaterial({
     map: starTexture,
