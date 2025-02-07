@@ -122,7 +122,7 @@ body {
 }
 
 .Landing-subtitle {
-    font-size: 1.5rem;
+    font-size: 4rem; /* Match the size of Landing-title */
     max-width: 600px;
     margin: 0 auto;
     background: linear-gradient(135deg, #50c878, #2e8b57); /* Metallic emerald green gradient */
