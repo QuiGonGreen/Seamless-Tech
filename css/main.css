@@ -63,17 +63,17 @@ body {
 }
 
 .nav-item {
-    color: #b8860b; /* Dull gold color */
+    color: #b8860b; /* Gold color */
     text-decoration: none;
     transition: color 0.3s ease;
 }
 
 .nav-item:hover {
-    color: var(--accent-blue);
+    color: #50c878; /* Dull emerald green color */
 }
 
 .nav-item.active {
-    color: var(--accent-blue);
+    color: #b8860b; /* Gold color */
     font-weight: bold;
 }
 
