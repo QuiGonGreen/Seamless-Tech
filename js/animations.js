@@ -20,23 +20,54 @@ scene.add(directionalLight);
 
 // Earth material with enhanced emissive properties
 const textureLoader = new THREE.TextureLoader();
-const earthMaterial = new THREE.MeshPhongMaterial({
-    map: textureLoader.load('Images/00_earthmap1k.jpg'),
-    normalMap: textureLoader.load('Images/01_earthbump1k.jpg'),
-    specularMap: textureLoader.load('Images/02_earthspec1k.jpg'),
-    emissiveMap: textureLoader.load('Images/03_earthlights1k.jpg'),
-    emissive: 0xffffff,
-    emissiveIntensity: 0.2,
-    shininess: 15,
-    transparent: true,
-    opacity: 1 // Set opacity to 1 or remove this line
-});
 
-// Earth mesh
-const earthGeometry = new THREE.SphereGeometry(2, 64, 64);
-const earthMesh = new THREE.Mesh(earthGeometry, earthMaterial);
-earthMesh.rotation.z = 0.41;
-scene.add(earthMesh);
+const loadTexture = (path) => {
+    return new Promise((resolve, reject) => {
+        textureLoader.load(
+            path,
+            (texture) => resolve(texture),
+            undefined,
+            (error) => reject(new Error(`Failed to load texture: ${path}`))
+        );
+    });
+};
+
+Promise.all([
+    loadTexture('Images/00_earthmap1k.jpg'),
+    loadTexture('Images/01_earthbump1k.jpg'),
+    loadTexture('Images/02_earthspec1k.jpg'),
+    loadTexture('Images/03_earthlights1k.jpg')
+]).then(([map, normalMap, specularMap, emissiveMap]) => {
+    const earthMaterial = new THREE.MeshPhongMaterial({
+        map,
+        normalMap,
+        specularMap,
+        emissiveMap,
+        emissive: 0xffffff,
+        emissiveIntensity: 0.2,
+        shininess: 15,
+        transparent: true,
+        opacity: 1 // Set opacity to 1 or remove this line
+    });
+
+    // Earth mesh
+    const earthGeometry = new THREE.SphereGeometry(2, 64, 64);
+    const earthMesh = new THREE.Mesh(earthGeometry, earthMaterial);
+    earthMesh.rotation.z = 0.41;
+    scene.add(earthMesh);
+
+    // Animation loop
+    function animate() {
+        requestAnimationFrame(animate);
+        earthMesh.rotation.y += 0.002;
+        atmosphereMesh.rotation.y += 0.002;
+        renderer.render(scene, camera);
+    }
+
+    animate();
+}).catch((error) => {
+    console.error(error);
+});
 
 // Atmosphere effect
 const atmosphereMaterial = new THREE.MeshPhongMaterial({
@@ -66,16 +97,6 @@ const stars = new THREE.Points(starGeometry, starMaterial);
 scene.add(stars);
 
 camera.position.z = 5;
-
-// Animation loop
-function animate() {
-    requestAnimationFrame(animate);
-    earthMesh.rotation.y += 0.002;
-    atmosphereMesh.rotation.y += 0.002;
-    renderer.render(scene, camera);
-}
-
-animate();
 
 // Handle window resize
 window.addEventListener('resize', () => {
