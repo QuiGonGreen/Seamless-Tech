@@ -11,13 +11,14 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.sortObjects = true;
 
-// Realistic sunlight setup
-const directionalLight = new THREE.DirectionalLight(0xfff4e6, 3.5);
-directionalLight.position.set(5, 0, 0); // Positioned to create day/night split
+// Realistic sunlight setup - Position adjusted to left side
+const directionalLight = new THREE.DirectionalLight(0xfff4e6, 4.0);
+directionalLight.position.set(-5, 0, 0); // Changed to negative X for left-side illumination
+directionalLight.castShadow = true;
 scene.add(directionalLight);
 
 // Minimal ambient light to prevent complete darkness
-const minimalAmbient = new THREE.AmbientLight(0x404040, 0.15);
+const minimalAmbient = new THREE.AmbientLight(0x404040, 0.1);
 scene.add(minimalAmbient);
 
 // Earth material with enhanced night lights
@@ -28,9 +29,9 @@ const earthMaterial = new THREE.MeshPhongMaterial({
     specularMap: textureLoader.load('Images/02_earthspec1k.jpg'),
     emissiveMap: textureLoader.load('Images/03_earthlights1k.jpg'),
     emissive: 0xffffff,
-    emissiveIntensity: 0.8, // Enhanced city lights visibility
-    shininess: 35,
-    specular: 0x444444
+    emissiveIntensity: 1.2, // Increased night lights visibility
+    shininess: 40,
+    specular: 0x333333
 });
 
 // Earth mesh
@@ -44,9 +45,9 @@ const cloudMaterial = new THREE.MeshStandardMaterial({
     map: textureLoader.load('Images/04_earthcloudmap.jpg'),
     alphaMap: textureLoader.load('Images/05_earthcloudmaptrans.jpg'),
     transparent: true,
-    opacity: 0.5,
-    metalness: 0.1,
-    roughness: 0.8,
+    opacity: 0.6,
+    metalness: 0.05,
+    roughness: 0.7,
     depthWrite: false
 });
 
