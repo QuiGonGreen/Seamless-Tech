@@ -277,3 +277,22 @@ body {
         font-size: 1.5rem;
     }
 }
+
+/* ===== BLOG-SPECIFIC STYLES ===== */
+.blog-meta {
+    display: flex;
+    gap: 1rem;
+    color: #b8860b;
+    font-size: 0.9rem;
+}
+
+.blog-video {
+    object-position: top;
+}
+
+/* Responsive Blog Adjustments */
+@media (max-width: 768px) {
+    .solution-card[style*="max-width: 800px"] .card-media img {
+        height: 250px;
+    }
+}
