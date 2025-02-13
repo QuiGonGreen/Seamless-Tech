@@ -299,33 +299,30 @@ body {
 
 /* ================= BLOG SCROLL PANELS ================= */
 .scroll-container {
-    scroll-snap-type: y mandatory;
-    overflow-y: scroll;
-    height: 100vh;
+    overflow-y: auto;
 }
 
 .scroll-panel {
-    height: 100vh;
-    scroll-snap-align: start;
-    position: relative;
-    opacity: 0.3;
-    transform: scale(0.9);
+    height: auto;
+    min-height: 100vh;
+    opacity: 0;
+    transform: translateY(20px);
     transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1);
     padding: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .scroll-panel.active {
     opacity: 1;
-    transform: scale(1);
+    transform: translateY(0);
     filter: drop-shadow(0 0 30px rgba(184, 134, 11, 0.3));
 }
 
 .panel-content {
     max-width: 1200px;
     margin: 0 auto;
-    position: relative;
-    top: 50%;
-    transform: translateY(-50%);
     border: 1px solid rgba(184, 134, 11, 0.2);
     border-radius: 15px;
     overflow: hidden;
@@ -335,9 +332,9 @@ body {
     height: 60vh;
 }
 
-.scroll-panel .card-content {
-    padding: 2rem;
-    background: var(--github-dark);
+/* Preserve original solution cards behavior */
+#solutions .solution-card {
+    /* Original styles remain untouched */
 }
 
 @media (max-width: 768px) {
