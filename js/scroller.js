@@ -2,7 +2,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     gsap.registerPlugin(ScrollTrigger);
 
-    // Scroller-specific configuration
+    // Initialize panel transitions
     gsap.utils.toArray(".scroll-panel").forEach((panel, i) => {
         // Panel entrance animation
         gsap.from(panel, {
@@ -20,30 +20,35 @@ document.addEventListener('DOMContentLoaded', () => {
         ScrollTrigger.create({
             trigger: panel,
             start: "top top",
-            end: "bottom top",
+            end: "+=100%",
             pin: true,
             pinSpacing: false,
-            onEnter: () => panel.classList.add("active"),
-            onLeaveBack: () => panel.classList.remove("active")
+            markers: false, // Set to true for debugging
+            onEnter: () => {
+                panel.classList.add("active");
+                const video = panel.querySelector('video');
+                if(video) video.play();
+            },
+            onLeaveBack: () => {
+                panel.classList.remove("active");
+                const video = panel.querySelector('video');
+                if(video) video.pause();
+            }
         });
 
-        // Video autoplay control
-        const video = panel.querySelector('video');
-        if(video) {
-            ScrollTrigger.create({
+        // Parallax effect for media
+        gsap.from(panel.querySelector(".card-media"), {
+            yPercent: 20,
+            ease: "none",
+            scrollTrigger: {
                 trigger: panel,
-                start: "top center",
-                end: "bottom center",
-                onEnter: () => video.play(),
-                onEnterBack: () => video.play(),
-                onLeave: () => video.pause(),
-                onLeaveBack: () => video.pause()
-            });
-        }
+                start: "top bottom",
+                end: "bottom top",
+                scrub: true
+            }
+        });
     });
 
-    // Cleanup other ScrollTriggers on this page
-    ScrollTrigger.config({
-        autoRefreshEvents: "visibilitychange,DOMContentLoaded,load"
-    });
+    // Refresh ScrollTrigger after load
+    ScrollTrigger.refresh();
 });
