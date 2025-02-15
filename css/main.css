@@ -251,62 +251,15 @@ body {
     text-shadow: 2px 2px 4px black;
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-    .Landing-title {
-        font-size: 2.5rem;
-    }
-    
-    .nav-links {
-        display: none;
-    }
-    
-    .solution-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .card-content h3 {
-        font-size: 1.5rem;
-    }
-    
-    .solution-card p {
-        font-size: 0.9rem;
-    }
-    
-    .Landing-subtitle {
-        font-size: 1.5rem;
-    }
-}
-
-/* ===== BLOG-SPECIFIC STYLES ===== */
-.blog-meta {
-    display: flex;
-    gap: 1rem;
-    color: #b8860b;
-    font-size: 0.9rem;
-}
-
-.blog-video {
-    object-position: top;
-}
-
-/* Responsive Blog Adjustments */
-@media (max-width: 768px) {
-    .solution-card[style*="max-width: 800px"] .card-media img {
-        height: 250px;
-    }
-}
-
-/* ================= BLOG SCROLL PANELS ================= */
+/* Scroller Page Specific Styles */
 .scroll-container {
-    scroll-snap-type: y mandatory;
-    overflow-y: scroll;
-    height: 100vh;
+    height: auto;
+    overflow-y: auto;
 }
 
 .scroll-panel {
     height: 100vh;
-    scroll-snap-align: start;
+    width: 100%;
     position: relative;
     opacity: 0.3;
     transform: scale(0.9);
@@ -340,7 +293,33 @@ body {
     background: var(--github-dark);
 }
 
+/* Responsive Design */
 @media (max-width: 768px) {
+    .Landing-title {
+        font-size: 2.5rem;
+    }
+    
+    .nav-links {
+        display: none;
+    }
+    
+    .solution-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .card-content h3 {
+        font-size: 1.5rem;
+    }
+    
+    .solution-card p {
+        font-size: 0.9rem;
+    }
+    
+    .Landing-subtitle {
+        font-size: 1.5rem;
+    }
+
+    /* Scroller Mobile Adjustments */
     .panel-content {
         top: 45%;
         padding: 0;
@@ -353,4 +332,16 @@ body {
     .scroll-panel {
         padding: 1rem;
     }
+}
+
+/* Blog Specific Styles */
+.blog-meta {
+    display: flex;
+    gap: 1rem;
+    color: #b8860b;
+    font-size: 0.9rem;
+}
+
+.blog-video {
+    object-position: top;
 }
