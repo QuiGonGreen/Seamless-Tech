@@ -19,12 +19,19 @@ document.addEventListener('DOMContentLoaded', () => {
         // Full-screen panel control
         ScrollTrigger.create({
             trigger: panel,
-            start: "top top",
-            end: "+=100%",
-            pin: true,
-            pinSpacing: false,
-            markers: false, // Set to true for debugging
+            start: "top center",
+            end: "bottom center",
             onEnter: () => {
+                panel.classList.add("active");
+                const video = panel.querySelector('video');
+                if(video) video.play();
+            },
+            onLeave: () => {
+                panel.classList.remove("active");
+                const video = panel.querySelector('video');
+                if(video) video.pause();
+            },
+            onEnterBack: () => {
                 panel.classList.add("active");
                 const video = panel.querySelector('video');
                 if(video) video.play();

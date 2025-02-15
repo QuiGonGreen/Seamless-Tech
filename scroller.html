@@ -101,7 +101,24 @@
         </section>
     </main>
 
-    <!-- Scroller-specific JS -->
     <script src="js/scroller.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            gsap.registerPlugin(ScrollTrigger);
+
+            const videos = document.querySelectorAll('.card-video');
+
+            videos.forEach(video => {
+                ScrollTrigger.create({
+                    trigger: video,
+                    start: 'center center',
+                    onEnter: () => video.play(),
+                    onLeave: () => video.pause(),
+                    onEnterBack: () => video.play(),
+                    onLeaveBack: () => video.pause()
+                });
+            });
+        });
+    </script>
 </body>
 </html>
