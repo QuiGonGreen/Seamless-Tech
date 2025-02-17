@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Seamless-Tech | Solution Showcase</title>
+    <title>California Wildfires Newsletter</title>
     <link rel="stylesheet" href="css/main.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
@@ -19,85 +19,119 @@
                 <a href="index.html" class="nav-item">Home</a>
                 <a href="index.html#solutions" class="nav-item">Solutions</a>
                 <a href="scroller.html" class="nav-item active">Scroller</a>
-                <a href="california-wildfires.html" class="nav-item">California Wildfires</a>
             </div>
         </div>
     </nav>
 
+    <section class="newsletter-hero">
+        <div class="hero-content">
+            <h1>California Wildfires</h1>
+            <p>Get updates on Southern California’s latest wildfire threats.</p>
+        </div>
+    </section>
+
+    <main class="newsletter-main">
+        <section class="newsletter-content">
+            <h2>Latest Alerts</h2>
+            <!-- Embed or link a real-time map or chart here -->
+            <p>Stay informed with up-to-date information on fire perimeters, evacuation zones, and resources.</p>
+        </section>
+
+        <section class="newsletter-updates">
+            <h3>Recent Reports</h3>
+            <ul>
+                <li>Current Fire Danger Ratings</li>
+                <li>Road Closures & Evacuation Routes</li>
+                <li>Air Quality & Weather Outlook</li>
+            </ul>
+        </section>
+
+        <section class="subscribe-form">
+            <h3>Subscribe for Alerts</h3>
+            <form>
+                <label for="subscriber-email">Email Address</label>
+                <input type="email" id="subscriber-email" placeholder="Enter your email" required>
+                <button type="submit">Subscribe</button>
+            </form>
+        </section>
+    </main>
+
     <main class="scroll-container">
-        <!-- Panel 1 -->
         <section class="scroll-panel">
+            <!-- Panel 1 -->
             <div class="panel-content">
                 <div class="card-media">
                     <video class="card-video" muted loop playsinline>
                         <source src="videos/video1.mp4" type="video/mp4">
                     </video>
-                </div>
-                <div class="card-content">
-                    <h3>Educational Video ...</h3>
-                    <p>Educational Video ...</p>
+                    <div class="card-content">
+                        <h3>Educational Video ...</h3>
+                        <p>Educational Video ...</p>
+                    </div>
                 </div>
             </div>
         </section>
-
-        <!-- Panel 2 -->
         <section class="scroll-panel">
+            <!-- Panel 2 -->
             <div class="panel-content">
                 <div class="card-media">
                     <video class="card-video" muted loop playsinline>
                         <source src="videos/video2.mp4" type="video/mp4">
                     </video>
-                </div>
-                <div class="card-content">
-                    <h3>Educational Video ...</h3>
-                    <p>Educational Video ...</p>
+                    <div class="card-content">
+                        <h3>Educational Video ...</h3>
+                        <p>Educational Video ...</p>
+                    </div>
                 </div>
             </div>
         </section>
-
-        <!-- Panel 3 -->
         <section class="scroll-panel">
+            <!-- Panel 3 -->
             <div class="panel-content">
                 <div class="card-media">
                     <video class="card-video" muted loop playsinline>
                         <source src="videos/video3.mp4" type="video/mp4">
                     </video>
-                </div>
-                <div class="card-content">
-                    <h3>Educational Video ...</h3>
-                    <p>Educational Video ...</p>
+                    <div class="card-content">
+                        <h3>Educational Video ...</h3>
+                        <p>Educational Video ...</p>
+                    </div>
                 </div>
             </div>
         </section>
-
-        <!-- Panel 4 -->
         <section class="scroll-panel">
+            <!-- Panel 4 -->
             <div class="panel-content">
                 <div class="card-media">
                     <video class="card-video" muted loop playsinline>
                         <source src="videos/video4.mp4" type="video/mp4">
                     </video>
-                </div>
-                <div class="card-content">
-                    <h3>Educational Video ...</h3>
-                    <p>Educational Video ...</p>
+                    <div class="card-content">
+                        <h3>Educational Video ...</h3>
+                        <p>Educational Video ...</p>
+                    </div>
                 </div>
             </div>
         </section>
-
-        <!-- Panel 5 -->
         <section class="scroll-panel">
+            <!-- Panel 5 -->
             <div class="panel-content">
                 <div class="card-media">
                     <video class="card-video" muted loop playsinline>
                         <source src="videos/video5.mp4" type="video/mp4">
                     </video>
-                </div>
-                <div class="card-content">
-                    <h3>Educational Video ...</h3>
-                    <p>Educational Video ...</p>
+                    <div class="card-content">
+                        <h3>Educational Video ...</h3>
+                        <p>Educational Video ...</p>
+                    </div>
                 </div>
             </div>
+        </section>
+        <section class="content-section">
+            <!-- California Wildfire Updates Section -->
+            <h2>California Wildfire Updates</h2>
+            <p>Your up-to-date newsletter on the current wildfire threatmap for Southern California.</p>
+            <!-- ...additional content or embedded map... -->
         </section>
     </main>
 
@@ -105,9 +139,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             gsap.registerPlugin(ScrollTrigger);
-
             const videos = document.querySelectorAll('.card-video');
-
             videos.forEach(video => {
                 ScrollTrigger.create({
                     trigger: video,
