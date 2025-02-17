@@ -60,7 +60,7 @@ img {
 
 .brand-name {
     font-weight: 600;
-    font-size: 1rem; /* Reduced font size */
+    font-size: 2rem; /* Doubled font size */
     color: #b8860b;
 }
 
@@ -86,7 +86,7 @@ img {
     color: #b8860b;
     text-decoration: none;
     padding: 0.5rem 0;
-    font-size: 0.9rem; /* Reduced font size */
+    font-size: 1.8rem; /* Doubled font size */
 }
 
 .nav-item.active {
@@ -98,7 +98,7 @@ img {
     background: none;
     border: none;
     color: #b8860b;
-    font-size: 1.2rem; /* Reduced font size */
+    font-size: 2.4rem; /* Doubled font size */
     cursor: pointer;
     padding: 0;
 }
