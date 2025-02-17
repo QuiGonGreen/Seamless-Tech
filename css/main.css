@@ -36,13 +36,13 @@ img {
     background: linear-gradient(135deg, #260241, #401161 60%, #521b85);
     backdrop-filter: blur(10px);
     z-index: 1000;
-    padding: 0.5rem 0; /* Reduced padding */
+    padding: 0; /* Removed padding */
 }
 
 .nav-container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 1rem;
+    padding: 0; /* Removed padding */
     display: flex;
     justify-content: space-between;
     align-items: center;
