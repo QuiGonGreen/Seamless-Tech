@@ -36,7 +36,7 @@ img {
     background: linear-gradient(135deg, #260241, #401161 60%, #521b85);
     backdrop-filter: blur(10px);
     z-index: 1000;
-    padding: 1rem 0;
+    padding: 0.5rem 0; /* Reduced padding */
 }
 
 .nav-container {
@@ -60,7 +60,7 @@ img {
 
 .brand-name {
     font-weight: 600;
-    font-size: 1.25rem;
+    font-size: 1rem; /* Reduced font size */
     color: #b8860b;
 }
 
@@ -86,6 +86,7 @@ img {
     color: #b8860b;
     text-decoration: none;
     padding: 0.5rem 0;
+    font-size: 0.9rem; /* Reduced font size */
 }
 
 .nav-item.active {
@@ -97,7 +98,7 @@ img {
     background: none;
     border: none;
     color: #b8860b;
-    font-size: 1.5rem;
+    font-size: 1.2rem; /* Reduced font size */
     cursor: pointer;
     padding: 0;
 }
