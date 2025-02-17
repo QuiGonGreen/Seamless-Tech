@@ -65,17 +65,41 @@ img {
 }
 
 .nav-links {
-    display: none;
+    display: none; /* Hide nav links by default */
+    flex-direction: column;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: rgba(13, 17, 23, 0.95);
+    width: 200px;
+    padding: 1rem;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    z-index: 10;
+}
+
+.nav-links.active {
+    display: flex; /* Show nav links when active class is present */
 }
 
 .nav-item {
     color: #b8860b;
     text-decoration: none;
+    padding: 0.5rem 0;
 }
 
 .nav-item.active {
     color: #b8860b;
     font-weight: bold;
+}
+
+.hamburger {
+    background: none;
+    border: none;
+    color: #b8860b;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0;
 }
 
 /* Dropdown Button */
@@ -388,6 +412,10 @@ img {
     
     .scroll-panel {
         padding: 1rem;
+    }
+
+    .nav-container {
+        flex-wrap: wrap;
     }
 }
 
