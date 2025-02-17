@@ -21,6 +21,13 @@ body {
     overflow-x: hidden;
 }
 
+/* Basic responsive styles */
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
 /* Navigation */
 .navbar {
     position: fixed;
@@ -35,10 +42,10 @@ body {
 .nav-container {
     max-width: 1200px;
     margin: 0 auto;
+    padding: 1rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 2rem;
 }
 
 .brand {
@@ -59,7 +66,7 @@ body {
 
 .nav-links {
     display: flex;
-    gap: 2rem;
+    gap: 1rem;
 }
 
 .nav-item {
