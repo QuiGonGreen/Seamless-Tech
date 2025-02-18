@@ -46,6 +46,7 @@ img {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    position: relative; /* Align dropdown with .hamburger button */
 }
 
 .brand {
@@ -70,6 +71,7 @@ img {
     position: absolute;
     top: 100%;
     right: 0;
+    left: auto; 
     background-color: rgba(13, 17, 23, 0.95);
     width: 200px;
     padding: 1rem;
@@ -101,6 +103,8 @@ img {
     font-size: 2.4rem; /* Doubled font size */
     cursor: pointer;
     padding: 0;
+    position: relative;
+    z-index: 1100;
 }
 
 /* Dropdown Button */
