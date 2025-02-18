@@ -34,16 +34,16 @@ scene.add(directionalLight);
 const ambientLight = new THREE.AmbientLight(0x404040, isMobile ? 0.5 : 0.3);
 scene.add(ambientLight);
 
-// Earth material
+// Earth material (adjust emissive and specular intensity)
 const earthMaterial = new THREE.MeshPhongMaterial({
     map: createNPOTTexture('Images/00_earthmap1k.jpg'),
     normalMap: createNPOTTexture('Images/01_earthbump1k.jpg'),
     specularMap: createNPOTTexture('Images/02_earthspec1k.jpg'),
     emissiveMap: createNPOTTexture('Images/03_earthlights1k.jpg'),
     emissive: 0xffffff,
-    emissiveIntensity: 0.7,
-    shininess: 15,
-    specular: 0x222222,
+    emissiveIntensity: 0.4, // lowered from 0.7
+    shininess: 20,
+    specular: 0x444444, // slightly brighter for better water reflection
     bumpScale: 0.04
 });
 
