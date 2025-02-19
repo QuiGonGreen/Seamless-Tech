@@ -5,17 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Scholar AI</title>
     <link rel="stylesheet" href="css/main.css">
+    <script>
+        // Mobile viewport height hack
+        function setViewportHeight() {
+            let vh = window.innerHeight * 0.01;
+            document.documentElement.style.setProperty('--vh', `${vh}px`);
+        }
+        
+        window.addEventListener('resize', setViewportHeight);
+        window.addEventListener('orientationchange', setViewportHeight);
+        setViewportHeight();
+    </script>
 </head>
 <body>
     <div class="scholar-container">
-        <div class="iframe-overlay"></div>
+        <div class="scholar-overlay"></div>
         
         <header class="scholar-header">
             <h1 class="scholar-title">Codex Translator</h1>
-            <p class="scholar-subtitle">Engage with ancient wisdom through modern interface</p>
+            <p class="scholar-subtitle">Connect with ancient wisdom through modern interface</p>
         </header>
 
-        <div class="copilot-embed-slot">
+        <div class="iframe-container">
             <iframe
                 src="https://copilotstudio.microsoft.com/environments/Default-8fc571aa-06d7-4bb5-87d7-27e923366e36/bots/crc7a_bibliaeScholaris/webchat?__version__=2"
                 allow="microphone"
