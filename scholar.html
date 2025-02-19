@@ -14,18 +14,6 @@
             color: #fff;
             padding: 1rem; /* Add padding for small screens */
         }
-        .scholar-header {
-            text-align: center;
-            padding: 2rem;
-            background: rgba(0, 0, 0, 0.4);
-        }
-        .scholar-header h1 {
-            margin-bottom: 0.5rem;
-            font-size: 2rem; /* Adjust font size for smaller screens */
-        }
-        .scholar-header p {
-            font-size: 1rem; /* Adjust font size for smaller screens */
-        }
         .copilot-section {
             flex: 1;
             display: flex;
@@ -61,26 +49,6 @@
         }
         /* Media query for larger screens */
         @media (min-width: 769px) {
-            .scholar-header h1 {
-                font-size: 3rem;
-            }
-            .scholar-header p {
-                font-size: 1.2rem;
-            }
-            .copilot-section {
-                padding: 2rem;
-            }
-            .copilot-panel {
-                width: 80%;
-                padding: 2rem;
-            }
-            .copilot-panel h3 {
-                font-size: 2rem;
-            }
-            .copilot-embed-slot {
-                height: 70vh;
-                padding: 1.5rem;
-            }
             .copilot-panel p {
                 font-size: 1.1rem;
             }
@@ -89,14 +57,10 @@
 </head>
 <body>
     <div class="scholar-container">
-        <header class="scholar-header">
-            <h1>Scholar AI</h1>
-            <p>Copilot Agent Interface</p>
-        </header>
-
         <section class="copilot-section">
             <div class="copilot-panel">
                 <h3>Copilot Development Console</h3>
+                <p>Embed your Copilot agent below and experiment with advanced features.</p>
                 <div class="copilot-embed-slot">
                     <iframe
                         src="https://copilotstudio.microsoft.com/environments/Default-8fc571aa-06d7-4bb5-87d7-27e923366e36/bots/crc7a_bibliaeScholaris/webchat?__version__=2"
