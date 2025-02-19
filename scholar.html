@@ -2,86 +2,26 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Scholar AI</title>
     <link rel="stylesheet" href="css/main.css">
-    <style>
-        /* Page-specific styles */
-        .copilot-panel {
-            position: relative;
-            height: 100vh;
-        }
-
-        .title-container {
-            position: absolute;
-            top: 10%;
-            left: 50%;
-            transform: translateX(-50%);
-            text-align: center;
-            z-index: 2;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-        }
-
-        .scholar-title {
-            font-size: 2.5rem;
-            color: #b8860b;
-            margin-bottom: 1rem;
-        }
-
-        .scholar-subtitle {
-            font-size: 1.2rem;
-            color: #9fbfdf;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        /* Iframe styling */
-        iframe {
-            width: 100%;
-            height: 100%;
-            filter: 
-                brightness(0.85) 
-                contrast(1.1) 
-                saturate(1.2) 
-                hue-rotate(-5deg);
-            border-radius: 10px;
-        }
-
-        /* Mobile optimization */
-        @media (max-width: 768px) {
-            .scholar-title {
-                font-size: 2rem;
-                padding: 0 1rem;
-            }
-            
-            .scholar-subtitle {
-                font-size: 1rem;
-                padding: 0 1rem;
-            }
-            
-            iframe {
-                border-radius: 0;
-            }
-        }
-    </style>
 </head>
 <body>
     <div class="scholar-container">
         <div class="iframe-overlay"></div>
-        <section class="copilot-section">
-            <div class="copilot-panel">
-                <div class="title-container">
-                    <h1 class="scholar-title">Codex Translator</h1>
-                    <p class="scholar-subtitle">Use the space below to grow your connection with ancient wisdom</p>
-                </div>
-                <div class="copilot-embed-slot">
-                    <iframe
-                        src="https://copilotstudio.microsoft.com/environments/Default-8fc571aa-06d7-4bb5-87d7-27e923366e36/bots/crc7a_bibliaeScholaris/webchat?__version__=2"
-                        allow="microphone">
-                    </iframe>
-                </div>
-            </div>
-        </section>
+        
+        <header class="scholar-header">
+            <h1 class="scholar-title">Codex Translator</h1>
+            <p class="scholar-subtitle">Engage with ancient wisdom through modern interface</p>
+        </header>
+
+        <div class="copilot-embed-slot">
+            <iframe
+                src="https://copilotstudio.microsoft.com/environments/Default-8fc571aa-06d7-4bb5-87d7-27e923366e36/bots/crc7a_bibliaeScholaris/webchat?__version__=2"
+                allow="microphone"
+                title="Scholar AI Interface">
+            </iframe>
+        </div>
     </div>
 </body>
 </html>
