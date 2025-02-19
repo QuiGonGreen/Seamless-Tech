@@ -1,15 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scholar Page</title>
+    <link rel="stylesheet" href="css/main.css">
+    <style>
+        .scholar-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            color: #fff;
+        }
+        .scholar-header {
+            text-align: center;
+            padding: 2rem;
+            background: rgba(0, 0, 0, 0.4);
+        }
+        .scholar-header h1 {
+            margin-bottom: 0.5rem;
+            font-size: 3rem;
+        }
+        .scholar-header p {
+            font-size: 1.2rem;
+        }
+        .copilot-section {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+        .copilot-panel {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            text-align: center;
+            width: 80%;
+            max-width: 800px;
+            padding: 2rem;
+        }
+        .copilot-panel h3 {
+            margin-bottom: 1rem;
+            font-size: 2rem;
+        }
+        .copilot-embed-slot {
+            border: 3px dashed #fff;
+            padding: 1.5rem;
+            margin: 1rem 0;
+        }
+        .copilot-panel p {
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="scholar-container">
+        <header class="scholar-header">
+            <h1>Scholar Page</h1>
+            <p>Interactive Copilot Agent Interface</p>
+        </header>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-</html></body>       Use it for any specialized testing or pages not yet in production.</p>    <p>This page is intentionally hidden from the rest of the website.     <h1>Scholar Page</h1><body></head>    <link rel="stylesheet" href="css/main.css">    <title>Scholar Page</title>    <meta name="viewport" content="width=device-width, initial-scale=1.0">    <meta charset="UTF-8"><head><html lang="en"><!DOCTYPE html>
+        <section class="copilot-section">
+            <div class="copilot-panel">
+                <h3>Copilot Development Console</h3>
+                <p>Embed your Copilot agent below and experiment with advanced features.</p>
+                <div class="copilot-embed-slot">
+                    <!-- Place your Copilot agent embed code here -->
+                    <p style="font-size: 0.9rem;">[ Copilot Agent Embed Slot ]</p>
+                </div>
+            </div>
+        </section>
+    </div>
+</body>
+</html>
