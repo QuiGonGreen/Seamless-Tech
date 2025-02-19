@@ -5,34 +5,64 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Scholar AI</title>
     <link rel="stylesheet" href="css/main.css">
-    <script>
-        // Mobile viewport height hack
-        function setViewportHeight() {
-            let vh = window.innerHeight * 0.01;
-            document.documentElement.style.setProperty('--vh', `${vh}px`);
+    <style>
+        .scholar-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            color: #fff;
+            padding: 0;
         }
-        
-        window.addEventListener('resize', setViewportHeight);
-        window.addEventListener('orientationchange', setViewportHeight);
-        setViewportHeight();
-    </script>
+        .copilot-section {
+            flex: 1;
+            display: flex;
+        }
+        .copilot-panel {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            text-align: center;
+            width: 100%;
+            padding: 0;
+            margin: 0;
+        }
+        .copilot-embed-slot {
+            padding: 0;
+            margin: 0;
+            height: 100vh;
+            border-radius: 10px;
+        }
+        .copilot-panel h3 {
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+            padding: 1rem;
+        }
+        .copilot-panel p {
+            font-size: 0.9rem;
+            padding: 0 1rem;
+        }
+        @media (max-width: 768px) {
+            .copilot-embed-slot {
+                height: 90vh;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="scholar-container">
-        <div class="scholar-overlay"></div>
-        
-        <header class="scholar-header">
-            <h1 class="scholar-title">Codex Translator</h1>
-            <p class="scholar-subtitle">Connect with ancient wisdom through modern interface</p>
-        </header>
-
-        <div class="iframe-container">
-            <iframe
-                src="https://copilotstudio.microsoft.com/environments/Default-8fc571aa-06d7-4bb5-87d7-27e923366e36/bots/crc7a_bibliaeScholaris/webchat?__version__=2"
-                allow="microphone"
-                title="Scholar AI Interface">
-            </iframe>
-        </div>
+        <section class="copilot-section">
+            <div class="copilot-panel">
+                <h3>Codex Translator</h3>
+                <p>Use the space below to grow your connection!</p>
+                <div class="copilot-embed-slot">
+                    <iframe
+                        src="https://copilotstudio.microsoft.com/environments/Default-8fc571aa-06d7-4bb5-87d7-27e923366e36/bots/crc7a_bibliaeScholaris/webchat?__version__=2"
+                        frameborder="0"
+                        style="width: 100%; height: 100%;">
+                    </iframe>
+                </div>
+            </div>
+        </section>
     </div>
 </body>
 </html>
