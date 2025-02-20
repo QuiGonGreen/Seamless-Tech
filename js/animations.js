@@ -74,9 +74,9 @@ scene.add(cloudMesh);
 // Atmosphere shader with improved depth handling
 const atmosphereMaterial = new THREE.ShaderMaterial({
     uniforms: {
-        glowColor: { value: new THREE.Color(0x93c5fd) }, // Lighter blue color
+        glowColor: { value: new THREE.Color(0x4169e1) }, // Royal blue base color
         viewVector: { value: camera.position },
-        power: { value: 2.0 }
+        power: { value: 1.5 }
     },
     vertexShader: `
         varying vec3 vNormal;
@@ -94,9 +94,10 @@ const atmosphereMaterial = new THREE.ShaderMaterial({
         varying vec3 vNormal;
         varying vec3 vViewDir;
         void main() {
-            float intensity = power * pow(1.0 - dot(vNormal, -vViewDir), 4.0);
+            float rim = 1.0 - max(0.0, dot(vNormal, -vViewDir));
+            float intensity = pow(rim, 2.5) * power;
             vec3 atmosphere = glowColor * intensity;
-            gl_FragColor = vec4(atmosphere, intensity * 0.12);
+            gl_FragColor = vec4(atmosphere, intensity * 0.6);
         }
     `,
     side: THREE.BackSide,
@@ -106,7 +107,7 @@ const atmosphereMaterial = new THREE.ShaderMaterial({
 });
 
 const atmosphereMesh = new THREE.Mesh(
-    new THREE.SphereGeometry(2.15, 64, 64), // Slightly larger and less detailed
+    new THREE.SphereGeometry(2.12, 64, 64),  // Slightly adjusted size
     atmosphereMaterial
 );
 atmosphereMesh.renderOrder = 0;
