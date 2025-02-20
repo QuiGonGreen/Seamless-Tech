@@ -41,40 +41,42 @@ const earthMaterial = new THREE.MeshPhongMaterial({
     specularMap: createNPOTTexture('Images/02_earthspec1k.jpg'),
     emissiveMap: createNPOTTexture('Images/03_earthlights1k.jpg'),
     emissive: 0xffffff,
-    emissiveIntensity: 0.4, // lowered from 0.7
-    shininess: 20,
-    specular: 0x444444, // slightly brighter for better water reflection
-    bumpScale: 0.04
+    emissiveIntensity: 0.3,
+    shininess: 15,
+    specular: 0x333333,
+    bumpScale: 0.05
 });
 
 // Earth mesh
 const earthGeometry = new THREE.SphereGeometry(2, 128, 128);
 const earthMesh = new THREE.Mesh(earthGeometry, earthMaterial);
 earthMesh.rotation.z = 0.41;
+earthMesh.renderOrder = 1;
 scene.add(earthMesh);
 
-// Cloud material
+// Cloud material with improved blending
 const cloudMaterial = new THREE.MeshStandardMaterial({
     map: textureLoader.load('Images/04_earthcloudmap.jpg'),
     alphaMap: textureLoader.load('Images/05_earthcloudmaptrans.jpg'),
     transparent: true,
-    opacity: 0.35,
-    metalness: 0.0,
-    roughness: 0.9,
+    opacity: 0.4,
+    metalness: 0.1,
+    roughness: 1.0,
     depthWrite: false,
-    blending: THREE.CustomBlending
+    blending: THREE.NormalBlending
 });
 
-const cloudGeometry = new THREE.SphereGeometry(2.02, 128, 128);
+const cloudGeometry = new THREE.SphereGeometry(2.005, 128, 128);
 const cloudMesh = new THREE.Mesh(cloudGeometry, cloudMaterial);
+cloudMesh.renderOrder = 2;
 scene.add(cloudMesh);
 
-// Atmosphere shader
+// Atmosphere shader with improved depth handling
 const atmosphereMaterial = new THREE.ShaderMaterial({
     uniforms: {
-        glowColor: { value: new THREE.Color(0x40E0D0) },
+        glowColor: { value: new THREE.Color(0x6699ff) },
         viewVector: { value: camera.position },
-        power: { value: 1.2 }
+        power: { value: 1.5 }
     },
     vertexShader: `
         varying vec3 vNormal;
@@ -82,7 +84,7 @@ const atmosphereMaterial = new THREE.ShaderMaterial({
         void main() {
             vNormal = normalize(normalMatrix * normal);
             vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
-            vViewDir = -normalize(mvPosition.xyz);
+            vViewDir = normalize(mvPosition.xyz);
             gl_Position = projectionMatrix * mvPosition;
         }
     `,
@@ -92,21 +94,22 @@ const atmosphereMaterial = new THREE.ShaderMaterial({
         varying vec3 vNormal;
         varying vec3 vViewDir;
         void main() {
-            float intensity = power - dot(vNormal, vViewDir);
-            vec3 atmosphere = glowColor * pow(intensity, 2.5);
-            gl_FragColor = vec4(atmosphere, pow(intensity, 2.5) * 0.25);
+            float intensity = power * (1.0 - dot(vNormal, -vViewDir));
+            vec3 atmosphere = glowColor * pow(intensity, 3.0);
+            gl_FragColor = vec4(atmosphere, pow(intensity, 2.0) * 0.3);
         }
     `,
-    side: THREE.FrontSide,
+    side: THREE.BackSide,
     transparent: true,
     depthWrite: false,
     blending: THREE.AdditiveBlending
 });
 
 const atmosphereMesh = new THREE.Mesh(
-    new THREE.SphereGeometry(2.06, 128, 128),
+    new THREE.SphereGeometry(2.1, 128, 128),
     atmosphereMaterial
 );
+atmosphereMesh.renderOrder = 0;
 scene.add(atmosphereMesh);
 
 // Star background
