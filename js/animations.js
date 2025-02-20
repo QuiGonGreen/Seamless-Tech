@@ -71,48 +71,6 @@ const cloudMesh = new THREE.Mesh(cloudGeometry, cloudMaterial);
 cloudMesh.renderOrder = 2;
 scene.add(cloudMesh);
 
-// Atmosphere shader with improved depth handling
-const atmosphereMaterial = new THREE.ShaderMaterial({
-    uniforms: {
-        glowColor: { value: new THREE.Color(0x4169e1) }, // Royal blue base color
-        viewVector: { value: camera.position },
-        power: { value: 1.5 }
-    },
-    vertexShader: `
-        varying vec3 vNormal;
-        varying vec3 vViewDir;
-        void main() {
-            vNormal = normalize(normalMatrix * normal);
-            vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
-            vViewDir = normalize(mvPosition.xyz);
-            gl_Position = projectionMatrix * mvPosition;
-        }
-    `,
-    fragmentShader: `
-        uniform vec3 glowColor;
-        uniform float power;
-        varying vec3 vNormal;
-        varying vec3 vViewDir;
-        void main() {
-            float rim = 1.0 - max(0.0, dot(vNormal, -vViewDir));
-            float intensity = pow(rim, 2.5) * power;
-            vec3 atmosphere = glowColor * intensity;
-            gl_FragColor = vec4(atmosphere, intensity * 0.6);
-        }
-    `,
-    side: THREE.BackSide,
-    transparent: true,
-    depthWrite: false,
-    blending: THREE.AdditiveBlending
-});
-
-const atmosphereMesh = new THREE.Mesh(
-    new THREE.SphereGeometry(2.12, 64, 64),  // Slightly adjusted size
-    atmosphereMaterial
-);
-atmosphereMesh.renderOrder = 0;
-scene.add(atmosphereMesh);
-
 // Star background
 const starGeometry = new THREE.BufferGeometry();
 const starVertices = [];
@@ -148,8 +106,6 @@ function animate() {
     
     directionalLight.position.x = Math.sin(time) * 6;
     directionalLight.position.z = Math.cos(time) * 6;
-    
-    atmosphereMaterial.uniforms.viewVector.value.copy(camera.position);
     
     renderer.render(scene, camera);
 }
