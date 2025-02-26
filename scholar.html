@@ -3,38 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Assistant - Seamless Tech</title>
+    <title>Scholar AI - Seamless Tech</title>
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/ai-interface.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-    <header>
-        <!-- ...existing code... -->
-    </header>
-
-    <main class="ai-interface-container">
-        <div class="ai-sidebar">
-            <div class="ai-logo">
-                <h2>Scholar AI</h2>
+    <div class="app-container">
+        <main class="ai-interface-container">
+            <!-- Sidebar with AI risk reminder cards -->
+            <div class="ai-sidebar">
+                <div class="ai-logo">
+                    <h2>Scholar AI</h2>
+                </div>
+                
+                <div class="risk-cards">
+                    <div class="risk-card">
+                        <h3><i class="fas fa-exclamation-triangle"></i> Accuracy Notice</h3>
+                        <p>AI may provide incorrect or incomplete information. Always verify critical information with trusted sources.</p>
+                    </div>
+                    
+                    <div class="risk-card">
+                        <h3><i class="fas fa-balance-scale"></i> Bias Awareness</h3>
+                        <p>AI responses can reflect biases present in training data. Consider multiple perspectives.</p>
+                    </div>
+                    
+                    <div class="risk-card">
+                        <h3><i class="fas fa-shield-alt"></i> Data Privacy</h3>
+                        <p>Do not share sensitive personal information as your conversations may be retained for AI improvement.</p>
+                    </div>
+                    
+                    <div class="risk-card">
+                        <h3><i class="fas fa-brain"></i> Critical Thinking</h3>
+                        <p>AI is a tool, not a replacement for human judgment. Always apply your own reasoning.</p>
+                    </div>
+                </div>
             </div>
             
-            <div class="ai-warnings">
-                <h3>AI Usage Notice</h3>
-                <ul>
-                    <li>AI may provide incorrect information</li>
-                    <li>Verify important information from trusted sources</li>
-                    <li>AI outputs may contain unintended biases</li>
-                    <li>Your inputs contribute to AI learning</li>
-                    <li>Do not share sensitive personal data</li>
-                </ul>
+            <!-- Main content area with the iframe -->
+            <div class="ai-main">
+                <div class="iframe-overlay">
+                    <!-- The iframe is the focus of the page -->
+                    <iframe id="copilot-agent-frame" 
+                        src="https://copilotstudio.microsoft.com/environments/Default-8fc571aa-06d7-4bb5-87d7-27e923366e36/bots/crc7a_bibliaeScholaris/webchat?__version__=2" 
+                        frameborder="0" 
+                        title="Copilot Agent">
+                    </iframe>
+                </div>
             </div>
-        </div>
-        
-        <div class="ai-main">
-            <!-- Updated iframe with the Copilot Studio bot URL -->
-            <iframe id="copilot-agent-frame" src="https://copilotstudio.microsoft.com/environments/Default-8fc571aa-06d7-4bb5-87d7-27e923366e36/bots/crc7a_bibliaeScholaris/webchat?__version__=2" frameborder="0" style="width: 100%; height: 100%;" title="Copilot Agent"></iframe>
-        </div>
-    </main>
+        </main>
+    </div>
+    
     <script src="js/ai-interface.js"></script>
 </body>
 </html>

@@ -121,4 +121,82 @@ document.addEventListener('DOMContentLoaded', function() {
             // Implementation would depend on your copilot agent's capabilities
         }
     });
+
+    const iframe = document.getElementById('copilot-agent-frame');
+    
+    // Show loading state
+    const aiMain = document.querySelector('.ai-main');
+    const loadingElement = document.createElement('div');
+    loadingElement.className = 'iframe-loading';
+    loadingElement.innerHTML = '<div class="spinner"></div><p>Loading Scholar AI...</p>';
+    aiMain.appendChild(loadingElement);
+    
+    // Handle iframe load event
+    iframe.addEventListener('load', function() {
+        // Remove loading indicator
+        const loadingElement = document.querySelector('.iframe-loading');
+        if (loadingElement) {
+            loadingElement.style.opacity = '0';
+            setTimeout(() => {
+                loadingElement.remove();
+            }, 500);
+        }
+        
+        try {
+            // Try to inject custom styles to the iframe
+            // Note: This may fail due to same-origin policy if the iframe is from a different domain
+            const iframeDocument = iframe.contentDocument || iframe.contentWindow.document;
+            
+            const styleElement = document.createElement('style');
+            styleElement.textContent = `
+                body, html { 
+                    background-color: #2a0066 !important;
+                }
+                
+                *, p, span, div, button, input, textarea, a {
+                    color: #ffd700 !important;
+                    font-family: 'Segoe UI', Tahoma, sans-serif !important;
+                }
+            `;
+            
+            iframeDocument.head.appendChild(styleElement);
+        } catch (e) {
+            console.log('Could not access iframe contents due to same-origin policy.');
+        }
+    });
 });
+
+// Add CSS for loading indicator
+document.head.insertAdjacentHTML('beforeend', `
+<style>
+.iframe-loading {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #2a0066;
+    color: #ffd700;
+    z-index: 10;
+    transition: opacity 0.5s ease;
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid rgba(255, 215, 0, 0.3);
+    border-radius: 50%;
+    border-top-color: #ffd700;
+    animation: spin 1s ease-in-out infinite;
+    margin-bottom: 20px;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+</style>
+`);
