@@ -34,10 +34,26 @@
         <div class="ai-main">
             <!-- Updated iframe with inline CSS styling -->
             <iframe id="copilot-agent-frame" 
-                src="https://copilotstudio.microsoft.com/environments/Default-8fc571aa-06d7-4bb5-87d7-27e923366e36/bots/crc7a_bibliaeScholaris/webchat?__version__=2" 
-                frameborder="0" 
-                style="width: 100%; height: 100%; background-color: #2a0066; color: #ffd700; font-family: 'Cascadia Code', monospace;" 
-                title="Copilot Agent"></iframe>
+        src="https://copilotstudio.microsoft.com/environments/Default-8fc571aa-06d7-4bb5-87d7-27e923366e36/bots/crc7a_bibliaeScholaris/webchat?__version__=2" 
+        frameborder="0" 
+        style="width: 100%; height: 100%;" 
+        title="Copilot Agent"></iframe>
+
+<script>
+  const iframe = document.getElementById('copilot-agent-frame');
+  iframe.onload = function() {
+    const iframeDocument = iframe.contentDocument || iframe.contentWindow.document;
+    const style = iframeDocument.createElement('style');
+    style.innerHTML = `
+      body {
+        background-color: #2a0066;
+        color: #ffd700;
+        font-family: 'Cascadia Code', monospace;
+      }
+    `;
+    iframeDocument.head.appendChild(style);
+  };
+</script>
         </div>
     </main>
 
