@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const newChatBtn = document.querySelector('.new-chat-btn');
     const aiMessages = document.querySelector('.ai-messages');
     const inputFrame = document.getElementById('ai-input-frame');
+    const copilotFrame = document.getElementById('copilot-agent-frame');
     
     // Initialize the iframe content
     if (inputFrame) {
@@ -71,17 +72,16 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Handle new chat button click
-    if (newChatBtn) {
+    if (newChatBtn && copilotFrame) {
         newChatBtn.addEventListener('click', function() {
-            // Clear all existing messages except the first welcome message
-            while (aiMessages.children.length > 1) {
-                aiMessages.removeChild(aiMessages.lastChild);
-            }
-            
-            // Reset the input field
-            if (inputFrame.contentDocument) {
-                const textarea = inputFrame.contentDocument.getElementById('user-input');
-                if (textarea) textarea.value = '';
+            // If possible, send a message to the iframe to start a new conversation
+            try {
+                copilotFrame.contentWindow.postMessage({ action: 'newChat' }, '*');
+            } catch (e) {
+                console.log('Could not communicate with the copilot agent iframe:', e);
+                
+                // Fallback: reload the iframe to start fresh
+                copilotFrame.src = copilotFrame.src;
             }
         });
     }
@@ -90,16 +90,35 @@ document.addEventListener('DOMContentLoaded', function() {
     const chatHistoryItems = document.querySelectorAll('.chat-history li');
     chatHistoryItems.forEach(item => {
         item.addEventListener('click', function() {
-            // Simulate loading a previous chat
+            // Get the chat name/ID
             const chatName = this.textContent.trim();
             
-            // Clear current messages
-            while (aiMessages.children.length > 0) {
-                aiMessages.removeChild(aiMessages.lastChild);
+            // If possible, send a message to the iframe to load this chat
+            if (copilotFrame) {
+                try {
+                    copilotFrame.contentWindow.postMessage({ 
+                        action: 'loadChat', 
+                        chatName: chatName 
+                    }, '*');
+                } catch (e) {
+                    console.log('Could not communicate with the copilot agent iframe:', e);
+                }
             }
-            
-            // Add a contextual message based on the selected chat
-            addMessage(`Welcome back to "${chatName}". How can I assist you further?`, false);
         });
+    });
+    
+    // Listen for messages from the iframe (if your copilot agent supports this)
+    window.addEventListener('message', function(event) {
+        // Check origin for security
+        // if (event.origin !== "https://your-copilot-agent-url.com") return;
+        
+        const data = event.data;
+        
+        // Example: Handle chat history updates
+        if (data.action === 'updateHistory') {
+            // Update the chat history in the sidebar
+            console.log('Received chat history update:', data.chats);
+            // Implementation would depend on your copilot agent's capabilities
+        }
     });
 });
