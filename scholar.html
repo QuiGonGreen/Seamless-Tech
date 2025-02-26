@@ -2,67 +2,61 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Scholar AI</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Assistant - Seamless Tech</title>
     <link rel="stylesheet" href="css/main.css">
-    <style>
-        .scholar-container {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-            color: #fff;
-            padding: 0;
-        }
-        .copilot-section {
-            flex: 1;
-            display: flex;
-        }
-        .copilot-panel {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            text-align: center;
-            width: 100%;
-            padding: 0;
-            margin: 0;
-        }
-        .copilot-embed-slot {
-            padding: 0;
-            margin: 0;
-            height: 100vh;
-            border-radius: 10px;
-        }
-        .copilot-panel h3 {
-            margin-bottom: 1rem;
-            font-size: 1.5rem;
-            padding: 1rem;
-        }
-        .copilot-panel p {
-            font-size: 0.9rem;
-            padding: 0 1rem;
-        }
-        @media (max-width: 768px) {
-            .copilot-embed-slot {
-                height: 90vh;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="css/ai-interface.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-    <div class="scholar-container">
-        <section class="copilot-section">
-            <div class="copilot-panel">
-                <h3>Codex Translator</h3>
-                <p>Use the space below to grow your connection!</p>
-                <div class="copilot-embed-slot">
-                    <iframe
-                        src="https://copilotstudio.microsoft.com/environments/Default-8fc571aa-06d7-4bb5-87d7-27e923366e36/bots/crc7a_bibliaeScholaris/webchat?__version__=2"
-                        frameborder="0"
-                        style="width: 100%; height: 100%;">
-                    </iframe>
+    <header>
+        <!-- ...existing code... -->
+    </header>
+
+    <main class="ai-interface-container">
+        <div class="ai-sidebar">
+            <div class="ai-logo">
+                <h2>Scholar AI</h2>
+            </div>
+            <button class="new-chat-btn">
+                <i class="fas fa-plus"></i> New Chat
+            </button>
+            <div class="chat-history">
+                <h3>Previous Chats</h3>
+                <ul>
+                    <li><i class="fas fa-comment"></i> Welcome Chat</li>
+                    <li><i class="fas fa-comment"></i> Research Assistant</li>
+                    <li><i class="fas fa-comment"></i> Code Helper</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="ai-main">
+            <div class="ai-chat-container">
+                <div class="ai-messages">
+                    <div class="ai-message">
+                        <div class="ai-avatar">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <div class="ai-message-content">
+                            <p>Hello! I'm Scholar AI. How can I assist you today?</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Messages will appear here -->
+                </div>
+                
+                <div class="ai-input-container">
+                    <iframe src="about:blank" id="ai-input-frame" title="AI Input Field"></iframe>
                 </div>
             </div>
-        </section>
-    </div>
+        </div>
+    </main>
+
+    <footer>
+        <!-- ...existing code... -->
+    </footer>
+
+    <script src="js/ai-interface.js"></script>
 </body>
 </html>

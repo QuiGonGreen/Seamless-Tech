@@ -20,6 +20,9 @@ body {
     color: var(--text-primary);
     line-height: 1.6;
     overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
 
 /* Basic responsive styles */
@@ -434,4 +437,14 @@ img {
 
 .blog-video {
     object-position: top;
+}
+
+/* Additional styles to support the AI interface while maintaining compatibility with existing pages */
+main {
+    flex: 1;
+}
+
+/* Ensure footer stays at bottom even with flexible content */
+footer {
+    margin-top: auto;
 }
