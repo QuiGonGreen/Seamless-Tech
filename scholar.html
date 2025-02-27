@@ -103,7 +103,7 @@
                     // Clear input
                     userInput.value = '';
                     
-                    // Process the message (replace with your actual AI integration)
+                    // Process the message using Azure API
                     processUserMessage(message);
                 }
             }
@@ -119,7 +119,21 @@
                 
                 const contentDiv = document.createElement('div');
                 contentDiv.className = 'message-content';
-                contentDiv.textContent = text;
+
+                // Handle markdown formatting if it's an AI response
+                if (!isUser) {
+                    // Simple markdown parser for basic formatting
+                    const formattedText = text
+                        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                        .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                        .replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>')
+                        .replace(/`(.*?)`/g, '<code>$1</code>')
+                        .replace(/\n/g, '<br>');
+                        
+                    contentDiv.innerHTML = formattedText;
+                } else {
+                    contentDiv.textContent = text;
+                }
                 
                 messageDiv.appendChild(avatarDiv);
                 messageDiv.appendChild(contentDiv);
@@ -130,8 +144,8 @@
                 messagesContainer.scrollTop = messagesContainer.scrollHeight;
             }
             
-            // Function to process user message and generate AI response
-            function processUserMessage(message) {
+            // Function to process user message and get AI response from Azure
+            async function processUserMessage(message) {
                 // Add loading indicator
                 const loadingDiv = document.createElement('div');
                 loadingDiv.className = 'message ai-message loading';
@@ -148,34 +162,28 @@
                 messagesContainer.appendChild(loadingDiv);
                 messagesContainer.scrollTop = messagesContainer.scrollHeight;
                 
-                // Simulate AI response (replace with actual API call)
-                setTimeout(() => {
+                try {
+                    // Call the Azure Function to get AI response
+                    const response = await askAI(message);
+                    
                     // Remove loading indicator
                     messagesContainer.removeChild(loadingDiv);
                     
                     // Add AI response
-                    const response = generateResponse(message);
                     addMessage(response, false);
-                }, 1000);
+                } catch (error) {
+                    // Remove loading indicator
+                    messagesContainer.removeChild(loadingDiv);
+                    
+                    // Add error message
+                    addMessage("I'm sorry, I encountered an error while processing your request. Please try again later.", false);
+                    console.error("Error getting AI response:", error);
+                }
             }
             
-            // Simple response generator (replace with actual AI functionality)
-            function generateResponse(message) {
-                const responses = [
-                    "I understand your query about '" + message + "'. Let me help you with that.",
-                    "That's an interesting question! Based on my knowledge, I can provide some insights.",
-                    "Thank you for your question. Here's what I can tell you about that topic.",
-                    "I've analyzed your question and have some information that might be helpful.",
-                    "Great question! Let me share what I know about this subject."
-                ];
-                
-                return responses[Math.floor(Math.random() * responses.length)];
-            }
-            
-            // Function to call your Azure Function endpoint (commented out until needed)
-            /*
+            // Function to call your Azure Function endpoint
             async function askAI(message) {
-                const functionUrl = "https://your-function-app-name.azurewebsites.net/api/aiChat";
+                const functionUrl = "https://scholarai.azurewebsites.net/api/claudeChat";
                 
                 try {
                     const response = await fetch(functionUrl, {
@@ -186,14 +194,26 @@
                         body: JSON.stringify({ message: message })
                     });
                     
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    
                     const data = await response.json();
-                    return data.content || "Error: No response from AI";
+                    return data.content || "I'm sorry, I couldn't generate a response.";
                 } catch (error) {
                     console.error("Error calling AI:", error);
-                    return "Error communicating with AI service";
+                    throw error;
                 }
             }
-            */
+            
+            // Create auto-resize functionality for the textarea
+            if (userInput) {
+                userInput.addEventListener('input', function() {
+                    this.style.height = 'auto';
+                    const newHeight = Math.min(this.scrollHeight, 150);
+                    this.style.height = newHeight + 'px';
+                });
+            }
         });
     </script>
 </body>
