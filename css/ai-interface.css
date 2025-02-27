@@ -174,7 +174,7 @@ body {
     color: #ffd700;
 }
 
-/* Main Content Area */
+/* Main Content Area - Simplified */
 .ai-main {
     flex: 1;
     position: relative;
@@ -183,43 +183,19 @@ body {
     background-color: #ffffff;
 }
 
-/* iFrame Container with Overlay */
-.iframe-overlay {
-    position: relative;
-    flex: 1;
-    display: flex;
-    overflow: hidden;
-}
-
-.iframe-overlay::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(42, 0, 102, 0.15); /* Semi-transparent purple overlay */
-    pointer-events: none;
-    z-index: 1;
-}
-
-.iframe-overlay::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, transparent 100%); /* Gold gradient */
-    pointer-events: none;
-    z-index: 2;
-}
-
+/* Clean iframe styling without overlays */
 #copilot-agent-frame {
     width: 100%;
     height: 100%;
     border: none;
     flex: 1;
+    background-color: #2a0066;
+}
+
+/* Remove the overlay pseudo-elements */
+.iframe-overlay::before,
+.iframe-overlay::after {
+    content: none;
 }
 
 /* Responsive Adjustments */
