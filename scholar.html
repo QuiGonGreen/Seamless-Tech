@@ -171,60 +171,35 @@
                     
                     // Add AI response
                     addMessage(response, false);
-                    
-                    // Log success for debugging
-                    console.log("Successfully received AI response");
                 } catch (error) {
                     // Remove loading indicator
                     messagesContainer.removeChild(loadingDiv);
                     
                     // Add error message
-                    addMessage("I'm sorry, I encountered an error while processing your request. Please try again later. (Error: " + error.message + ")", false);
+                    addMessage("I'm sorry, I encountered an error while processing your request. Please try again later.", false);
                     console.error("Error getting AI response:", error);
                 }
             }
             
-            // Updated function to call your Azure Function endpoint with improved error handling
+            // Function to call your Azure Function endpoint
             async function askAI(message) {
                 const functionUrl = "https://scholarai.azurewebsites.net/api/claudeChat";
                 
                 try {
-                    console.log("Sending request to:", functionUrl);
-                    console.log("Request payload:", JSON.stringify({ message: message }));
-                    
                     const response = await fetch(functionUrl, {
                         method: "POST",
                         headers: {
-                            "Content-Type": "application/json",
-                            // Add CORS headers if needed
-                            "Accept": "application/json"
+                            "Content-Type": "application/json"
                         },
                         body: JSON.stringify({ message: message })
                     });
                     
-                    console.log("Response status:", response.status);
-                    
                     if (!response.ok) {
-                        const errorText = await response.text();
-                        console.error("API Error Response:", errorText);
                         throw new Error(`HTTP error! status: ${response.status}`);
                     }
                     
                     const data = await response.json();
-                    console.log("Response data:", data);
-                    
-                    if (data && data.content) {
-                        return data.content;
-                    } else if (data && typeof data === 'string') {
-                        return data;
-                    } else if (data && data.response) {
-                        return data.response;
-                    } else if (data && data.message) {
-                        return data.message;
-                    } else {
-                        console.warn("Unexpected response format:", data);
-                        return "I received a response, but I'm not sure how to interpret it. Please try again.";
-                    }
+                    return data.content || "I'm sorry, I couldn't generate a response.";
                 } catch (error) {
                     console.error("Error calling AI:", error);
                     throw error;

@@ -55,28 +55,4 @@ document.addEventListener('DOMContentLoaded', function() {
             userInput.focus();
         }, 100);
     }
-    
-    // Add a small button for testing API connectivity
-    const aiMain = document.querySelector('.ai-main');
-    if (aiMain) {
-        const debugBtn = document.createElement('button');
-        debugBtn.style.position = 'absolute';
-        debugBtn.style.right = '10px';
-        debugBtn.style.top = '10px';
-        debugBtn.style.fontSize = '12px';
-        debugBtn.style.padding = '4px 8px';
-        debugBtn.style.background = 'rgba(255, 215, 0, 0.2)';
-        debugBtn.style.border = '1px solid #ffd700';
-        debugBtn.style.color = '#ffd700';
-        debugBtn.style.borderRadius = '4px';
-        debugBtn.style.cursor = 'pointer';
-        debugBtn.textContent = 'Test API';
-        debugBtn.style.zIndex = '1000';
-        debugBtn.onclick = async function() {
-            const result = await window.testAPI();
-            alert(result.success ? 'API Connection Successful!' : `API Error: ${result.error}`);
-        };
-        
-        aiMain.appendChild(debugBtn);
-    }
 });
