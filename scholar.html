@@ -47,89 +47,153 @@
                 </div>
             </div>
             
-            <!-- Main content area with the iframe - simplified -->
+            <!-- Main content area - iframe removed -->
             <div class="ai-main">
-                <!-- Removed overlay divs, keeping it simple -->
-                <iframe id="copilot-agent-frame" 
-                    src="https://copilotstudio.microsoft.com/environments/Default-8fc571aa-06d7-4bb5-87d7-27e923366e36/bots/crc7a_bibliaeScholaris/webchat?__version__=2" 
-                    frameborder="0"
-                    style="
-                        width: 100%;
-                        height: 100%;
-                        border: none;
-                        background-color: #2a0066;
-                    "
-                    title="Copilot Agent">
-                </iframe>
+                <div class="scholar-container">
+                    <div class="scholar-header">
+                        <h2>Scholar AI Assistant</h2>
+                    </div>
+                    <div class="scholar-messages">
+                        <!-- Messages will appear here -->
+                    </div>
+                    <div class="scholar-input">
+                        <textarea id="user-message" placeholder="Ask Scholar AI a question..."></textarea>
+                        <button id="send-message">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
             </div>
         </main>
     </div>
     
-    <!-- Simplified script for iframe styling -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const iframe = document.getElementById('copilot-agent-frame');
+            const sendButton = document.getElementById('send-message');
+            const userInput = document.getElementById('user-message');
+            const messagesContainer = document.querySelector('.scholar-messages');
             
-            // Show simple loading indicator
-            const aiMain = document.querySelector('.ai-main');
-            const loadingElement = document.createElement('div');
-            loadingElement.style.position = 'absolute';
-            loadingElement.style.top = '0';
-            loadingElement.style.left = '0';
-            loadingElement.style.width = '100%';
-            loadingElement.style.height = '100%';
-            loadingElement.style.display = 'flex';
-            loadingElement.style.alignItems = 'center';
-            loadingElement.style.justifyContent = 'center';
-            loadingElement.style.backgroundColor = '#2a0066';
-            loadingElement.style.color = '#ffd700';
-            loadingElement.style.zIndex = '10';
+            // Add a welcome message
+            addMessage("Welcome to Scholar AI! How can I assist you today?", false);
             
-            loadingElement.textContent = 'Loading Scholar AI...';
+            // Send message on button click
+            if (sendButton && userInput) {
+                sendButton.addEventListener('click', function() {
+                    sendMessage();
+                });
+            }
             
-            aiMain.appendChild(loadingElement);
+            // Send message on Enter key (but allow Shift+Enter for new lines)
+            if (userInput) {
+                userInput.addEventListener('keydown', function(event) {
+                    if (event.key === 'Enter' && !event.shiftKey) {
+                        event.preventDefault();
+                        sendMessage();
+                    }
+                });
+            }
             
-            // Handle iframe load event
-            iframe.addEventListener('load', function() {
-                // Remove loading indicator
-                if (loadingElement) {
-                    loadingElement.remove();
+            // Function to send message
+            function sendMessage() {
+                const message = userInput.value.trim();
+                if (message) {
+                    // Add user message to chat
+                    addMessage(message, true);
+                    
+                    // Clear input
+                    userInput.value = '';
+                    
+                    // Process the message (replace with your actual AI integration)
+                    processUserMessage(message);
                 }
+            }
+            
+            // Function to add a message to the chat
+            function addMessage(text, isUser) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = isUser ? 'message user-message' : 'message ai-message';
+                
+                const avatarDiv = document.createElement('div');
+                avatarDiv.className = 'message-avatar';
+                avatarDiv.innerHTML = isUser ? '<i class="fas fa-user"></i>' : '<i class="fas fa-robot"></i>';
+                
+                const contentDiv = document.createElement('div');
+                contentDiv.className = 'message-content';
+                contentDiv.textContent = text;
+                
+                messageDiv.appendChild(avatarDiv);
+                messageDiv.appendChild(contentDiv);
+                
+                messagesContainer.appendChild(messageDiv);
+                
+                // Scroll to the bottom
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }
+            
+            // Function to process user message and generate AI response
+            function processUserMessage(message) {
+                // Add loading indicator
+                const loadingDiv = document.createElement('div');
+                loadingDiv.className = 'message ai-message loading';
+                loadingDiv.innerHTML = `
+                    <div class="message-avatar">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="message-content">
+                        <span class="loading-dots">
+                            <span>.</span><span>.</span><span>.</span>
+                        </span>
+                    </div>
+                `;
+                messagesContainer.appendChild(loadingDiv);
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                
+                // Simulate AI response (replace with actual API call)
+                setTimeout(() => {
+                    // Remove loading indicator
+                    messagesContainer.removeChild(loadingDiv);
+                    
+                    // Add AI response
+                    const response = generateResponse(message);
+                    addMessage(response, false);
+                }, 1000);
+            }
+            
+            // Simple response generator (replace with actual AI functionality)
+            function generateResponse(message) {
+                const responses = [
+                    "I understand your query about '" + message + "'. Let me help you with that.",
+                    "That's an interesting question! Based on my knowledge, I can provide some insights.",
+                    "Thank you for your question. Here's what I can tell you about that topic.",
+                    "I've analyzed your question and have some information that might be helpful.",
+                    "Great question! Let me share what I know about this subject."
+                ];
+                
+                return responses[Math.floor(Math.random() * responses.length)];
+            }
+            
+            // Function to call your Azure Function endpoint (commented out until needed)
+            /*
+            async function askAI(message) {
+                const functionUrl = "https://your-function-app-name.azurewebsites.net/api/aiChat";
                 
                 try {
-                    // Direct styling of iframe content - should work now that you've moved to Azure
-                    const iframeDocument = iframe.contentDocument || iframe.contentWindow.document;
+                    const response = await fetch(functionUrl, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({ message: message })
+                    });
                     
-                    // Create style element with simplified styling
-                    const styleElement = document.createElement('style');
-                    styleElement.textContent = `
-                        body, html { 
-                            background-color: #2a0066 !important;
-                        }
-                        
-                        * {
-                            color: #ffd700 !important;
-                            font-family: 'Consolas', 'Courier New', monospace !important;
-                        }
-                        
-                        input, textarea {
-                            background-color: #3c0095 !important;
-                            border: 1px solid #ffd700 !important;
-                        }
-                        
-                        button {
-                            background-color: #3c0095 !important;
-                            border: 1px solid #ffd700 !important;
-                        }
-                    `;
-                    
-                    // Apply the style to the iframe document
-                    iframeDocument.head.appendChild(styleElement);
-                    
-                } catch (e) {
-                    console.log('Error styling iframe content:', e);
+                    const data = await response.json();
+                    return data.content || "Error: No response from AI";
+                } catch (error) {
+                    console.error("Error calling AI:", error);
+                    return "Error communicating with AI service";
                 }
-            });
+            }
+            */
         });
     </script>
 </body>
