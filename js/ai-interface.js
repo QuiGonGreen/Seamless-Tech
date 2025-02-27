@@ -164,6 +164,44 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log('Could not access iframe contents due to same-origin policy.');
         }
     });
+    
+    // Attempt to periodically apply the VS Code style to the iframe
+    // This is a fallback in case the iframe content reloads or changes dynamically
+    let styleAttempts = 0;
+    const maxAttempts = 5;
+    
+    function attemptStyleInjection() {
+        if (styleAttempts >= maxAttempts) return;
+        
+        try {
+            const iframeDocument = copilotFrame.contentDocument || copilotFrame.contentWindow.document;
+            if (!iframeDocument.querySelector('#vscode-theme-style')) {
+                const styleElement = document.createElement('style');
+                styleElement.id = 'vscode-theme-style';
+                styleElement.textContent = `
+                    body, html { 
+                        background-color: #2a0066 !important;
+                        color: #ffd700 !important;
+                    }
+                    
+                    * { color: #ffd700 !important; }
+                `;
+                iframeDocument.head.appendChild(styleElement);
+                console.log('VS Code theme styles applied to iframe');
+            }
+        } catch (e) {
+            console.log('Style injection attempt failed:', e);
+            styleAttempts++;
+            setTimeout(attemptStyleInjection, 2000); // Try again in 2 seconds
+        }
+    }
+    
+    // First attempt after iframe loads
+    if (copilotFrame) {
+        copilotFrame.addEventListener('load', function() {
+            setTimeout(attemptStyleInjection, 1000);
+        });
+    }
 });
 
 // Add CSS for loading indicator

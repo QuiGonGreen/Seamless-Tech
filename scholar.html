@@ -7,6 +7,17 @@
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/ai-interface.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* VS Code-inspired Purple and Gold Theme */
+        :root {
+            --vscode-purple: #2a0066;
+            --vscode-purple-light: #3c0095;
+            --vscode-purple-dark: #1a003d;
+            --vscode-gold: #ffd700;
+            --vscode-gold-light: #ffdf33;
+            --vscode-gold-dark: #d4af00;
+        }
+    </style>
 </head>
 <body>
     <div class="app-container">
@@ -42,18 +53,183 @@
             
             <!-- Main content area with the iframe -->
             <div class="ai-main">
-                <div class="iframe-overlay">
-                    <!-- The iframe is the focus of the page -->
+                <div class="iframe-overlay" style="position: relative; flex: 1; display: flex; overflow: hidden;">
+                    <!-- VS Code-themed iframe with inline styles -->
                     <iframe id="copilot-agent-frame" 
                         src="https://copilotstudio.microsoft.com/environments/Default-8fc571aa-06d7-4bb5-87d7-27e923366e36/bots/crc7a_bibliaeScholaris/webchat?__version__=2" 
-                        frameborder="0" 
+                        frameborder="0"
+                        style="
+                            width: 100%;
+                            height: 100%;
+                            border: none;
+                            background-color: #2a0066;
+                            box-shadow: 0 0 15px rgba(42, 0, 102, 0.5) inset;
+                            position: relative;
+                            z-index: 1;
+                        "
                         title="Copilot Agent">
                     </iframe>
+                    
+                    <!-- Purple and Gold overlay divs with inline styles -->
+                    <div style="
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background-color: rgba(42, 0, 102, 0.15);
+                        pointer-events: none;
+                        z-index: 2;
+                    "></div>
+                    
+                    <div style="
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, transparent 100%);
+                        pointer-events: none;
+                        z-index: 3;
+                    "></div>
                 </div>
             </div>
         </main>
     </div>
     
-    <script src="js/ai-interface.js"></script>
+    <!-- Update the JS file to include style injection -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const iframe = document.getElementById('copilot-agent-frame');
+            
+            // Show VS Code-themed loading indicator
+            const aiMain = document.querySelector('.ai-main');
+            const loadingElement = document.createElement('div');
+            loadingElement.style.position = 'absolute';
+            loadingElement.style.top = '0';
+            loadingElement.style.left = '0';
+            loadingElement.style.width = '100%';
+            loadingElement.style.height = '100%';
+            loadingElement.style.display = 'flex';
+            loadingElement.style.flexDirection = 'column';
+            loadingElement.style.alignItems = 'center';
+            loadingElement.style.justifyContent = 'center';
+            loadingElement.style.backgroundColor = '#2a0066';
+            loadingElement.style.color = '#ffd700';
+            loadingElement.style.zIndex = '10';
+            loadingElement.style.transition = 'opacity 0.5s ease';
+            
+            const spinnerDiv = document.createElement('div');
+            spinnerDiv.style.width = '50px';
+            spinnerDiv.style.height = '50px';
+            spinnerDiv.style.border = '5px solid rgba(255, 215, 0, 0.3)';
+            spinnerDiv.style.borderRadius = '50%';
+            spinnerDiv.style.borderTopColor = '#ffd700';
+            spinnerDiv.style.animation = 'spin 1s ease-in-out infinite';
+            spinnerDiv.style.marginBottom = '20px';
+            
+            const loadingText = document.createElement('p');
+            loadingText.textContent = 'Loading Scholar AI...';
+            loadingText.style.fontFamily = 'Consolas, "Courier New", monospace';
+            loadingText.style.fontSize = '16px';
+            loadingText.style.fontWeight = 'bold';
+            
+            loadingElement.appendChild(spinnerDiv);
+            loadingElement.appendChild(loadingText);
+            aiMain.appendChild(loadingElement);
+            
+            // Add keyframes for spinner animation
+            const styleSheet = document.createElement('style');
+            styleSheet.textContent = `
+                @keyframes spin {
+                    to { transform: rotate(360deg); }
+                }
+            `;
+            document.head.appendChild(styleSheet);
+            
+            // Handle iframe load event
+            iframe.addEventListener('load', function() {
+                // Remove loading indicator
+                loadingElement.style.opacity = '0';
+                setTimeout(() => {
+                    loadingElement.remove();
+                }, 500);
+                
+                try {
+                    // Try to access iframe content and inject VS Code style theme
+                    const iframeDocument = iframe.contentDocument || iframe.contentWindow.document;
+                    
+                    // Create style element with VS Code theme
+                    const styleElement = document.createElement('style');
+                    styleElement.textContent = `
+                        body, html { 
+                            background-color: #2a0066 !important;
+                            color: #ffd700 !important;
+                            font-family: 'Consolas', 'Courier New', monospace !important;
+                        }
+                        
+                        /* Target all elements to apply VS Code theme */
+                        *, p, span, div, button, input, textarea, a {
+                            color: #ffd700 !important;
+                            font-family: 'Consolas', 'Courier New', monospace !important;
+                        }
+                        
+                        /* Style input fields */
+                        input, textarea, [contenteditable=true] {
+                            background-color: #1a003d !important;
+                            border: 1px solid #3c0095 !important;
+                            color: #ffd700 !important;
+                            padding: 8px !important;
+                        }
+                        
+                        /* Style buttons */
+                        button, [role=button] {
+                            background-color: #3c0095 !important;
+                            border: 1px solid #ffd700 !important;
+                            color: #ffd700 !important;
+                            cursor: pointer !important;
+                        }
+                        
+                        /* Style hover states */
+                        button:hover, [role=button]:hover {
+                            background-color: #4c00b5 !important;
+                        }
+                        
+                        /* Style links */
+                        a, a:visited {
+                            color: #ffdf33 !important;
+                            text-decoration: none !important;
+                        }
+                        
+                        a:hover {
+                            text-decoration: underline !important;
+                        }
+                        
+                        /* WebChat message containers */
+                        .webchat__bubble {
+                            background-color: #3c0095 !important;
+                            border: 1px solid #ffd700 !important;
+                        }
+                        
+                        /* Bot messages */
+                        .webchat__bubble--from-bot {
+                            background-color: #2a0066 !important;
+                        }
+                        
+                        /* User messages */
+                        .webchat__bubble--from-user {
+                            background-color: #3c0095 !important;
+                        }
+                    `;
+                    
+                    // Append style to iframe document head
+                    iframeDocument.head.appendChild(styleElement);
+                    
+                } catch (e) {
+                    console.log('Could not access iframe contents due to same-origin policy.');
+                }
+            });
+        });
+    </script>
 </body>
 </html>
