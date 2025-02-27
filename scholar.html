@@ -14,6 +14,7 @@
             --vscode-gold: #ffd700;
         }
     </style>
+    <script src="config.js"></script>
 </head>
 <body>
     <div class="app-container">
@@ -183,7 +184,8 @@
             
             // Function to call your Azure Function endpoint
             async function askAI(message) {
-                const functionUrl = "https://scholarai.azurewebsites.net/api/claudeChat";
+                // Use the global variable from config.js
+                const functionUrl = `https://scholarai.azurewebsites.net/api/claudeChat?code=${FUNCTION_KEY}`;
                 
                 try {
                     const response = await fetch(functionUrl, {
