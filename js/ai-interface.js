@@ -16,22 +16,12 @@ document.addEventListener('DOMContentLoaded', function() {
     // Update API testing function with better error handling
     window.testAPI = async function() {
         try {
-            const functionKey = window.FUNCTION_KEY || '';
-
-            if (!functionKey || functionKey.length < 10) {
-                return {
-                    success: false,
-                    error: "No API key provided. Please use the API key form in the top right."
-                };
-            }
-
             const functionUrl = `https://scholarai.azurewebsites.net/api/claudeChat`;
 
             const response = await fetch(functionUrl, {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/json",
-                    "x-api-key": functionKey // Send key in header, not URL
+                    "Content-Type": "application/json"
                 },
                 body: JSON.stringify({ message: "Hello, this is a test message." })
             });
@@ -115,12 +105,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Run a series of diagnostic tests
             console.log("Starting diagnostics...");
             
-            // 1. Check if we have a function key
-            console.log("Key check:", window.FUNCTION_KEY ? 
-                        `Key present (${window.FUNCTION_KEY.substring(0, 3)}...)` : 
-                        "No key found");
-            
-            // 2. Try a basic fetch to the endpoint (without the key)
+            // 1. Try a basic fetch to the endpoint
             try {
                 const checkResponse = await fetch("https://scholarai.azurewebsites.net/api/claudeChat", {
                     method: "HEAD"
@@ -130,7 +115,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.log("Endpoint check failed:", e);
             }
             
-            // 3. Test the actual API call
+            // 2. Test the actual API call
             const apiTest = await window.testAPI();
             console.log("API test result:", apiTest);
             
