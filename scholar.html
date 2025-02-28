@@ -14,7 +14,7 @@
             --vscode-gold: #ffd700;
         }
     </style>
-    <script src="config.js"></script>
+    <!-- Remove the external config.js reference -->
 </head>
 <body>
     <div class="app-container">
@@ -69,13 +69,35 @@
     </div>
     
     <script>
+        // Define a default API key (or empty string for safety)
+        // In production, you'll pass the key via URL parameter
+        let FUNCTION_KEY = '';
+        
+        // Try to extract key from URL if present (for production use)
+        try {
+            const urlParams = new URLSearchParams(window.location.search);
+            const keyParam = urlParams.get('key');
+            if (keyParam) {
+                FUNCTION_KEY = keyParam;
+            }
+        } catch (err) {
+            console.log('No API key in URL parameters');
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             const sendButton = document.getElementById('send-message');
             const userInput = document.getElementById('user-message');
             const messagesContainer = document.querySelector('.scholar-messages');
             
-            // Add a welcome message
-            addMessage("Welcome to Scholar AI! How can I assist you today?", false);
+            // Check if we have an API key
+            const hasApiKey = FUNCTION_KEY && FUNCTION_KEY.length > 10;
+            
+            // Add a welcome message with API key status
+            if (hasApiKey) {
+                addMessage("Welcome to Scholar AI! How can I assist you today?", false);
+            } else {
+                addMessage("Welcome to Scholar AI! To use this service, you need to provide an API key. Please add '?key=YOUR_API_KEY' to the URL.", false);
+            }
             
             // Send message on button click
             if (sendButton && userInput) {
@@ -147,6 +169,12 @@
             
             // Function to process user message and get AI response from Azure
             async function processUserMessage(message) {
+                // Check if we have an API key before proceeding
+                if (!FUNCTION_KEY || FUNCTION_KEY.length < 10) {
+                    addMessage("Please add your API key to the URL as a parameter: ?key=YOUR_API_KEY", false);
+                    return;
+                }
+                
                 // Add loading indicator
                 const loadingDiv = document.createElement('div');
                 loadingDiv.className = 'message ai-message loading';
@@ -184,7 +212,7 @@
             
             // Function to call your Azure Function endpoint
             async function askAI(message) {
-                // Use the global variable from config.js
+                // Construct the URL with the key as a query parameter
                 const functionUrl = `https://scholarai.azurewebsites.net/api/claudeChat?code=${FUNCTION_KEY}`;
                 
                 try {
