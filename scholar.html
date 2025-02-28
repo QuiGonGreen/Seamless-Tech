@@ -14,7 +14,6 @@
             --vscode-gold: #ffd700;
         }
     </style>
-    <!-- Remove the external config.js reference -->
 </head>
 <body>
     <div class="app-container">
@@ -48,7 +47,7 @@
                 </div>
             </div>
             
-            <!-- Main content area - iframe removed -->
+            <!-- Main content area -->
             <div class="ai-main">
                 <div class="scholar-container">
                     <div class="scholar-header">
@@ -69,7 +68,7 @@
     </div>
     
     <script>
-        // Check for API key in localStorage instead of URL
+        // Check for API key in localStorage
         let FUNCTION_KEY = localStorage.getItem('scholar_api_key') || '';
         
         document.addEventListener('DOMContentLoaded', function() {
@@ -80,11 +79,12 @@
             // Check if we have an API key
             const hasApiKey = FUNCTION_KEY && FUNCTION_KEY.length > 10;
             
-            // Add a welcome message
+            // Add welcome message and API key instruction if needed
             if (hasApiKey) {
                 addMessage("Welcome to Scholar AI! How can I assist you today?", false);
             } else {
-                addMessage("Welcome to Scholar AI! Please enter your API key using the form in the top right corner to get started.", false);
+                addMessage("Welcome to Scholar AI! Please enter your API key by typing: /setkey YOUR_API_KEY", false);
+                addMessage("Your API key will be securely stored in your browser for future sessions.", false);
             }
             
             // Send message on button click
@@ -104,17 +104,34 @@
                 });
             }
             
-            // Function to send message
+            // Function to send message - UPDATED to handle API key setting
             function sendMessage() {
                 const message = userInput.value.trim();
                 if (message) {
-                    // Add user message to chat
+                    // Check if this is an API key command
+                    if (message.startsWith('/setkey ')) {
+                        const apiKey = message.substring(8).trim();
+                        if (apiKey.length > 10) {
+                            // Save the API key
+                            localStorage.setItem('scholar_api_key', apiKey);
+                            FUNCTION_KEY = apiKey;
+                            
+                            // Clear the input field
+                            userInput.value = '';
+                            
+                            // Add confirmation message
+                            addMessage("API key has been set successfully! You can now chat with Scholar AI.", false);
+                        } else {
+                            // Add message about invalid key
+                            addMessage("Invalid API key. Please try again with a valid key using: /setkey YOUR_API_KEY", false);
+                            userInput.value = '';
+                        }
+                        return; // Don't process as a normal message
+                    }
+                    
+                    // Regular message handling
                     addMessage(message, true);
-                    
-                    // Clear input
                     userInput.value = '';
-                    
-                    // Process the message using Azure API
                     processUserMessage(message);
                 }
             }
@@ -159,7 +176,7 @@
             async function processUserMessage(message) {
                 // Check if we have an API key before proceeding
                 if (!FUNCTION_KEY || FUNCTION_KEY.length < 10) {
-                    addMessage("Please enter your API key using the form in the top right corner to use Scholar AI.", false);
+                    addMessage("Please set your API key first by typing: /setkey YOUR_API_KEY", false);
                     return;
                 }
                 
@@ -270,194 +287,63 @@
                 });
             }
 
-            // Add a failsafe check to make sure the form appears
-            setTimeout(() => {
-                const keyForm = document.getElementById('fixed-key-form');
-                if (!keyForm) {
-                    console.error("API Key form not found after 1 second!");
-                    alert("API Key form not loaded properly. Please check the console (F12) and reload the page.");
-                    
-                    // Create emergency form if it doesn't exist
-                    const emergencyForm = document.createElement('div');
-                    emergencyForm.id = 'emergency-key-form';
-                    emergencyForm.style.position = 'fixed';
-                    emergencyForm.style.top = '50%';
-                    emergencyForm.style.left = '50%';
-                    emergencyForm.style.transform = 'translate(-50%, -50%)';
-                    emergencyForm.style.backgroundColor = '#2a0066';
-                    emergencyForm.style.padding = '20px';
-                    emergencyForm.style.border = '3px solid red';
-                    emergencyForm.style.zIndex = '99999';
-                    emergencyForm.style.borderRadius = '8px';
-                    emergencyForm.style.boxShadow = '0 0 20px rgba(0, 0, 0, 0.6)';
-                    emergencyForm.innerHTML = `
-                        <h3 style="color: #ffd700; margin-bottom: 15px;">Emergency API Key Setup</h3>
-                        <input type="password" id="emergency-key-input" 
-                               style="width: 100%; padding: 8px; margin-bottom: 10px; background-color: #3c0095; color: #ffd700; border: 1px solid #ffd700;"
-                               placeholder="Enter your API key">
-                        <button id="emergency-save-btn"
-                                style="width: 100%; padding: 8px; background-color: #ffd700; color: #2a0066; border: none; cursor: pointer; font-weight: bold;">
-                            Save API Key
-                        </button>
+            // Add a visual cue for API key command
+            setTimeout(function() {
+                const keyInstructions = document.createElement('div');
+                keyInstructions.className = 'api-key-instructions';
+                keyInstructions.style.position = 'fixed';
+                keyInstructions.style.bottom = '75px';
+                keyInstructions.style.right = '20px';
+                keyInstructions.style.backgroundColor = 'rgba(42, 0, 102, 0.9)';
+                keyInstructions.style.border = '1px solid #ffd700';
+                keyInstructions.style.borderRadius = '5px';
+                keyInstructions.style.padding = '10px';
+                keyInstructions.style.color = '#ffd700';
+                keyInstructions.style.zIndex = '1000';
+                keyInstructions.style.maxWidth = '300px';
+                keyInstructions.style.fontSize = '14px';
+                
+                if (!hasApiKey) {
+                    keyInstructions.innerHTML = `
+                        <strong>API Key Required</strong><br>
+                        Type <code style="background: #3c0095; padding: 2px 4px; border-radius: 3px;">/setkey YOUR_API_KEY</code> 
+                        in the message box below and press Enter.
+                        <button id="dismiss-instructions" style="background: none; border: none; color: #ffd700; cursor: pointer; float: right; font-size: 18px;">&times;</button>
                     `;
+                    document.body.appendChild(keyInstructions);
                     
-                    document.body.appendChild(emergencyForm);
+                    document.getElementById('dismiss-instructions').addEventListener('click', function() {
+                        keyInstructions.style.display = 'none';
+                    });
+                } else {
+                    // If they have a key already, show a reset option
+                    const resetKeyBtn = document.createElement('button');
+                    resetKeyBtn.textContent = 'Reset API Key';
+                    resetKeyBtn.style.position = 'fixed';
+                    resetKeyBtn.style.bottom = '75px';
+                    resetKeyBtn.style.right = '20px';
+                    resetKeyBtn.style.backgroundColor = 'rgba(42, 0, 102, 0.9)';
+                    resetKeyBtn.style.color = '#ffd700';
+                    resetKeyBtn.style.border = '1px solid #ffd700';
+                    resetKeyBtn.style.borderRadius = '5px';
+                    resetKeyBtn.style.padding = '8px 12px';
+                    resetKeyBtn.style.cursor = 'pointer';
+                    resetKeyBtn.style.zIndex = '1000';
+                    resetKeyBtn.style.fontSize = '14px';
                     
-                    // Add event listener to the emergency button
-                    document.getElementById('emergency-save-btn').addEventListener('click', function() {
-                        const keyInput = document.getElementById('emergency-key-input');
-                        if (keyInput && keyInput.value.trim()) {
-                            localStorage.setItem('scholar_api_key', keyInput.value.trim());
-                            alert('API key saved! Page will now reload.');
+                    resetKeyBtn.addEventListener('click', function() {
+                        if (confirm('Are you sure you want to reset your API key?')) {
+                            localStorage.removeItem('scholar_api_key');
+                            FUNCTION_KEY = '';
                             location.reload();
-                        } else {
-                            alert('Please enter a valid API key.');
                         }
                     });
+                    
+                    document.body.appendChild(resetKeyBtn);
                 }
-            }, 1000);
+            }, 500);
         });
     </script>
-    <script>
-    // Check for API key in localStorage
-    let FUNCTION_KEY = localStorage.getItem('scholar_api_key') || '';
-    
-    document.addEventListener('DOMContentLoaded', function() {
-        const sendButton = document.getElementById('send-message');
-        const userInput = document.getElementById('user-message');
-        const messagesContainer = document.querySelector('.scholar-messages');
-        
-        // Check if we have an API key
-        const hasApiKey = FUNCTION_KEY && FUNCTION_KEY.length > 10;
-        
-        // Add welcome message and API key instruction if needed
-        if (hasApiKey) {
-            addMessage("Welcome to Scholar AI! How can I assist you today?", false);
-        } else {
-            addMessage("Welcome to Scholar AI! Please enter your API key by typing: /setkey YOUR_API_KEY", false);
-            addMessage("Your API key will be securely stored in your browser for future sessions.", false);
-        }
-        
-        // Send message on button click
-        // ...existing code...
-        
-        // Send message on Enter key
-        // ...existing code...
-        
-        // Function to send message - UPDATED to handle API key setting
-        function sendMessage() {
-            const message = userInput.value.trim();
-            if (message) {
-                // Check if this is an API key command
-                if (message.startsWith('/setkey ')) {
-                    const apiKey = message.substring(8).trim();
-                    if (apiKey.length > 10) {
-                        // Save the API key
-                        localStorage.setItem('scholar_api_key', apiKey);
-                        FUNCTION_KEY = apiKey;
-                        
-                        // Clear the input field
-                        userInput.value = '';
-                        
-                        // Add confirmation message
-                        addMessage("API key has been set successfully! You can now chat with Scholar AI.", false);
-                    } else {
-                        // Add message about invalid key
-                        addMessage("Invalid API key. Please try again with a valid key using: /setkey YOUR_API_KEY", false);
-                        userInput.value = '';
-                    }
-                    return; // Don't process as a normal message
-                }
-                
-                // Regular message handling
-                addMessage(message, true);
-                userInput.value = '';
-                processUserMessage(message);
-            }
-        }
-        
-        // Add a check for API key command on initial load
-        setTimeout(function() {
-            const keyInstructions = document.createElement('div');
-            keyInstructions.className = 'api-key-instructions';
-            keyInstructions.style.position = 'fixed';
-            keyInstructions.style.bottom = '75px';
-            keyInstructions.style.right = '20px';
-            keyInstructions.style.backgroundColor = 'rgba(42, 0, 102, 0.9)';
-            keyInstructions.style.border = '1px solid #ffd700';
-            keyInstructions.style.borderRadius = '5px';
-            keyInstructions.style.padding = '10px';
-            keyInstructions.style.color = '#ffd700';
-            keyInstructions.style.zIndex = '1000';
-            keyInstructions.style.maxWidth = '300px';
-            keyInstructions.style.fontSize = '14px';
-            
-            if (!hasApiKey) {
-                keyInstructions.innerHTML = `
-                    <strong>API Key Required</strong><br>
-                    Type <code style="background: #3c0095; padding: 2px 4px; border-radius: 3px;">/setkey YOUR_API_KEY</code> 
-                    in the message box below and press Enter.
-                    <button id="dismiss-instructions" style="background: none; border: none; color: #ffd700; cursor: pointer; float: right; font-size: 18px;">&times;</button>
-                `;
-                document.body.appendChild(keyInstructions);
-                
-                document.getElementById('dismiss-instructions').addEventListener('click', function() {
-                    keyInstructions.style.display = 'none';
-                });
-            } else {
-                // If they have a key already, show a reset option
-                const resetKeyBtn = document.createElement('button');
-                resetKeyBtn.textContent = 'Reset API Key';
-                resetKeyBtn.style.position = 'fixed';
-                resetKeyBtn.style.bottom = '75px';
-                resetKeyBtn.style.right = '20px';
-                resetKeyBtn.style.backgroundColor = 'rgba(42, 0, 102, 0.9)';
-                resetKeyBtn.style.color = '#ffd700';
-                resetKeyBtn.style.border = '1px solid #ffd700';
-                resetKeyBtn.style.borderRadius = '5px';
-                resetKeyBtn.style.padding = '8px 12px';
-                resetKeyBtn.style.cursor = 'pointer';
-                resetKeyBtn.style.zIndex = '1000';
-                resetKeyBtn.style.fontSize = '14px';
-                
-                resetKeyBtn.addEventListener('click', function() {
-                    if (confirm('Are you sure you want to reset your API key?')) {
-                        localStorage.removeItem('scholar_api_key');
-                        FUNCTION_KEY = '';
-                        location.reload();
-                    }
-                });
-                
-                document.body.appendChild(resetKeyBtn);
-            }
-        }, 500);
-        
-        // Function to add a message to the chat
-        // ...existing code...
-        
-        // Function to process user message and get AI response from Azure
-        async function processUserMessage(message) {
-            // Check if we have an API key before proceeding
-            if (!FUNCTION_KEY || FUNCTION_KEY.length < 10) {
-                addMessage("Please set your API key first by typing: /setkey YOUR_API_KEY", false);
-                return;
-            }
-            
-            // Add loading indicator
-            // ...existing code...
-            
-            // ...existing code...
-        }
-        
-        // Function to call your Azure Function endpoint with improved error handling
-        // ...existing code...
-        
-        // Create auto-resize functionality for the textarea
-        // ...existing code...
-
-        // Remove the failsafe check as we're using a different approach now
-        // No need for setTimeout and emergency form
-    });
-</script>
+    <script src="js/ai-interface.js"></script>
 </body>
 </html>
