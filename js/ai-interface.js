@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!functionKey || functionKey.length < 10) {
                 return {
                     success: false,
-                    error: "No API key provided. Add ?key=YOUR_API_KEY to the URL."
+                    error: "No API key provided. Please use the API key form in the top right."
                 };
             }
 
@@ -95,19 +95,35 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     };
     
-    // Add a form to allow entering API key - improved version
+    // Fix the API key form to ensure it's visible
     const aiMain = document.querySelector('.ai-main');
     if (aiMain) {
+        console.log("Creating API key form...");
+        
+        // Remove any existing key form to avoid duplication
+        const existingForm = document.querySelector('.api-key-form');
+        if (existingForm) {
+            existingForm.remove();
+        }
+        
         const keyForm = document.createElement('div');
+        keyForm.className = 'api-key-form';
         keyForm.style.position = 'absolute';
         keyForm.style.right = '10px';
         keyForm.style.top = '10px';
         keyForm.style.display = 'flex';
         keyForm.style.gap = '5px';
-        keyForm.style.zIndex = '100';
+        keyForm.style.zIndex = '1000'; // Increase z-index to ensure visibility
+        keyForm.style.padding = '8px';
+        keyForm.style.backgroundColor = 'rgba(42, 0, 102, 0.3)'; // Add slight background for visibility
+        keyForm.style.borderRadius = '4px';
         
-        // Don't show the form if we already have a key
-        if (window.FUNCTION_KEY && window.FUNCTION_KEY.length > 10) {
+        // Check if we already have a key
+        const savedKey = localStorage.getItem('scholar_api_key') || '';
+        if (savedKey && savedKey.length > 10) {
+            console.log("API key found in localStorage");
+            window.FUNCTION_KEY = savedKey;
+            
             const keyInfo = document.createElement('div');
             keyInfo.style.padding = '5px 10px';
             keyInfo.style.backgroundColor = 'rgba(42, 0, 102, 0.8)';
@@ -139,10 +155,20 @@ document.addEventListener('DOMContentLoaded', function() {
             keyInfo.appendChild(resetBtn);
             keyForm.appendChild(keyInfo);
         } else {
+            console.log("No API key found, showing input form");
+            
+            const keyLabel = document.createElement('label');
+            keyLabel.textContent = 'API Key:';
+            keyLabel.style.color = '#ffd700';
+            keyLabel.style.fontSize = '12px';
+            keyLabel.style.marginRight = '5px';
+            keyLabel.style.alignSelf = 'center';
+            
             const keyInput = document.createElement('input');
             keyInput.type = 'password';
             keyInput.placeholder = 'Enter API Key';
             keyInput.style.padding = '5px';
+            keyInput.style.width = '180px'; // Make input wider
             keyInput.style.borderRadius = '4px';
             keyInput.style.border = '1px solid #ffd700';
             keyInput.style.backgroundColor = 'rgba(42, 0, 102, 0.8)';
@@ -192,42 +218,21 @@ document.addEventListener('DOMContentLoaded', function() {
                         setTimeout(() => notification.remove(), 500);
                     }, 3000);
                     
-                    // Replace the form with confirmation
-                    keyForm.innerHTML = '';
-                    const keyInfo = document.createElement('div');
-                    keyInfo.style.padding = '5px 10px';
-                    keyInfo.style.backgroundColor = 'rgba(42, 0, 102, 0.8)';
-                    keyInfo.style.color = '#ffd700';
-                    keyInfo.style.borderRadius = '4px';
-                    keyInfo.style.border = '1px solid #ffd700';
-                    keyInfo.style.fontSize = '12px';
-                    keyInfo.textContent = 'API Key: Set ✓';
-                    keyForm.appendChild(keyInfo);
-                    
-                    // Refresh the welcome message
-                    const messagesContainer = document.querySelector('.scholar-messages');
-                    if (messagesContainer) {
-                        messagesContainer.innerHTML = '';
-                        const welcomeDiv = document.createElement('div');
-                        welcomeDiv.className = 'message ai-message';
-                        welcomeDiv.innerHTML = `
-                            <div class="message-avatar">
-                                <i class="fas fa-robot"></i>
-                            </div>
-                            <div class="message-content">
-                                Welcome to Scholar AI! How can I assist you today?
-                            </div>
-                        `;
-                        messagesContainer.appendChild(welcomeDiv);
-                    }
+                    // Refresh the page to use the new API key
+                    location.reload();
                 }
             };
             
+            keyForm.appendChild(keyLabel);
             keyForm.appendChild(keyInput);
             keyForm.appendChild(keyButton);
         }
         
+        // Ensure the form is appended to the DOM
         aiMain.appendChild(keyForm);
+        console.log("API key form added to the DOM");
+    } else {
+        console.error("Could not find .ai-main element to append the API key form");
     }
     
     // Add diagnostics button for deeper troubleshooting
