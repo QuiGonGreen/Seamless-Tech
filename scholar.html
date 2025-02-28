@@ -199,23 +199,30 @@
                     messagesContainer.removeChild(loadingDiv);
                     
                     // Add AI response
-                    addMessage(response, false);
+                    if (response && response.trim()) {
+                        addMessage(response, false);
+                    } else {
+                        addMessage("I received an empty response from the server. This might indicate an issue with the API or the API key.", false);
+                    }
                 } catch (error) {
                     // Remove loading indicator
                     messagesContainer.removeChild(loadingDiv);
                     
-                    // Add error message
-                    addMessage("I'm sorry, I encountered an error while processing your request. Please try again later.", false);
+                    // Add more detailed error message
+                    addMessage(`I'm sorry, I encountered an error while processing your request: ${error.message}`, false);
                     console.error("Error getting AI response:", error);
                 }
             }
             
-            // Function to call your Azure Function endpoint
+            // Function to call your Azure Function endpoint with improved error handling
             async function askAI(message) {
                 // Construct the URL with the key as a query parameter
                 const functionUrl = `https://scholarai.azurewebsites.net/api/claudeChat?code=${FUNCTION_KEY}`;
                 
                 try {
+                    console.log("Sending request to:", functionUrl);
+                    console.log("Request payload:", JSON.stringify({ message: message }));
+                    
                     const response = await fetch(functionUrl, {
                         method: "POST",
                         headers: {
@@ -224,14 +231,47 @@
                         body: JSON.stringify({ message: message })
                     });
                     
+                    console.log("Response status:", response.status);
+                    console.log("Response headers:", [...response.headers.entries()]);
+                    
+                    // Check if the response is ok (status in the range 200-299)
                     if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
+                        const errorText = await response.text();
+                        console.error("Error response text:", errorText || "(empty response)");
+                        throw new Error(`HTTP error! status: ${response.status}, text: ${errorText || "No response text"}`);
                     }
                     
-                    const data = await response.json();
-                    return data.content || "I'm sorry, I couldn't generate a response.";
+                    // Try to parse as JSON first, but handle text responses too
+                    try {
+                        const contentType = response.headers.get('content-type') || '';
+                        
+                        if (contentType.includes('application/json')) {
+                            const data = await response.json();
+                            console.log("Response data:", data);
+                            
+                            if (data && data.content) {
+                                return data.content;
+                            } else if (typeof data === 'string') {
+                                return data;
+                            } else {
+                                console.warn("Unexpected JSON structure:", data);
+                                return JSON.stringify(data);
+                            }
+                        } else {
+                            // Handle plain text or other non-JSON responses
+                            const textData = await response.text();
+                            console.log("Text response:", textData);
+                            return textData || "I received an empty response from the API.";
+                        }
+                    } catch (parseError) {
+                        console.error("Error parsing response:", parseError);
+                        const rawText = await response.text();
+                        console.log("Raw response text:", rawText);
+                        return rawText || "I received a response but couldn't parse it properly.";
+                    }
+                    
                 } catch (error) {
-                    console.error("Error calling AI:", error);
+                    console.error("Network or fetch error:", error);
                     throw error;
                 }
             }

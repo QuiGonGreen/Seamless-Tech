@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', function() {
             .replace(/\n/g, '<br>');
     };
     
-    // Update API testing function to use the global FUNCTION_KEY
+    // Update API testing function with better error handling
     window.testAPI = async function() {
         try {
             // Get the function key from the global variable
@@ -39,17 +39,56 @@ document.addEventListener('DOMContentLoaded', function() {
             
             console.log("API Test - Status:", response.status);
             console.log("API Test - Status Text:", response.statusText);
+            console.log("API Test - Headers:", [...response.headers.entries()]);
             
-            const data = await response.json();
-            console.log("API Test - Response Data:", data);
+            // Check if response was successful
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error("API Test - Error response:", errorText || "(empty error response)");
+                return {
+                    success: false,
+                    status: response.status,
+                    error: `HTTP error ${response.status}: ${errorText || "No response text"}`
+                };
+            }
             
-            return {
-                success: response.ok,
-                status: response.status,
-                data: data
-            };
+            // Try to parse the response as JSON
+            try {
+                const contentType = response.headers.get('content-type') || '';
+                
+                if (contentType.includes('application/json')) {
+                    const data = await response.json();
+                    console.log("API Test - JSON Response:", data);
+                    return {
+                        success: true,
+                        status: response.status,
+                        data: data
+                    };
+                } else {
+                    // Handle non-JSON responses
+                    const textData = await response.text();
+                    console.log("API Test - Text Response:", textData);
+                    return {
+                        success: true,
+                        status: response.status,
+                        data: textData,
+                        note: "Response was not JSON"
+                    };
+                }
+            } catch (parseError) {
+                // Handle parsing errors
+                console.error("API Test - Parse error:", parseError);
+                const rawText = await response.text();
+                console.log("API Test - Raw response:", rawText);
+                return {
+                    success: false,
+                    status: response.status,
+                    error: "Failed to parse response: " + parseError.message,
+                    rawResponse: rawText
+                };
+            }
         } catch (error) {
-            console.error("API Test - Error:", error);
+            console.error("API Test - Network error:", error);
             return {
                 success: false,
                 error: error.message
@@ -113,6 +152,51 @@ document.addEventListener('DOMContentLoaded', function() {
         keyForm.appendChild(keyInput);
         keyForm.appendChild(keyButton);
         aiMain.appendChild(keyForm);
+    }
+    
+    // Add diagnostics button for deeper troubleshooting
+    if (aiMain) {
+        const diagButton = document.createElement('button');
+        diagButton.textContent = 'Run Diagnostics';
+        diagButton.style.position = 'absolute';
+        diagButton.style.right = '10px';
+        diagButton.style.bottom = '10px';
+        diagButton.style.backgroundColor = 'rgba(255, 215, 0, 0.2)';
+        diagButton.style.color = '#ffd700';
+        diagButton.style.border = '1px solid #ffd700';
+        diagButton.style.borderRadius = '4px';
+        diagButton.style.padding = '5px 10px';
+        diagButton.style.cursor = 'pointer';
+        diagButton.style.zIndex = '100';
+        
+        diagButton.onclick = async function() {
+            // Run a series of diagnostic tests
+            console.log("Starting diagnostics...");
+            
+            // 1. Check if we have a function key
+            console.log("Key check:", window.FUNCTION_KEY ? 
+                        `Key present (${window.FUNCTION_KEY.substring(0, 3)}...)` : 
+                        "No key found");
+            
+            // 2. Try a basic fetch to the endpoint (without the key)
+            try {
+                const checkResponse = await fetch("https://scholarai.azurewebsites.net/api/claudeChat", {
+                    method: "HEAD"
+                });
+                console.log("Endpoint check:", checkResponse.status, checkResponse.statusText);
+            } catch (e) {
+                console.log("Endpoint check failed:", e);
+            }
+            
+            // 3. Test the actual API call
+            const apiTest = await window.testAPI();
+            console.log("API test result:", apiTest);
+            
+            // Display results
+            alert(`Diagnostics complete! Check the console (F12) for detailed results.\n\nSummary: ${apiTest.success ? 'API connection succeeded' : 'API connection failed: ' + apiTest.error}`);
+        };
+        
+        aiMain.appendChild(diagButton);
     }
     
     // Enhance the textarea with auto-resize functionality
