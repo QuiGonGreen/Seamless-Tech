@@ -95,9 +95,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     };
     
-    // Add a small form to allow entering API key if one is not found in the URL
+    // Add a form to allow entering API key - improved version
     const aiMain = document.querySelector('.ai-main');
-    if (aiMain && (!window.FUNCTION_KEY || window.FUNCTION_KEY.length < 10)) {
+    if (aiMain) {
         const keyForm = document.createElement('div');
         keyForm.style.position = 'absolute';
         keyForm.style.right = '10px';
@@ -106,50 +106,127 @@ document.addEventListener('DOMContentLoaded', function() {
         keyForm.style.gap = '5px';
         keyForm.style.zIndex = '100';
         
-        const keyInput = document.createElement('input');
-        keyInput.type = 'password';
-        keyInput.placeholder = 'Enter API Key';
-        keyInput.style.padding = '5px';
-        keyInput.style.borderRadius = '4px';
-        keyInput.style.border = '1px solid #ffd700';
-        keyInput.style.backgroundColor = 'rgba(42, 0, 102, 0.8)';
-        keyInput.style.color = '#ffd700';
-        
-        const keyButton = document.createElement('button');
-        keyButton.textContent = 'Set Key';
-        keyButton.style.backgroundColor = '#ffd700';
-        keyButton.style.color = '#2a0066';
-        keyButton.style.border = 'none';
-        keyButton.style.borderRadius = '4px';
-        keyButton.style.padding = '5px 10px';
-        keyButton.style.cursor = 'pointer';
-        
-        keyButton.onclick = function() {
-            if (keyInput.value.trim()) {
-                window.FUNCTION_KEY = keyInput.value.trim();
-                keyForm.remove();
-                
-                // Refresh the welcome message
-                const messagesContainer = document.querySelector('.scholar-messages');
-                if (messagesContainer) {
-                    messagesContainer.innerHTML = '';
-                    const welcomeDiv = document.createElement('div');
-                    welcomeDiv.className = 'message ai-message';
-                    welcomeDiv.innerHTML = `
-                        <div class="message-avatar">
-                            <i class="fas fa-robot"></i>
-                        </div>
-                        <div class="message-content">
-                            Welcome to Scholar AI! How can I assist you today?
-                        </div>
-                    `;
-                    messagesContainer.appendChild(welcomeDiv);
+        // Don't show the form if we already have a key
+        if (window.FUNCTION_KEY && window.FUNCTION_KEY.length > 10) {
+            const keyInfo = document.createElement('div');
+            keyInfo.style.padding = '5px 10px';
+            keyInfo.style.backgroundColor = 'rgba(42, 0, 102, 0.8)';
+            keyInfo.style.color = '#ffd700';
+            keyInfo.style.borderRadius = '4px';
+            keyInfo.style.border = '1px solid #ffd700';
+            keyInfo.style.fontSize = '12px';
+            keyInfo.textContent = 'API Key: Set ✓';
+            
+            const resetBtn = document.createElement('button');
+            resetBtn.textContent = 'Reset Key';
+            resetBtn.style.marginLeft = '5px';
+            resetBtn.style.backgroundColor = 'rgba(255, 0, 0, 0.2)';
+            resetBtn.style.color = '#ffd700';
+            resetBtn.style.border = '1px solid #ffd700';
+            resetBtn.style.borderRadius = '4px';
+            resetBtn.style.padding = '2px 5px';
+            resetBtn.style.fontSize = '11px';
+            resetBtn.style.cursor = 'pointer';
+            
+            resetBtn.onclick = function() {
+                if (confirm('Are you sure you want to reset your API key?')) {
+                    localStorage.removeItem('scholar_api_key');
+                    window.FUNCTION_KEY = '';
+                    location.reload();
                 }
-            }
-        };
+            };
+            
+            keyInfo.appendChild(resetBtn);
+            keyForm.appendChild(keyInfo);
+        } else {
+            const keyInput = document.createElement('input');
+            keyInput.type = 'password';
+            keyInput.placeholder = 'Enter API Key';
+            keyInput.style.padding = '5px';
+            keyInput.style.borderRadius = '4px';
+            keyInput.style.border = '1px solid #ffd700';
+            keyInput.style.backgroundColor = 'rgba(42, 0, 102, 0.8)';
+            keyInput.style.color = '#ffd700';
+            
+            const keyButton = document.createElement('button');
+            keyButton.textContent = 'Set Key';
+            keyButton.style.backgroundColor = '#ffd700';
+            keyButton.style.color = '#2a0066';
+            keyButton.style.border = 'none';
+            keyButton.style.borderRadius = '4px';
+            keyButton.style.padding = '5px 10px';
+            keyButton.style.cursor = 'pointer';
+            
+            // Handle Enter key in the input
+            keyInput.addEventListener('keydown', function(event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    keyButton.click();
+                }
+            });
+            
+            keyButton.onclick = function() {
+                if (keyInput.value.trim()) {
+                    // Save key to localStorage
+                    localStorage.setItem('scholar_api_key', keyInput.value.trim());
+                    window.FUNCTION_KEY = keyInput.value.trim();
+                    
+                    // Show success notification
+                    const notification = document.createElement('div');
+                    notification.textContent = 'API Key saved successfully!';
+                    notification.style.position = 'fixed';
+                    notification.style.top = '20px';
+                    notification.style.left = '50%';
+                    notification.style.transform = 'translateX(-50%)';
+                    notification.style.backgroundColor = '#4CAF50';
+                    notification.style.color = 'white';
+                    notification.style.padding = '10px 20px';
+                    notification.style.borderRadius = '4px';
+                    notification.style.zIndex = '1000';
+                    document.body.appendChild(notification);
+                    
+                    // Remove notification after 3 seconds
+                    setTimeout(() => {
+                        notification.style.opacity = '0';
+                        notification.style.transition = 'opacity 0.5s ease';
+                        setTimeout(() => notification.remove(), 500);
+                    }, 3000);
+                    
+                    // Replace the form with confirmation
+                    keyForm.innerHTML = '';
+                    const keyInfo = document.createElement('div');
+                    keyInfo.style.padding = '5px 10px';
+                    keyInfo.style.backgroundColor = 'rgba(42, 0, 102, 0.8)';
+                    keyInfo.style.color = '#ffd700';
+                    keyInfo.style.borderRadius = '4px';
+                    keyInfo.style.border = '1px solid #ffd700';
+                    keyInfo.style.fontSize = '12px';
+                    keyInfo.textContent = 'API Key: Set ✓';
+                    keyForm.appendChild(keyInfo);
+                    
+                    // Refresh the welcome message
+                    const messagesContainer = document.querySelector('.scholar-messages');
+                    if (messagesContainer) {
+                        messagesContainer.innerHTML = '';
+                        const welcomeDiv = document.createElement('div');
+                        welcomeDiv.className = 'message ai-message';
+                        welcomeDiv.innerHTML = `
+                            <div class="message-avatar">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                            <div class="message-content">
+                                Welcome to Scholar AI! How can I assist you today?
+                            </div>
+                        `;
+                        messagesContainer.appendChild(welcomeDiv);
+                    }
+                }
+            };
+            
+            keyForm.appendChild(keyInput);
+            keyForm.appendChild(keyButton);
+        }
         
-        keyForm.appendChild(keyInput);
-        keyForm.appendChild(keyButton);
         aiMain.appendChild(keyForm);
     }
     

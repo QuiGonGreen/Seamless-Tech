@@ -69,20 +69,9 @@
     </div>
     
     <script>
-        // Define a default API key (or empty string for safety)
-        let FUNCTION_KEY = '';
+        // Check for API key in localStorage instead of URL
+        let FUNCTION_KEY = localStorage.getItem('scholar_api_key') || '';
         
-        // Try to extract key from URL if present (for production use)
-        try {
-            const urlParams = new URLSearchParams(window.location.search);
-            const keyParam = urlParams.get('key');
-            if (keyParam) {
-                FUNCTION_KEY = keyParam;
-            }
-        } catch (err) {
-            console.log('No API key in URL parameters');
-        }
-
         document.addEventListener('DOMContentLoaded', function() {
             const sendButton = document.getElementById('send-message');
             const userInput = document.getElementById('user-message');
@@ -91,11 +80,11 @@
             // Check if we have an API key
             const hasApiKey = FUNCTION_KEY && FUNCTION_KEY.length > 10;
             
-            // Add a welcome message with API key status
+            // Add a welcome message
             if (hasApiKey) {
                 addMessage("Welcome to Scholar AI! How can I assist you today?", false);
             } else {
-                addMessage("Welcome to Scholar AI! To use this service, you need to provide an API key. Please add '?key=YOUR_API_KEY' to the URL.", false);
+                addMessage("Welcome to Scholar AI! Please enter your API key using the form in the top right corner to get started.", false);
             }
             
             // Send message on button click
@@ -170,7 +159,7 @@
             async function processUserMessage(message) {
                 // Check if we have an API key before proceeding
                 if (!FUNCTION_KEY || FUNCTION_KEY.length < 10) {
-                    addMessage("Please add your API key to the URL as a parameter: ?key=YOUR_API_KEY", false);
+                    addMessage("Please enter your API key using the form in the top right corner to use Scholar AI.", false);
                     return;
                 }
                 
