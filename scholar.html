@@ -269,6 +269,53 @@
                     this.style.height = newHeight + 'px';
                 });
             }
+
+            // Add a failsafe check to make sure the form appears
+            setTimeout(() => {
+                const keyForm = document.getElementById('fixed-key-form');
+                if (!keyForm) {
+                    console.error("API Key form not found after 1 second!");
+                    alert("API Key form not loaded properly. Please check the console (F12) and reload the page.");
+                    
+                    // Create emergency form if it doesn't exist
+                    const emergencyForm = document.createElement('div');
+                    emergencyForm.id = 'emergency-key-form';
+                    emergencyForm.style.position = 'fixed';
+                    emergencyForm.style.top = '50%';
+                    emergencyForm.style.left = '50%';
+                    emergencyForm.style.transform = 'translate(-50%, -50%)';
+                    emergencyForm.style.backgroundColor = '#2a0066';
+                    emergencyForm.style.padding = '20px';
+                    emergencyForm.style.border = '3px solid red';
+                    emergencyForm.style.zIndex = '99999';
+                    emergencyForm.style.borderRadius = '8px';
+                    emergencyForm.style.boxShadow = '0 0 20px rgba(0, 0, 0, 0.6)';
+                    emergencyForm.innerHTML = `
+                        <h3 style="color: #ffd700; margin-bottom: 15px;">Emergency API Key Setup</h3>
+                        <input type="password" id="emergency-key-input" 
+                               style="width: 100%; padding: 8px; margin-bottom: 10px; background-color: #3c0095; color: #ffd700; border: 1px solid #ffd700;"
+                               placeholder="Enter your API key">
+                        <button id="emergency-save-btn"
+                                style="width: 100%; padding: 8px; background-color: #ffd700; color: #2a0066; border: none; cursor: pointer; font-weight: bold;">
+                            Save API Key
+                        </button>
+                    `;
+                    
+                    document.body.appendChild(emergencyForm);
+                    
+                    // Add event listener to the emergency button
+                    document.getElementById('emergency-save-btn').addEventListener('click', function() {
+                        const keyInput = document.getElementById('emergency-key-input');
+                        if (keyInput && keyInput.value.trim()) {
+                            localStorage.setItem('scholar_api_key', keyInput.value.trim());
+                            alert('API key saved! Page will now reload.');
+                            location.reload();
+                        } else {
+                            alert('Please enter a valid API key.');
+                        }
+                    });
+                }
+            }, 1000);
         });
     </script>
 </body>

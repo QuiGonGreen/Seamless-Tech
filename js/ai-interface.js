@@ -95,147 +95,152 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     };
     
-    // Fix the API key form to ensure it's visible
-    const aiMain = document.querySelector('.ai-main');
-    if (aiMain) {
-        console.log("Creating API key form...");
+    // Create API key form - GUARANTEED approach
+    console.log("Starting API key form creation GUARANTEED approach");
+    
+    // Create the form directly in the body with fixed positioning
+    const fixedKeyForm = document.createElement('div');
+    fixedKeyForm.id = 'fixed-key-form';
+    fixedKeyForm.style.position = 'fixed';
+    fixedKeyForm.style.top = '10px';
+    fixedKeyForm.style.right = '10px';
+    fixedKeyForm.style.padding = '10px';
+    fixedKeyForm.style.backgroundColor = '#2a0066';
+    fixedKeyForm.style.border = '2px solid #ffd700';
+    fixedKeyForm.style.borderRadius = '5px';
+    fixedKeyForm.style.zIndex = '9999'; // Extremely high z-index
+    fixedKeyForm.style.display = 'flex';
+    fixedKeyForm.style.flexDirection = 'column';
+    fixedKeyForm.style.gap = '8px';
+    fixedKeyForm.style.boxShadow = '0 0 10px rgba(0, 0, 0, 0.5)';
+    fixedKeyForm.style.minWidth = '250px';
+    
+    // Check if we already have a valid key in localStorage
+    const savedApiKey = localStorage.getItem('scholar_api_key') || '';
+    if (savedApiKey && savedApiKey.length > 10) {
+        console.log("API Key found in localStorage");
+        window.FUNCTION_KEY = savedApiKey;
         
-        // Remove any existing key form to avoid duplication
+        // Display key status
+        const keyStatus = document.createElement('div');
+        keyStatus.style.display = 'flex';
+        keyStatus.style.justifyContent = 'space-between';
+        keyStatus.style.alignItems = 'center';
+        
+        const statusText = document.createElement('span');
+        statusText.textContent = 'API Key: ✓ Set';
+        statusText.style.color = '#ffd700';
+        statusText.style.fontWeight = 'bold';
+        
+        const resetButton = document.createElement('button');
+        resetButton.textContent = 'Reset Key';
+        resetButton.style.backgroundColor = '#aa0000';
+        resetButton.style.color = 'white';
+        resetButton.style.border = 'none';
+        resetButton.style.borderRadius = '3px';
+        resetButton.style.padding = '5px 10px';
+        resetButton.style.cursor = 'pointer';
+        resetButton.style.fontSize = '12px';
+        
+        resetButton.addEventListener('click', function() {
+            if (confirm('Are you sure you want to reset your API key?')) {
+                localStorage.removeItem('scholar_api_key');
+                window.FUNCTION_KEY = '';
+                location.reload();
+            }
+        });
+        
+        keyStatus.appendChild(statusText);
+        keyStatus.appendChild(resetButton);
+        fixedKeyForm.appendChild(keyStatus);
+    } else {
+        console.log("No API Key in localStorage, showing form");
+        
+        const formTitle = document.createElement('h4');
+        formTitle.textContent = 'Enter API Key';
+        formTitle.style.color = '#ffd700';
+        formTitle.style.margin = '0 0 5px 0';
+        formTitle.style.textAlign = 'center';
+        
+        const inputField = document.createElement('input');
+        inputField.type = 'password';
+        inputField.placeholder = 'Paste your API key';
+        inputField.style.padding = '8px';
+        inputField.style.borderRadius = '4px';
+        inputField.style.border = '1px solid #ffd700';
+        inputField.style.backgroundColor = '#3c0095';
+        inputField.style.color = '#ffd700';
+        inputField.style.width = '100%';
+        
+        const submitButton = document.createElement('button');
+        submitButton.textContent = 'Save Key';
+        submitButton.style.backgroundColor = '#ffd700';
+        submitButton.style.color = '#2a0066';
+        submitButton.style.border = 'none';
+        submitButton.style.borderRadius = '4px';
+        submitButton.style.padding = '8px';
+        submitButton.style.width = '100%';
+        submitButton.style.cursor = 'pointer';
+        submitButton.style.fontWeight = 'bold';
+        
+        // Handle enter key in input field
+        inputField.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                submitButton.click();
+            }
+        });
+        
+        // Handle button click
+        submitButton.addEventListener('click', function() {
+            if (inputField.value.trim()) {
+                const apiKey = inputField.value.trim();
+                
+                // Save API key
+                localStorage.setItem('scholar_api_key', apiKey);
+                window.FUNCTION_KEY = apiKey;
+                
+                // Show notification
+                alert('API key saved successfully! The page will now reload.');
+                
+                // Reload page
+                location.reload();
+            } else {
+                alert('Please enter a valid API key.');
+            }
+        });
+        
+        fixedKeyForm.appendChild(formTitle);
+        fixedKeyForm.appendChild(inputField);
+        fixedKeyForm.appendChild(submitButton);
+    }
+    
+    // Add a note about the key
+    const noteText = document.createElement('div');
+    noteText.style.marginTop = '5px';
+    noteText.style.fontSize = '10px';
+    noteText.style.color = '#ffd700';
+    noteText.style.opacity = '0.8';
+    noteText.textContent = 'Your API key is stored securely in your browser.';
+    fixedKeyForm.appendChild(noteText);
+    
+    // Append the form to the document body
+    document.body.appendChild(fixedKeyForm);
+    console.log("Fixed key form GUARANTEED added to body");
+    
+    // Remove previous attempt to add the form
+    try {
         const existingForm = document.querySelector('.api-key-form');
         if (existingForm) {
             existingForm.remove();
+            console.log("Removed existing form");
         }
-        
-        const keyForm = document.createElement('div');
-        keyForm.className = 'api-key-form';
-        keyForm.style.position = 'absolute';
-        keyForm.style.right = '10px';
-        keyForm.style.top = '10px';
-        keyForm.style.display = 'flex';
-        keyForm.style.gap = '5px';
-        keyForm.style.zIndex = '1000'; // Increase z-index to ensure visibility
-        keyForm.style.padding = '8px';
-        keyForm.style.backgroundColor = 'rgba(42, 0, 102, 0.3)'; // Add slight background for visibility
-        keyForm.style.borderRadius = '4px';
-        
-        // Check if we already have a key
-        const savedKey = localStorage.getItem('scholar_api_key') || '';
-        if (savedKey && savedKey.length > 10) {
-            console.log("API key found in localStorage");
-            window.FUNCTION_KEY = savedKey;
-            
-            const keyInfo = document.createElement('div');
-            keyInfo.style.padding = '5px 10px';
-            keyInfo.style.backgroundColor = 'rgba(42, 0, 102, 0.8)';
-            keyInfo.style.color = '#ffd700';
-            keyInfo.style.borderRadius = '4px';
-            keyInfo.style.border = '1px solid #ffd700';
-            keyInfo.style.fontSize = '12px';
-            keyInfo.textContent = 'API Key: Set ✓';
-            
-            const resetBtn = document.createElement('button');
-            resetBtn.textContent = 'Reset Key';
-            resetBtn.style.marginLeft = '5px';
-            resetBtn.style.backgroundColor = 'rgba(255, 0, 0, 0.2)';
-            resetBtn.style.color = '#ffd700';
-            resetBtn.style.border = '1px solid #ffd700';
-            resetBtn.style.borderRadius = '4px';
-            resetBtn.style.padding = '2px 5px';
-            resetBtn.style.fontSize = '11px';
-            resetBtn.style.cursor = 'pointer';
-            
-            resetBtn.onclick = function() {
-                if (confirm('Are you sure you want to reset your API key?')) {
-                    localStorage.removeItem('scholar_api_key');
-                    window.FUNCTION_KEY = '';
-                    location.reload();
-                }
-            };
-            
-            keyInfo.appendChild(resetBtn);
-            keyForm.appendChild(keyInfo);
-        } else {
-            console.log("No API key found, showing input form");
-            
-            const keyLabel = document.createElement('label');
-            keyLabel.textContent = 'API Key:';
-            keyLabel.style.color = '#ffd700';
-            keyLabel.style.fontSize = '12px';
-            keyLabel.style.marginRight = '5px';
-            keyLabel.style.alignSelf = 'center';
-            
-            const keyInput = document.createElement('input');
-            keyInput.type = 'password';
-            keyInput.placeholder = 'Enter API Key';
-            keyInput.style.padding = '5px';
-            keyInput.style.width = '180px'; // Make input wider
-            keyInput.style.borderRadius = '4px';
-            keyInput.style.border = '1px solid #ffd700';
-            keyInput.style.backgroundColor = 'rgba(42, 0, 102, 0.8)';
-            keyInput.style.color = '#ffd700';
-            
-            const keyButton = document.createElement('button');
-            keyButton.textContent = 'Set Key';
-            keyButton.style.backgroundColor = '#ffd700';
-            keyButton.style.color = '#2a0066';
-            keyButton.style.border = 'none';
-            keyButton.style.borderRadius = '4px';
-            keyButton.style.padding = '5px 10px';
-            keyButton.style.cursor = 'pointer';
-            
-            // Handle Enter key in the input
-            keyInput.addEventListener('keydown', function(event) {
-                if (event.key === 'Enter') {
-                    event.preventDefault();
-                    keyButton.click();
-                }
-            });
-            
-            keyButton.onclick = function() {
-                if (keyInput.value.trim()) {
-                    // Save key to localStorage
-                    localStorage.setItem('scholar_api_key', keyInput.value.trim());
-                    window.FUNCTION_KEY = keyInput.value.trim();
-                    
-                    // Show success notification
-                    const notification = document.createElement('div');
-                    notification.textContent = 'API Key saved successfully!';
-                    notification.style.position = 'fixed';
-                    notification.style.top = '20px';
-                    notification.style.left = '50%';
-                    notification.style.transform = 'translateX(-50%)';
-                    notification.style.backgroundColor = '#4CAF50';
-                    notification.style.color = 'white';
-                    notification.style.padding = '10px 20px';
-                    notification.style.borderRadius = '4px';
-                    notification.style.zIndex = '1000';
-                    document.body.appendChild(notification);
-                    
-                    // Remove notification after 3 seconds
-                    setTimeout(() => {
-                        notification.style.opacity = '0';
-                        notification.style.transition = 'opacity 0.5s ease';
-                        setTimeout(() => notification.remove(), 500);
-                    }, 3000);
-                    
-                    // Refresh the page to use the new API key
-                    location.reload();
-                }
-            };
-            
-            keyForm.appendChild(keyLabel);
-            keyForm.appendChild(keyInput);
-            keyForm.appendChild(keyButton);
-        }
-        
-        // Ensure the form is appended to the DOM
-        aiMain.appendChild(keyForm);
-        console.log("API key form added to the DOM");
-    } else {
-        console.error("Could not find .ai-main element to append the API key form");
+    } catch (e) {
+        console.log("Error removing existing form:", e);
     }
     
     // Add diagnostics button for deeper troubleshooting
+    const aiMain = document.querySelector('.ai-main');
     if (aiMain) {
         const diagButton = document.createElement('button');
         diagButton.textContent = 'Run Diagnostics';
