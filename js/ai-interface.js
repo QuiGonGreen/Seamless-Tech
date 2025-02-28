@@ -16,31 +16,30 @@ document.addEventListener('DOMContentLoaded', function() {
     // Update API testing function with better error handling
     window.testAPI = async function() {
         try {
-            // Get the function key from the global variable
             const functionKey = window.FUNCTION_KEY || '';
-            
-            // Check if we have a valid key
+
             if (!functionKey || functionKey.length < 10) {
                 return {
                     success: false,
                     error: "No API key provided. Add ?key=YOUR_API_KEY to the URL."
                 };
             }
-            
-            const functionUrl = `https://scholarai.azurewebsites.net/api/claudeChat?code=${functionKey}`;
-            
+
+            const functionUrl = `https://scholarai.azurewebsites.net/api/claudeChat`;
+
             const response = await fetch(functionUrl, {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/json"
+                    "Content-Type": "application/json",
+                    "x-api-key": functionKey // Send key in header, not URL
                 },
                 body: JSON.stringify({ message: "Hello, this is a test message." })
             });
-            
+
             console.log("API Test - Status:", response.status);
             console.log("API Test - Status Text:", response.statusText);
             console.log("API Test - Headers:", [...response.headers.entries()]);
-            
+
             // Check if response was successful
             if (!response.ok) {
                 const errorText = await response.text();

@@ -70,7 +70,6 @@
     
     <script>
         // Define a default API key (or empty string for safety)
-        // In production, you'll pass the key via URL parameter
         let FUNCTION_KEY = '';
         
         // Try to extract key from URL if present (for production use)
@@ -216,39 +215,37 @@
             
             // Function to call your Azure Function endpoint with improved error handling
             async function askAI(message) {
-                // Construct the URL with the key as a query parameter
-                const functionUrl = `https://scholarai.azurewebsites.net/api/claudeChat?code=${FUNCTION_KEY}`;
-                
+                const functionUrl = "https://scholarai.azurewebsites.net/api/claudeChat";
+
                 try {
                     console.log("Sending request to:", functionUrl);
                     console.log("Request payload:", JSON.stringify({ message: message }));
-                    
+
                     const response = await fetch(functionUrl, {
                         method: "POST",
                         headers: {
-                            "Content-Type": "application/json"
+                            "Content-Type": "application/json",
+                            "x-api-key": FUNCTION_KEY // Send key in header, not URL
                         },
                         body: JSON.stringify({ message: message })
                     });
-                    
+
                     console.log("Response status:", response.status);
                     console.log("Response headers:", [...response.headers.entries()]);
-                    
-                    // Check if the response is ok (status in the range 200-299)
+
                     if (!response.ok) {
                         const errorText = await response.text();
                         console.error("Error response text:", errorText || "(empty response)");
                         throw new Error(`HTTP error! status: ${response.status}, text: ${errorText || "No response text"}`);
                     }
-                    
-                    // Try to parse as JSON first, but handle text responses too
+
                     try {
                         const contentType = response.headers.get('content-type') || '';
-                        
+
                         if (contentType.includes('application/json')) {
                             const data = await response.json();
                             console.log("Response data:", data);
-                            
+
                             if (data && data.content) {
                                 return data.content;
                             } else if (typeof data === 'string') {
@@ -258,7 +255,6 @@
                                 return JSON.stringify(data);
                             }
                         } else {
-                            // Handle plain text or other non-JSON responses
                             const textData = await response.text();
                             console.log("Text response:", textData);
                             return textData || "I received an empty response from the API.";
@@ -269,7 +265,7 @@
                         console.log("Raw response text:", rawText);
                         return rawText || "I received a response but couldn't parse it properly.";
                     }
-                    
+
                 } catch (error) {
                     console.error("Network or fetch error:", error);
                     throw error;
