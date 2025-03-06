@@ -146,29 +146,6 @@ img {
     opacity: 0.9;
 }
 
-.nav-action {
-    display: flex;
-    align-items: center;
-}
-
-.nav-cta {
-    display: inline-block;
-    padding: 0.6rem 1.5rem;
-    background: var(--gold);
-    color: var(--purple-dark);
-    text-decoration: none;
-    font-weight: bold;
-    font-size: 0.9rem;
-    border-radius: 50px;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-}
-
-.nav-cta:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 15px rgba(184, 134, 11, 0.4);
-}
-
 /* Hamburger Menu */
 .hamburger {
     background: none;
@@ -182,6 +159,7 @@ img {
     display: none;
     border-radius: 4px;
     transition: all 0.3s ease;
+    margin-left: auto; /* Position to the right */
 }
 
 .hamburger:hover {
@@ -206,20 +184,28 @@ img {
 @media (max-width: 992px) {
     .hamburger {
         display: block;
-        order: -1;
+        order: 2; /* Changed from -1 to 2 to move to the right */
+    }
+    
+    .brand {
+        order: 1; /* Ensure brand is on the left */
+    }
+    
+    .nav-container {
+        justify-content: flex-start; /* Align items to the left */
     }
     
     .nav-links-container {
         position: fixed;
         top: 0;
-        left: -280px;
+        right: -280px; /* Changed from left to right */
         width: 280px;
         bottom: 0;
         background: var(--purple-gradient);
         z-index: 1000;
-        box-shadow: 2px 0 20px rgba(0, 0, 0, 0.25);
+        box-shadow: -2px 0 20px rgba(0, 0, 0, 0.25); /* Changed shadow direction */
         transition: all 0.3s ease;
-        border-right: 1px solid var(--gold-transparent);
+        border-left: 1px solid var(--gold-transparent); /* Changed from right to left border */
         padding-top: var(--nav-height);
         overflow-y: auto;
     }
@@ -242,16 +228,12 @@ img {
     }
     
     .nav-links-container.active {
-        left: 0;
+        right: 0; /* Changed from left to right */
     }
     
     .nav-backdrop.active {
         opacity: 1;
         visibility: visible;
-    }
-    
-    .nav-action {
-        display: none;
     }
     
     .brand-name {
