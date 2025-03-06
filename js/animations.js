@@ -55,14 +55,17 @@ document.addEventListener('DOMContentLoaded', function() {
     let clouds = [];
     let frameCount = 0;
     
-    // Platform configuration
+    // Platform configuration - positioned to be viewed from above and to the side
     const platform = {
-        x: canvas.width / 2,
-        y: canvas.height * 0.65,
-        radius: isMobile ? canvas.width * 0.4 : canvas.width * 0.3,
-        supportWidth: isMobile ? 30 : 40,
+        x: canvas.width * 0.55,   // Shift right to show perspective
+        y: canvas.height * 0.75,  // Lower in view
+        radiusX: isMobile ? canvas.width * 0.4 : canvas.width * 0.32, // Horizontal radius
+        radiusY: isMobile ? canvas.width * 0.2 : canvas.width * 0.16, // Vertical radius (shorter for perspective)
+        supportWidth: isMobile ? 24 : 30,
+        supportHeight: isMobile ? 180 : 250,
         hoverAmount: 2,
-        hoverSpeed: 0.3
+        hoverSpeed: 0.3,
+        rotation: Math.PI * 0.1 // Slight rotation for perspective
     };
     
     // Initialize stars
@@ -71,7 +74,7 @@ document.addEventListener('DOMContentLoaded', function() {
         for (let i = 0; i < config.animation.starCount; i++) {
             stars.push({
                 x: Math.random() * canvas.width,
-                y: Math.random() * canvas.height * 0.7, // Stars only in the upper 70% of screen
+                y: Math.random() * canvas.height * 0.85, // Stars across most of the screen
                 size: Math.random() * 2 + 1,
                 twinkle: Math.random() * 0.05 + 0.01,
                 twinkleOffset: Math.random() * Math.PI * 2
@@ -79,10 +82,10 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // Initialize buildings on the circular platform - Jetsons-style bubble topped buildings
+    // Initialize buildings on the circular platform - with perspective
     function initBuildings() {
         buildings = [];
-        const platformRadius = platform.radius * 0.85; // Buildings stay within platform radius
+        const platformRadius = platform.radiusX * 0.85; // Buildings stay within platform radius
         
         for (let i = 0; i < config.animation.buildingCount; i++) {
             // Distribute buildings in a circular pattern
@@ -91,45 +94,65 @@ document.addEventListener('DOMContentLoaded', function() {
             // Random radius between 30% and 90% of platform radius
             const radius = (Math.random() * 0.6 + 0.3) * platformRadius;
             
-            // Calculate x and y position on the platform
-            const x = platform.x + Math.cos(angle) * radius;
-            const y = platform.y + Math.sin(angle) * radius;
+            // Calculate x and y position on the platform with perspective
+            // Apply rotation to position
+            const rotatedAngle = angle + platform.rotation;
             
-            // Different heights for variety
-            const heightFactor = Math.random() * 0.2 + 0.1;
+            // Adjust ellipse equations for x and y
+            const x = platform.x + Math.cos(rotatedAngle) * radius;
+            // Multiply by radiusY/radiusX ratio for proper elliptical positioning
+            const y = platform.y + Math.sin(rotatedAngle) * radius * (platform.radiusY / platform.radiusX);
+            
+            // Different heights for variety - taller if in front (lower y), shorter if in back
+            const heightFactor = Math.random() * 0.15 + 0.1;
             const height = canvas.height * heightFactor;
             
+            // Perspective scaling - buildings in back (higher on screen) are smaller
+            const distanceScale = map(y, platform.y - platform.radiusY, platform.y + platform.radiusY, 0.6, 1.2);
+            
             // Building dimensions
-            const buildingWidth = (15 + Math.random() * 15) * config.performance.pixelSize;
+            const buildingWidth = (15 + Math.random() * 15) * config.performance.pixelSize * distanceScale;
             
             // Some buildings have animated lights
             const hasLight = Math.random() > 0.3;
             
+            // Z-depth for drawing order (buildings in back should be drawn first)
+            const zDepth = Math.sin(rotatedAngle); // -1 to 1 based on angle
+            
             buildings.push({
                 x: x,
                 y: y,
-                height: height,
+                angle: rotatedAngle,
+                height: height * distanceScale,
                 width: buildingWidth,
                 hasLight: hasLight,
                 lightBlinkRate: Math.random() * 0.1 + 0.02,
                 topShape: Math.random() > 0.5 ? 'dome' : 'ufo', // Two building top shapes
                 hoverOffset: Math.random() * Math.PI * 2, // For hover animation
-                hoverAmount: Math.random() * 2 + 1 // How much it hovers up/down
+                hoverAmount: Math.random() * 2 + 1, // How much it hovers up/down
+                zDepth: zDepth // For drawing order
             });
         }
         
-        // Sort by height so taller buildings are drawn in back
-        buildings.sort((a, b) => b.height - a.height);
+        // Sort by zDepth so buildings in back are drawn first
+        buildings.sort((a, b) => a.zDepth - b.zDepth);
     }
     
     // Initialize flying saucers (Jetsons-style flying cars)
     function initSaucers() {
         saucers = [];
         for (let i = 0; i < config.animation.saucerCount; i++) {
+            // Random point in the sky, more towards the center
+            const x = Math.random() * canvas.width * 0.8 + canvas.width * 0.1;
+            const y = Math.random() * (canvas.height * 0.6);
+            
+            // Size varies by height (perspective) - higher is smaller
+            const sizeScale = map(y, 0, canvas.height * 0.6, 0.7, 1.2);
+            
             saucers.push({
-                x: Math.random() * canvas.width,
-                y: Math.random() * (canvas.height * 0.6),
-                size: (Math.random() * 10 + 15) * config.performance.pixelSize,
+                x: x,
+                y: y,
+                size: (Math.random() * 10 + 15) * config.performance.pixelSize * sizeScale,
                 speed: (Math.random() * 1 + 0.5) * (Math.random() > 0.5 ? 1 : -1),
                 hoverOffset: Math.random() * Math.PI * 2,
                 hoverAmount: Math.random() * 2 + 1,
@@ -142,14 +165,25 @@ document.addEventListener('DOMContentLoaded', function() {
     function initClouds() {
         clouds = [];
         for (let i = 0; i < config.animation.cloudCount; i++) {
+            // Clouds at different heights
+            const y = Math.random() * (canvas.height * 0.4) + 40;
+            
+            // Size varies by height (perspective) - higher is smaller
+            const sizeScale = map(y, 40, canvas.height * 0.4, 0.7, 1.2);
+            
             clouds.push({
                 x: Math.random() * canvas.width,
-                y: Math.random() * (canvas.height * 0.3) + 50,
-                width: (Math.random() * 80 + 60) * config.performance.pixelSize,
-                height: (Math.random() * 20 + 20) * config.performance.pixelSize,
+                y: y,
+                width: (Math.random() * 80 + 60) * config.performance.pixelSize * sizeScale,
+                height: (Math.random() * 20 + 20) * config.performance.pixelSize * sizeScale,
                 speed: (Math.random() * 0.3 + 0.1) * (Math.random() > 0.5 ? 1 : -1)
             });
         }
+    }
+    
+    // Utility function to map values from one range to another
+    function map(value, low1, high1, low2, high2) {
+        return low2 + (high2 - low2) * (value - low1) / (high1 - low1);
     }
     
     // Draw an 8-bit star
@@ -164,28 +198,39 @@ document.addEventListener('DOMContentLoaded', function() {
         );
     }
     
-    // Draw the central platform with support column
+    // Draw the central platform with support column - from perspective
     function drawPlatform(time) {
         // Add hover effect to platform
         const hoverY = Math.sin(time * platform.hoverSpeed) * platform.hoverAmount;
         const platformY = platform.y + hoverY;
         
-        // Draw support column
+        // Draw support column - angled for perspective
         ctx.fillStyle = config.colors.supportColor;
-        ctx.fillRect(
-            platform.x - platform.supportWidth / 2,
-            platformY,
-            platform.supportWidth,
-            canvas.height - platformY
-        );
         
-        // Draw platform - main circle
-        ctx.fillStyle = config.colors.platformColor;
+        // Column is narrower at the top for perspective
+        const topWidth = platform.supportWidth * 0.8;
+        const bottomWidth = platform.supportWidth * 1.2;
+        const columnHeight = platform.supportHeight;
+        
+        // Draw as a trapezoid
         ctx.beginPath();
-        ctx.arc(
+        ctx.moveTo(platform.x - topWidth / 2, platformY);
+        ctx.lineTo(platform.x + topWidth / 2, platformY);
+        ctx.lineTo(platform.x + bottomWidth / 2, platformY + columnHeight);
+        ctx.lineTo(platform.x - bottomWidth / 2, platformY + columnHeight);
+        ctx.fill();
+        
+        // Draw platform main color
+        ctx.fillStyle = config.colors.platformColor;
+        
+        // Draw platform as an ellipse for perspective effect
+        ctx.beginPath();
+        ctx.ellipse(
             platform.x,
             platformY,
-            platform.radius,
+            platform.radiusX,
+            platform.radiusY,
+            platform.rotation,
             0,
             Math.PI * 2
         );
@@ -195,25 +240,31 @@ document.addEventListener('DOMContentLoaded', function() {
         ctx.strokeStyle = config.colors.platformEdge;
         ctx.lineWidth = 4 * config.performance.pixelSize;
         ctx.beginPath();
-        ctx.arc(
+        ctx.ellipse(
             platform.x,
             platformY,
-            platform.radius,
+            platform.radiusX,
+            platform.radiusY,
+            platform.rotation,
             0,
             Math.PI * 2
         );
         ctx.stroke();
         
-        // Draw platform top surface details - concentric rings
+        // Draw platform top surface details - concentric ellipses
         for (let i = 1; i <= 3; i++) {
-            const ringRadius = platform.radius * (0.3 * i);
+            const ringRadiusX = platform.radiusX * (0.3 * i);
+            const ringRadiusY = platform.radiusY * (0.3 * i);
+            
             ctx.strokeStyle = `rgba(166, 130, 255, ${0.3 - i * 0.08})`;
             ctx.lineWidth = 2 * config.performance.pixelSize;
             ctx.beginPath();
-            ctx.arc(
+            ctx.ellipse(
                 platform.x,
                 platformY,
-                ringRadius,
+                ringRadiusX,
+                ringRadiusY,
+                platform.rotation,
                 0,
                 Math.PI * 2
             );
@@ -221,7 +272,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // Draw Jetsons-style building on the platform
+    // Draw Jetsons-style building on the platform - with perspective
     function drawBuilding(building, time) {
         // Calculate hover effect for building
         const hoverY = Math.sin(time + building.hoverOffset) * building.hoverAmount;
@@ -245,15 +296,17 @@ document.addEventListener('DOMContentLoaded', function() {
         const topY = building.y - baseHeight - hoverY;
         
         if (building.topShape === 'dome') {
-            // Draw dome
+            // Draw dome with perspective (elliptical)
             ctx.fillStyle = config.colors.domeColor;
             ctx.beginPath();
-            ctx.arc(
+            ctx.ellipse(
                 building.x,
                 topY,
                 baseWidth / 2,
-                Math.PI,
-                0
+                baseWidth / 3, // Flatter for perspective
+                0,
+                0,
+                Math.PI * 2
             );
             ctx.fill();
             
@@ -283,16 +336,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
         } else {
-            // Draw UFO shaped top
+            // Draw UFO shaped top with perspective
             ctx.fillStyle = config.colors.domeColor;
             
-            // Draw UFO disk
+            // Draw UFO disk as ellipse
             ctx.beginPath();
             ctx.ellipse(
                 building.x,
                 topY,
                 baseWidth / 2,
-                baseWidth / 4,
+                baseWidth / 5, // Flatter for perspective
                 0,
                 0,
                 Math.PI * 2
@@ -310,7 +363,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 for (let i = 0; i < windowCount; i++) {
                     const angle = (i / windowCount) * Math.PI * 2;
                     const windowX = building.x + Math.cos(angle) * (baseWidth / 2 - windowSize / 2);
-                    const windowY = topY + Math.sin(angle) * (baseWidth / 4 - windowSize / 2);
+                    const windowY = topY + Math.sin(angle) * (baseWidth / 5 - windowSize / 2) * 0.8;
                     
                     ctx.fillRect(
                         Math.floor(windowX / config.performance.pixelSize) * config.performance.pixelSize,
@@ -323,7 +376,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // Draw a flying saucer (Jetsons-style)
+    // Draw a flying saucer (Jetsons-style) with perspective
     function drawSaucer(saucer, time) {
         // Calculate hover effect
         const hoverY = Math.sin(time + saucer.hoverOffset) * saucer.hoverAmount;
@@ -346,11 +399,14 @@ document.addEventListener('DOMContentLoaded', function() {
             ctx.fillStyle = `rgba(255, 158, 0, ${alpha * 0.7})`;
             ctx.fillRect(
                 Math.floor(saucer.trail[i].x / config.performance.pixelSize) * config.performance.pixelSize,
-                Math.floor((saucer.trail[i].y + saucer.size / 3) / config.performance.pixelSize) * config.performance.pixelSize,
+                Math.floor((saucer.trail[i].y + saucer.size / 4) / config.performance.pixelSize) * config.performance.pixelSize,
                 trailSize,
                 trailSize
             );
         }
+        
+        // Draw the saucer with perspective (elliptical)
+        // Bottom is more elliptical than top for perspective
         
         // Draw the saucer bottom
         ctx.fillStyle = config.colors.saucerDark;
@@ -359,7 +415,7 @@ document.addEventListener('DOMContentLoaded', function() {
             saucer.x,
             y,
             saucer.size / 2,
-            saucer.size / 6,
+            saucer.size / 5, // Flatter for perspective
             0,
             0,
             Math.PI * 2
@@ -369,12 +425,14 @@ document.addEventListener('DOMContentLoaded', function() {
         // Draw the cockpit dome
         ctx.fillStyle = config.colors.saucerLight;
         ctx.beginPath();
-        ctx.arc(
+        ctx.ellipse(
             saucer.x,
-            y - saucer.size / 6,
+            y - saucer.size / 8,
             saucer.size / 4,
-            Math.PI,
-            0
+            saucer.size / 5, // Flatter for perspective
+            0,
+            0,
+            Math.PI * 2
         );
         ctx.fill();
         
@@ -382,7 +440,7 @@ document.addEventListener('DOMContentLoaded', function() {
         ctx.fillStyle = '#333333';
         ctx.fillRect(
             Math.floor(saucer.x / config.performance.pixelSize) * config.performance.pixelSize - saucer.size / 12,
-            Math.floor((y - saucer.size / 6) / config.performance.pixelSize) * config.performance.pixelSize,
+            Math.floor((y - saucer.size / 8) / config.performance.pixelSize) * config.performance.pixelSize,
             saucer.size / 6,
             saucer.size / 12
         );
@@ -412,20 +470,38 @@ document.addEventListener('DOMContentLoaded', function() {
         const width = Math.floor(cloud.width / config.performance.pixelSize) * config.performance.pixelSize;
         const height = Math.floor(cloud.height / config.performance.pixelSize) * config.performance.pixelSize;
         
-        // Draw cloud as a series of circles for 8-bit cloud look
-        const segments = 5;
-        const segmentWidth = width / segments;
+        // Draw cloud as a flat elliptical shape for perspective
+        ctx.beginPath();
+        ctx.ellipse(
+            x + width / 2,
+            y,
+            width / 2,
+            height / 2,
+            0,
+            0,
+            Math.PI * 2
+        );
+        ctx.fill();
         
+        // Draw additional cloud segments
+        const segments = 3;
         for (let i = 0; i < segments; i++) {
-            const segX = x + i * segmentWidth;
-            const segHeight = height * (0.6 + Math.sin(i / segments * Math.PI) * 0.4);
+            const segX = x + (i * width / segments);
+            const segY = y - (i % 2) * (height / 3);
+            const segWidth = width / (segments + 1);
+            const segHeight = height * 0.8;
             
-            ctx.fillRect(
-                segX,
-                y - segHeight / 2,
-                segmentWidth,
-                segHeight
+            ctx.beginPath();
+            ctx.ellipse(
+                segX + segWidth / 2,
+                segY,
+                segWidth / 2,
+                segHeight / 2,
+                0,
+                0,
+                Math.PI * 2
             );
+            ctx.fill();
         }
     }
     
@@ -534,9 +610,10 @@ document.addEventListener('DOMContentLoaded', function() {
         canvas.height = window.innerHeight;
         
         // Update platform position for new dimensions
-        platform.x = canvas.width / 2;
-        platform.y = canvas.height * 0.65;
-        platform.radius = isMobile ? canvas.width * 0.4 : canvas.width * 0.3;
+        platform.x = canvas.width * 0.55;
+        platform.y = canvas.height * 0.75;
+        platform.radiusX = isMobile ? canvas.width * 0.4 : canvas.width * 0.32;
+        platform.radiusY = isMobile ? canvas.width * 0.2 : canvas.width * 0.16;
         
         // Reinitialize all elements for new dimensions
         initStars();
