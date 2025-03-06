@@ -27,22 +27,24 @@ document.addEventListener('DOMContentLoaded', function() {
             buildingDark: '#5390D9',    // Blue building base
             saucerLight: '#FFCFD2',     // Light pink for flying saucers
             saucerDark: '#FB6F92',      // Dark pink for flying saucers
-            spaceNeedle: '#80FFDB',     // Light teal for space needle
+            platformColor: '#5F56E8',   // Purple for main platform
+            platformEdge: '#A682FF',    // Light purple for platform edge
+            supportColor: '#7678ED',    // Support column color
             domeColor: '#7400B8',       // Purple for dome tops
             glowColor: '#4EA8DE',       // Blue glow
             rocketTrail: '#FF9E00'      // Orange for rocket trails
         },
         // Animation settings
         animation: {
-            starCount: isMobile ? 80 : 150,    // Fewer stars on mobile
-            buildingCount: isMobile ? 12 : 20, // Fewer buildings on mobile
-            saucerCount: isMobile ? 5 : 10,    // Fewer flying saucers on mobile
-            cloudCount: isMobile ? 3 : 6       // Fewer clouds on mobile
+            starCount: isMobile ? 80 : 150,       // Fewer stars on mobile
+            buildingCount: isMobile ? 12 : 18,    // Fewer buildings on mobile
+            saucerCount: isMobile ? 4 : 8,        // Fewer flying saucers on mobile
+            cloudCount: isMobile ? 3 : 6          // Fewer clouds on mobile
         },
         // Performance settings
         performance: {
-            pixelSize: isMobile ? 4 : 2,       // Larger pixels (more 8-bit) on mobile
-            frameSkip: isMobile ? 2 : 1        // Skip frames on mobile for better performance
+            pixelSize: isMobile ? 4 : 2,          // Larger pixels (more 8-bit) on mobile
+            frameSkip: isMobile ? 2 : 1           // Skip frames on mobile for better performance
         }
     };
     
@@ -52,6 +54,16 @@ document.addEventListener('DOMContentLoaded', function() {
     let saucers = [];
     let clouds = [];
     let frameCount = 0;
+    
+    // Platform configuration
+    const platform = {
+        x: canvas.width / 2,
+        y: canvas.height * 0.65,
+        radius: isMobile ? canvas.width * 0.4 : canvas.width * 0.3,
+        supportWidth: isMobile ? 30 : 40,
+        hoverAmount: 2,
+        hoverSpeed: 0.3
+    };
     
     // Initialize stars
     function initStars() {
@@ -67,36 +79,42 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // Initialize buildings - Jetsons-style round/bubble topped towers on thin stilts
+    // Initialize buildings on the circular platform - Jetsons-style bubble topped buildings
     function initBuildings() {
         buildings = [];
+        const platformRadius = platform.radius * 0.85; // Buildings stay within platform radius
+        
         for (let i = 0; i < config.animation.buildingCount; i++) {
-            // Buildings distributed across screen width
-            const x = (canvas.width / config.animation.buildingCount) * i + 
-                     (Math.random() * 50 - 25);
-                     
+            // Distribute buildings in a circular pattern
+            const angle = (i / config.animation.buildingCount) * Math.PI * 2;
+            
+            // Random radius between 30% and 90% of platform radius
+            const radius = (Math.random() * 0.6 + 0.3) * platformRadius;
+            
+            // Calculate x and y position on the platform
+            const x = platform.x + Math.cos(angle) * radius;
+            const y = platform.y + Math.sin(angle) * radius;
+            
             // Different heights for variety
-            const heightFactor = Math.random() * 0.3 + 0.2;
+            const heightFactor = Math.random() * 0.2 + 0.1;
             const height = canvas.height * heightFactor;
             
-            // Thin stilt width vs. bubble top width
-            const stiltWidth = 4 * config.performance.pixelSize;
-            const topWidth = (15 + Math.random() * 15) * config.performance.pixelSize;
+            // Building dimensions
+            const buildingWidth = (15 + Math.random() * 15) * config.performance.pixelSize;
             
             // Some buildings have animated lights
-            const hasLight = Math.random() > 0.5;
+            const hasLight = Math.random() > 0.3;
             
             buildings.push({
                 x: x,
-                y: canvas.height,
+                y: y,
                 height: height,
-                stiltWidth: stiltWidth,
-                topWidth: topWidth,
+                width: buildingWidth,
                 hasLight: hasLight,
                 lightBlinkRate: Math.random() * 0.1 + 0.02,
                 topShape: Math.random() > 0.5 ? 'dome' : 'ufo', // Two building top shapes
                 hoverOffset: Math.random() * Math.PI * 2, // For hover animation
-                hoverAmount: Math.random() * 3 + 1 // How much it hovers up/down
+                hoverAmount: Math.random() * 2 + 1 // How much it hovers up/down
             });
         }
         
@@ -110,7 +128,7 @@ document.addEventListener('DOMContentLoaded', function() {
         for (let i = 0; i < config.animation.saucerCount; i++) {
             saucers.push({
                 x: Math.random() * canvas.width,
-                y: Math.random() * canvas.height * 0.6 + canvas.height * 0.1,
+                y: Math.random() * (canvas.height * 0.6),
                 size: (Math.random() * 10 + 15) * config.performance.pixelSize,
                 speed: (Math.random() * 1 + 0.5) * (Math.random() > 0.5 ? 1 : -1),
                 hoverOffset: Math.random() * Math.PI * 2,
@@ -146,25 +164,85 @@ document.addEventListener('DOMContentLoaded', function() {
         );
     }
     
-    // Draw Jetsons-style building with thin stem and dome/UFO top
+    // Draw the central platform with support column
+    function drawPlatform(time) {
+        // Add hover effect to platform
+        const hoverY = Math.sin(time * platform.hoverSpeed) * platform.hoverAmount;
+        const platformY = platform.y + hoverY;
+        
+        // Draw support column
+        ctx.fillStyle = config.colors.supportColor;
+        ctx.fillRect(
+            platform.x - platform.supportWidth / 2,
+            platformY,
+            platform.supportWidth,
+            canvas.height - platformY
+        );
+        
+        // Draw platform - main circle
+        ctx.fillStyle = config.colors.platformColor;
+        ctx.beginPath();
+        ctx.arc(
+            platform.x,
+            platformY,
+            platform.radius,
+            0,
+            Math.PI * 2
+        );
+        ctx.fill();
+        
+        // Draw platform edge highlight
+        ctx.strokeStyle = config.colors.platformEdge;
+        ctx.lineWidth = 4 * config.performance.pixelSize;
+        ctx.beginPath();
+        ctx.arc(
+            platform.x,
+            platformY,
+            platform.radius,
+            0,
+            Math.PI * 2
+        );
+        ctx.stroke();
+        
+        // Draw platform top surface details - concentric rings
+        for (let i = 1; i <= 3; i++) {
+            const ringRadius = platform.radius * (0.3 * i);
+            ctx.strokeStyle = `rgba(166, 130, 255, ${0.3 - i * 0.08})`;
+            ctx.lineWidth = 2 * config.performance.pixelSize;
+            ctx.beginPath();
+            ctx.arc(
+                platform.x,
+                platformY,
+                ringRadius,
+                0,
+                Math.PI * 2
+            );
+            ctx.stroke();
+        }
+    }
+    
+    // Draw Jetsons-style building on the platform
     function drawBuilding(building, time) {
-        // Calculate hover effect for building tops
+        // Calculate hover effect for building
         const hoverY = Math.sin(time + building.hoverOffset) * building.hoverAmount;
         
-        // Draw the building stilt
-        ctx.fillStyle = config.colors.buildingLight;
-        const stiltX = building.x - building.stiltWidth / 2;
-        const stiltHeight = building.height - building.topWidth / 2;
+        // Draw the building base
+        ctx.fillStyle = config.colors.buildingDark;
         
+        // Buildings grow upward from the platform
+        const baseHeight = building.height;
+        const baseWidth = building.width;
+        
+        // Draw the building as a rectangle topped with dome or UFO shape
         ctx.fillRect(
-            Math.floor(stiltX / config.performance.pixelSize) * config.performance.pixelSize,
-            Math.floor((building.y - stiltHeight) / config.performance.pixelSize) * config.performance.pixelSize,
-            building.stiltWidth,
-            stiltHeight
+            Math.floor((building.x - baseWidth / 2) / config.performance.pixelSize) * config.performance.pixelSize,
+            Math.floor((building.y - baseHeight - hoverY) / config.performance.pixelSize) * config.performance.pixelSize,
+            baseWidth,
+            baseHeight
         );
         
         // Draw the building top (dome or UFO shape)
-        const topY = building.y - stiltHeight + hoverY;
+        const topY = building.y - baseHeight - hoverY;
         
         if (building.topShape === 'dome') {
             // Draw dome
@@ -172,52 +250,49 @@ document.addEventListener('DOMContentLoaded', function() {
             ctx.beginPath();
             ctx.arc(
                 building.x,
-                topY - building.topWidth / 4,
-                building.topWidth / 2,
+                topY,
+                baseWidth / 2,
                 Math.PI,
                 0
             );
             ctx.fill();
-            
-            // Draw dome base
-            ctx.fillStyle = config.colors.buildingDark;
-            ctx.fillRect(
-                Math.floor((building.x - building.topWidth / 2) / config.performance.pixelSize) * config.performance.pixelSize,
-                Math.floor(topY / config.performance.pixelSize) * config.performance.pixelSize,
-                building.topWidth,
-                building.topWidth / 4
-            );
             
             // Draw windows if this building has them
             if (building.hasLight) {
                 const lightOn = Math.sin(time * building.lightBlinkRate) > 0;
                 ctx.fillStyle = lightOn ? config.colors.buildingLight : 'rgba(100, 223, 223, 0.3)';
                 
-                // Draw 3 windows
-                const windowSize = building.topWidth / 8;
-                const windowY = topY - windowSize * 2;
+                // Draw windows on the building
+                const windowRows = 3;
+                const windowCols = 2;
+                const windowSize = baseWidth / 5;
+                const windowSpacing = baseHeight / (windowRows + 1);
                 
-                for (let i = 0; i < 3; i++) {
-                    const windowX = building.x - building.topWidth / 4 + i * building.topWidth / 4;
-                    ctx.fillRect(
-                        Math.floor(windowX / config.performance.pixelSize) * config.performance.pixelSize,
-                        Math.floor(windowY / config.performance.pixelSize) * config.performance.pixelSize,
-                        windowSize,
-                        windowSize
-                    );
+                for (let row = 0; row < windowRows; row++) {
+                    for (let col = 0; col < windowCols; col++) {
+                        const windowX = building.x - baseWidth / 4 + col * baseWidth / 2;
+                        const windowY = building.y - baseHeight + (row + 1) * windowSpacing - hoverY;
+                        
+                        ctx.fillRect(
+                            Math.floor(windowX / config.performance.pixelSize) * config.performance.pixelSize,
+                            Math.floor(windowY / config.performance.pixelSize) * config.performance.pixelSize,
+                            windowSize,
+                            windowSize
+                        );
+                    }
                 }
             }
         } else {
             // Draw UFO shaped top
-            ctx.fillStyle = config.colors.buildingDark;
+            ctx.fillStyle = config.colors.domeColor;
             
             // Draw UFO disk
             ctx.beginPath();
             ctx.ellipse(
                 building.x,
-                topY - building.topWidth / 8,
-                building.topWidth / 2,
-                building.topWidth / 6,
+                topY,
+                baseWidth / 2,
+                baseWidth / 4,
                 0,
                 0,
                 Math.PI * 2
@@ -229,13 +304,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 const lightOn = Math.sin(time * building.lightBlinkRate) > 0;
                 ctx.fillStyle = lightOn ? config.colors.buildingLight : 'rgba(100, 223, 223, 0.3)';
                 
-                const windowCount = 8;
-                const windowSize = building.topWidth / 12;
+                const windowCount = 6;
+                const windowSize = baseWidth / 6;
                 
                 for (let i = 0; i < windowCount; i++) {
                     const angle = (i / windowCount) * Math.PI * 2;
-                    const windowX = building.x + Math.cos(angle) * (building.topWidth / 2 - windowSize);
-                    const windowY = topY - building.topWidth / 8 + Math.sin(angle) * (building.topWidth / 6 - windowSize);
+                    const windowX = building.x + Math.cos(angle) * (baseWidth / 2 - windowSize / 2);
+                    const windowY = topY + Math.sin(angle) * (baseWidth / 4 - windowSize / 2);
                     
                     ctx.fillRect(
                         Math.floor(windowX / config.performance.pixelSize) * config.performance.pixelSize,
@@ -255,7 +330,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const y = saucer.y + hoverY;
         
         // Draw the saucer trails
-        const trailLength = 10;
+        const trailLength = 8;
         if (saucer.trail.length > trailLength) {
             saucer.trail = saucer.trail.slice(-trailLength);
         }
@@ -354,102 +429,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // Draw central space needle (Jetsons-style landmark)
-    function drawSpaceNeedle(time) {
-        const centerX = canvas.width / 2;
-        const needleHeight = canvas.height * 0.6;
-        const baseY = canvas.height;
-        
-        // Needle stem
-        const stemWidth = 10 * config.performance.pixelSize;
-        ctx.fillStyle = config.colors.spaceNeedle;
-        ctx.fillRect(
-            centerX - stemWidth / 2,
-            baseY - needleHeight,
-            stemWidth,
-            needleHeight - 50 * config.performance.pixelSize
-        );
-        
-        // Observation deck (UFO shape)
-        const deckWidth = 60 * config.performance.pixelSize;
-        const deckHeight = 20 * config.performance.pixelSize;
-        const deckY = baseY - needleHeight + 30 * config.performance.pixelSize;
-        
-        // Add hover effect to the deck
-        const hoverY = Math.sin(time * 0.5) * 5;
-        
-        ctx.fillStyle = config.colors.spaceNeedle;
-        ctx.beginPath();
-        ctx.ellipse(
-            centerX,
-            deckY + hoverY,
-            deckWidth / 2,
-            deckHeight / 2,
-            0,
-            0,
-            Math.PI * 2
-        );
-        ctx.fill();
-        
-        // Windows around the deck
-        const windowCount = 12;
-        const windowSize = 4 * config.performance.pixelSize;
-        
-        for (let i = 0; i < windowCount; i++) {
-            const angle = (i / windowCount) * Math.PI * 2;
-            const windowX = centerX + Math.cos(angle) * (deckWidth / 2 - windowSize);
-            const windowY = deckY + hoverY + Math.sin(angle) * (deckHeight / 2 - windowSize);
-            
-            // Alternate lit and unlit windows
-            const isLit = Math.sin(time * 0.3 + i) > 0;
-            ctx.fillStyle = isLit ? '#FFFFFF' : 'rgba(255, 255, 255, 0.3)';
-            
-            ctx.fillRect(
-                Math.floor(windowX / config.performance.pixelSize) * config.performance.pixelSize,
-                Math.floor(windowY / config.performance.pixelSize) * config.performance.pixelSize,
-                windowSize,
-                windowSize
-            );
-        }
-        
-        // Antenna on top
-        const antennaHeight = 20 * config.performance.pixelSize;
-        ctx.fillStyle = config.colors.spaceNeedle;
-        ctx.fillRect(
-            centerX - 2 * config.performance.pixelSize,
-            deckY + hoverY - deckHeight / 2 - antennaHeight,
-            4 * config.performance.pixelSize,
-            antennaHeight
-        );
-        
-        // Blinking light at top
-        const lightBlink = Math.sin(time * 2) > 0;
-        if (lightBlink) {
-            ctx.fillStyle = '#FF0000';
-            ctx.beginPath();
-            ctx.arc(
-                centerX,
-                deckY + hoverY - deckHeight / 2 - antennaHeight,
-                4 * config.performance.pixelSize,
-                0,
-                Math.PI * 2
-            );
-            ctx.fill();
-            
-            // Add glow effect around the light
-            ctx.fillStyle = 'rgba(255, 0, 0, 0.3)';
-            ctx.beginPath();
-            ctx.arc(
-                centerX,
-                deckY + hoverY - deckHeight / 2 - antennaHeight,
-                8 * config.performance.pixelSize,
-                0,
-                Math.PI * 2
-            );
-            ctx.fill();
-        }
-    }
-    
     // Draw background with gradient
     function drawBackground() {
         // Create a gradient background
@@ -503,10 +482,10 @@ document.addEventListener('DOMContentLoaded', function() {
             drawCloud(cloud);
         });
         
-        // Draw central space needle
-        drawSpaceNeedle(time);
+        // Draw platform and support
+        drawPlatform(time);
         
-        // Draw buildings
+        // Draw buildings on platform
         buildings.forEach(building => {
             drawBuilding(building, time);
         });
@@ -553,6 +532,11 @@ document.addEventListener('DOMContentLoaded', function() {
     function handleResize() {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
+        
+        // Update platform position for new dimensions
+        platform.x = canvas.width / 2;
+        platform.y = canvas.height * 0.65;
+        platform.radius = isMobile ? canvas.width * 0.4 : canvas.width * 0.3;
         
         // Reinitialize all elements for new dimensions
         initStars();
