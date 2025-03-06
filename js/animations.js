@@ -16,62 +16,52 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 // Texture loader
 const textureLoader = new THREE.TextureLoader();
 
-// Define colors for the futuristic theme
+// Define colors for the Jetsons-inspired futuristic theme
 const COLORS = {
-    buildings: 0x260241,  // Dark purple (base color)
-    buildingEmissive: 0x5865F2,  // Blue accent color
-    cars: [0xb8860b, 0x5865F2, 0xff69b4, 0x32cd32, 0xff4500],  // Gold, blue, pink, green, orange
-    rings: 0xb8860b,  // Gold
-    ground: 0x260241,  // Dark purple
-    lights: 0xffffff   // White
+    buildings: 0x6baed6,  // Light blue base
+    buildingEmissive: 0x4292c6, // Emissive blue glow
+    cars: [0xff5252, 0x2196f3, 0xffeb3b, 0x4caf50, 0xff9800], // Red, blue, yellow, green, orange
+    rings: 0x42a5f5,  // Bright blue
+    ground: 0x0d47a1,  // Deep blue
+    highlights: 0x64ffda,  // Aqua highlight
+    windows: 0xbbdefb   // Light blue windows
 };
 
-// Create space port city
+// Create space port city - Jetsons Style
 function createSpacePort() {
     const spacePortGroup = new THREE.Group();
 
-    // Ground/base platform
-    const groundGeometry = new THREE.CylinderGeometry(15, 15, 0.5, 64);
+    // Ground/base platform - more space-age style
+    const groundGeometry = new THREE.CylinderGeometry(18, 20, 1, 64);
     const groundMaterial = new THREE.MeshPhongMaterial({
         color: COLORS.ground,
         emissive: COLORS.buildingEmissive,
         emissiveIntensity: 0.2,
-        shininess: 30
+        shininess: 80
     });
     const ground = new THREE.Mesh(groundGeometry, groundMaterial);
     ground.position.y = -3;
     spacePortGroup.add(ground);
 
-    // Add grid patterns to the ground
-    const gridHelper = new THREE.GridHelper(30, 30, 0xb8860b, 0x5865F2);
-    gridHelper.position.y = -2.7;
-    spacePortGroup.add(gridHelper);
-
-    // Create buildings
-    const buildingCount = 50;
-    for (let i = 0; i < buildingCount; i++) {
-        // Randomize building properties
-        const height = Math.random() * 8 + 2;
-        const width = Math.random() * 1.5 + 0.5;
-        const depth = Math.random() * 1.5 + 0.5;
-        
-        // Create building with windows
-        const building = createBuilding(width, height, depth);
-        
-        // Position buildings in a circular pattern
-        const angle = (i / buildingCount) * Math.PI * 2;
-        const radius = Math.random() * 6 + 8;
-        building.position.x = Math.cos(angle) * radius;
-        building.position.z = Math.sin(angle) * radius;
-        building.position.y = -3 + (height / 2);
-        
-        // Rotate buildings to face center
-        building.rotation.y = -angle;
-        
-        spacePortGroup.add(building);
+    // Add futuristic concentric rings to the ground
+    for (let i = 0; i < 5; i++) {
+        const ringGeometry = new THREE.RingGeometry(3 + i * 3, 3 + i * 3 + 0.2, 64);
+        const ringMaterial = new THREE.MeshPhongMaterial({
+            color: COLORS.highlights,
+            side: THREE.DoubleSide,
+            emissive: COLORS.highlights,
+            emissiveIntensity: 0.5
+        });
+        const ring = new THREE.Mesh(ringGeometry, ringMaterial);
+        ring.rotation.x = -Math.PI / 2;
+        ring.position.y = -2.9;
+        spacePortGroup.add(ring);
     }
 
-    // Create central tower (tallest building at center)
+    // Create retro-futuristic Jetsons-style buildings
+    createJetsonsBuildings(spacePortGroup);
+    
+    // Create central tower - iconic space needle style
     const centralTower = createCentralTower();
     centralTower.position.y = 4;
     spacePortGroup.add(centralTower);
@@ -81,157 +71,180 @@ function createSpacePort() {
     rings.position.y = 8;
     spacePortGroup.add(rings);
 
-    // Create flying cars
-    const cars = createFlyingCars(30);
+    // Create flying cars - Jetsons style with bubble tops
+    const cars = createFlyingCars(15);  // Reduced count for better performance
     spacePortGroup.add(cars);
 
     return spacePortGroup;
 }
 
-// Create a building with windows
-function createBuilding(width, height, depth) {
-    const group = new THREE.Group();
+// Create Jetsons-style buildings with thin supports and bubble-like tops
+function createJetsonsBuildings(parentGroup) {
+    const buildingCount = 40;
+    const buildingPositions = [];
     
-    // Main building structure
-    const buildingGeometry = new THREE.BoxGeometry(width, height, depth);
-    const buildingMaterial = new THREE.MeshPhongMaterial({
-        color: COLORS.buildings,
-        emissive: COLORS.buildingEmissive,
-        emissiveIntensity: 0.2,
-        shininess: 30
-    });
-    const buildingMesh = new THREE.Mesh(buildingGeometry, buildingMaterial);
-    group.add(buildingMesh);
-    
-    // Add windows as small bright cubes
-    const windowSize = 0.1;
-    const windowGeometry = new THREE.BoxGeometry(windowSize, windowSize, windowSize);
-    const windowMaterial = new THREE.MeshPhongMaterial({
-        color: 0xffffff,
-        emissive: 0xffffff,
-        emissiveIntensity: 0.6
-    });
-    
-    // Determine number of windows based on building size
-    const windowsX = Math.floor(width / 0.3);
-    const windowsY = Math.floor(height / 0.3);
-    const windowsZ = Math.floor(depth / 0.3);
-    
-    // Place windows on all faces
-    for (let x = 0; x < windowsX; x++) {
-        for (let y = 0; y < windowsY; y++) {
-            // Only add some windows (random pattern)
-            if (Math.random() > 0.3) {
-                // Front face
-                const windowFront = new THREE.Mesh(windowGeometry, windowMaterial);
-                windowFront.position.set(
-                    (x / windowsX) * width - width / 2 + width / windowsX / 2,
-                    (y / windowsY) * height - height / 2 + height / windowsY / 2,
-                    depth / 2 + 0.01
-                );
-                group.add(windowFront);
-                
-                // Back face
-                const windowBack = new THREE.Mesh(windowGeometry, windowMaterial);
-                windowBack.position.set(
-                    (x / windowsX) * width - width / 2 + width / windowsX / 2,
-                    (y / windowsY) * height - height / 2 + height / windowsY / 2,
-                    -depth / 2 - 0.01
-                );
-                group.add(windowBack);
+    for (let i = 0; i < buildingCount; i++) {
+        // Determine building height and style variations
+        const height = Math.random() * 5 + 2;
+        const radius = Math.random() * 0.8 + 0.5;
+        
+        // Create a group for the building
+        const building = new THREE.Group();
+        
+        // Create thin support column
+        const supportGeometry = new THREE.CylinderGeometry(0.1, 0.1, height, 8);
+        const supportMaterial = new THREE.MeshPhongMaterial({
+            color: 0xd3d3d3,  // Light gray
+            shininess: 50
+        });
+        const support = new THREE.Mesh(supportGeometry, supportMaterial);
+        support.position.y = height / 2;
+        building.add(support);
+        
+        // Create building top - bubble or saucer shaped
+        let topGeometry;
+        if (Math.random() > 0.5) {
+            // Saucer shaped
+            topGeometry = new THREE.CapsuleGeometry(radius, radius * 0.5, 16, 8);
+            topGeometry.rotateZ(Math.PI / 2);
+        } else {
+            // Bubble dome
+            topGeometry = new THREE.SphereGeometry(radius, 16, 16);
+        }
+        
+        const topMaterial = new THREE.MeshPhongMaterial({
+            color: COLORS.buildings,
+            transparent: true,
+            opacity: 0.9,
+            emissive: COLORS.buildingEmissive,
+            emissiveIntensity: 0.3,
+            shininess: 90
+        });
+        
+        const top = new THREE.Mesh(topGeometry, topMaterial);
+        top.position.y = height;
+        building.add(top);
+        
+        // Add windows as glowing dots
+        addBuildingWindows(top, radius);
+        
+        // Position buildings in a circular pattern with variation
+        const angle = (i / buildingCount) * Math.PI * 2;
+        const buildingRadius = Math.random() * 5 + 10;
+        
+        // Check for overlap with existing buildings
+        let overlap = false;
+        const newPos = {
+            x: Math.cos(angle) * buildingRadius,
+            z: Math.sin(angle) * buildingRadius
+        };
+        
+        for (const pos of buildingPositions) {
+            const dist = Math.sqrt(
+                Math.pow(newPos.x - pos.x, 2) + 
+                Math.pow(newPos.z - pos.z, 2)
+            );
+            if (dist < 2.5) {
+                overlap = true;
+                break;
             }
         }
-    }
-    
-    // Side windows
-    for (let y = 0; y < windowsY; y++) {
-        for (let z = 0; z < windowsZ; z++) {
-            if (Math.random() > 0.3) {
-                // Right side
-                const windowRight = new THREE.Mesh(windowGeometry, windowMaterial);
-                windowRight.position.set(
-                    width / 2 + 0.01,
-                    (y / windowsY) * height - height / 2 + height / windowsY / 2,
-                    (z / windowsZ) * depth - depth / 2 + depth / windowsZ / 2
-                );
-                group.add(windowRight);
-                
-                // Left side
-                const windowLeft = new THREE.Mesh(windowGeometry, windowMaterial);
-                windowLeft.position.set(
-                    -width / 2 - 0.01,
-                    (y / windowsY) * height - height / 2 + height / windowsY / 2,
-                    (z / windowsZ) * depth - depth / 2 + depth / windowsZ / 2
-                );
-                group.add(windowLeft);
-            }
+        
+        if (!overlap) {
+            building.position.set(newPos.x, -3, newPos.z);
+            buildingPositions.push(newPos);
+            parentGroup.add(building);
         }
     }
-    
-    return group;
 }
 
-// Create central tower
+// Add windows to buildings
+function addBuildingWindows(buildingTop, radius) {
+    const windowCount = Math.floor(radius * 20);
+    const windowGeometry = new THREE.SphereGeometry(0.06, 8, 8);
+    const windowMaterial = new THREE.MeshPhongMaterial({
+        color: COLORS.windows,
+        emissive: COLORS.windows,
+        emissiveIntensity: 0.7
+    });
+    
+    for (let i = 0; i < windowCount; i++) {
+        if (Math.random() > 0.5) {
+            const phi = Math.acos(-1 + (2 * Math.random()));
+            const theta = 2 * Math.PI * Math.random();
+            
+            const x = radius * 0.9 * Math.sin(phi) * Math.cos(theta);
+            const y = radius * 0.9 * Math.sin(phi) * Math.sin(theta);
+            const z = radius * 0.9 * Math.cos(phi);
+            
+            const window = new THREE.Mesh(windowGeometry, windowMaterial);
+            window.position.set(x, y, z);
+            buildingTop.add(window);
+        }
+    }
+}
+
+// Create central tower - Space Needle inspired
 function createCentralTower() {
     const group = new THREE.Group();
     
-    // Base structure
-    const baseGeometry = new THREE.CylinderGeometry(2, 2.5, 12, 16);
-    const baseMaterial = new THREE.MeshPhongMaterial({
+    // Thin support column
+    const columnGeometry = new THREE.CylinderGeometry(0.2, 0.3, 12, 16);
+    const columnMaterial = new THREE.MeshPhongMaterial({
+        color: 0xe0e0e0,  // Silver
+        emissive: 0x303030,
+        emissiveIntensity: 0.2,
+        metalness: 0.7,
+        shininess: 80
+    });
+    const column = new THREE.Mesh(columnGeometry, columnMaterial);
+    group.add(column);
+    
+    // Saucer/dish at the top - Jetsons iconic shape
+    const saucerGeometry = new THREE.CapsuleGeometry(3, 0.8, 20, 16);
+    saucerGeometry.rotateZ(Math.PI / 2);
+    const saucerMaterial = new THREE.MeshPhongMaterial({
         color: COLORS.buildings,
         emissive: COLORS.buildingEmissive,
         emissiveIntensity: 0.4,
-        shininess: 50
-    });
-    const baseMesh = new THREE.Mesh(baseGeometry, baseMaterial);
-    group.add(baseMesh);
-    
-    // Top dome
-    const domeGeometry = new THREE.SphereGeometry(2, 32, 32, 0, Math.PI * 2, 0, Math.PI / 2);
-    const domeMaterial = new THREE.MeshPhongMaterial({
-        color: 0x5865F2,
-        emissive: 0x5865F2,
-        emissiveIntensity: 0.3,
         transparent: true,
-        opacity: 0.8,
+        opacity: 0.9,
         shininess: 100
     });
-    const dome = new THREE.Mesh(domeGeometry, domeMaterial);
-    dome.position.y = 6;
-    group.add(dome);
+    const saucer = new THREE.Mesh(saucerGeometry, saucerMaterial);
+    saucer.position.y = 6;
+    group.add(saucer);
     
-    // Add windows to the tower
-    const windowCount = 40;
-    const windowGeometry = new THREE.BoxGeometry(0.15, 0.3, 0.05);
+    // Add windows around the saucer edge
+    const windowCount = 24;
+    const windowGeometry = new THREE.SphereGeometry(0.12, 8, 8);
     const windowMaterial = new THREE.MeshPhongMaterial({
-        color: 0xffffff,
-        emissive: 0xffffff,
+        color: COLORS.windows,
+        emissive: COLORS.windows,
         emissiveIntensity: 0.8
     });
     
     for (let i = 0; i < windowCount; i++) {
         const angle = (i / windowCount) * Math.PI * 2;
-        const y = Math.random() * 10 - 5;  // Position windows along height
         
         const window = new THREE.Mesh(windowGeometry, windowMaterial);
         window.position.set(
-            Math.cos(angle) * 2,
-            y,
-            Math.sin(angle) * 2
+            Math.cos(angle) * 2.7,
+            6,
+            Math.sin(angle) * 2.7
         );
-        window.rotation.y = -angle;
         group.add(window);
     }
     
     // Add antenna at the top
-    const antennaGeometry = new THREE.CylinderGeometry(0.05, 0.05, 3, 8);
+    const antennaGeometry = new THREE.CylinderGeometry(0.05, 0.05, 2, 8);
     const antennaMaterial = new THREE.MeshPhongMaterial({
-        color: 0xb8860b,
-        emissive: 0xb8860b,
+        color: 0xf5f5f5,  // White
+        emissive: 0xff0000,
         emissiveIntensity: 0.3
     });
     const antenna = new THREE.Mesh(antennaGeometry, antennaMaterial);
-    antenna.position.y = 8;
+    antenna.position.y = 7.5;
     group.add(antenna);
     
     // Add blinking light at antenna top
@@ -242,7 +255,7 @@ function createCentralTower() {
         emissiveIntensity: 1
     });
     const blinkingLight = new THREE.Mesh(blinkingLightGeometry, blinkingLightMaterial);
-    blinkingLight.position.y = 9.5;
+    blinkingLight.position.y = 8.5;
     blinkingLight.userData.isBlinking = true;  // Flag for animation
     group.add(blinkingLight);
     
@@ -255,13 +268,13 @@ function createHoveringRings() {
     
     const ringCount = 3;
     for (let i = 0; i < ringCount; i++) {
-        const radius = 3 + i * 0.8;
-        const tubeRadius = 0.08;
+        const radius = 3.5 + i * 0.7;
+        const tubeRadius = 0.06;
         const ringGeometry = new THREE.TorusGeometry(radius, tubeRadius, 16, 100);
         const ringMaterial = new THREE.MeshPhongMaterial({
             color: COLORS.rings,
             emissive: COLORS.rings,
-            emissiveIntensity: 0.3,
+            emissiveIntensity: 0.6,
             transparent: true,
             opacity: 0.8,
             shininess: 100
@@ -270,7 +283,7 @@ function createHoveringRings() {
         ring.rotation.x = Math.PI / 2;
         ring.userData.rotationSpeed = 0.002 - i * 0.0005;  // Different speed for each ring
         ring.userData.hoverSpeed = 0.001 + i * 0.001;      // Different hover speed
-        ring.userData.hoverAmplitude = 0.2 - i * 0.05;     // Different hover amplitude
+        ring.userData.hoverAmplitude = 0.1 - i * 0.02;     // Different hover amplitude
         ring.userData.hoverOffset = i * Math.PI / 3;       // Phase offset for hovering
         group.add(ring);
     }
@@ -278,32 +291,49 @@ function createHoveringRings() {
     return group;
 }
 
-// Create flying cars
+// Create flying cars - classic Jetsons style
 function createFlyingCars(count) {
     const group = new THREE.Group();
     
+    // Define car paths with different heights and radiuses
+    const paths = [
+        { radius: 12, height: 3, clockwise: true },
+        { radius: 8, height: 5, clockwise: false },
+        { radius: 15, height: 2, clockwise: true },
+        { radius: 22, height: 8, clockwise: true },
+        { radius: 18, height: 6, clockwise: false }
+    ];
+    
     for (let i = 0; i < count; i++) {
-        const car = createFlyingCar();
+        const car = createJetsonsCar();
         
-        // Set initial position on a random path
-        const pathRadius = Math.random() * 10 + 8;
-        const height = Math.random() * 10 - 2;
-        const angle = Math.random() * Math.PI * 2;
+        // Assign to a path
+        const pathIndex = i % paths.length;
+        const path = paths[pathIndex];
+        
+        // Set initial position on path
+        const offset = (i * Math.PI * 2) / (count / paths.length);
+        const angle = path.clockwise ? offset : -offset;
         
         car.position.set(
-            Math.cos(angle) * pathRadius,
-            height,
-            Math.sin(angle) * pathRadius
+            Math.cos(angle) * path.radius,
+            path.height,
+            Math.sin(angle) * path.radius
         );
         
         // Store car animation parameters in userData
-        car.userData.pathRadius = pathRadius;
-        car.userData.height = height;
-        car.userData.speed = Math.random() * 0.01 + 0.005;
+        car.userData.pathRadius = path.radius;
+        car.userData.height = path.height;
+        car.userData.speed = 0.01 + Math.random() * 0.01;
+        car.userData.clockwise = path.clockwise;
         car.userData.angle = angle;
-        car.userData.wobbleSpeed = Math.random() * 0.05 + 0.02;
-        car.userData.wobbleAmplitude = Math.random() * 0.1 + 0.05;
-        car.userData.wobbleOffset = i;
+        car.userData.wobbleSpeed = 0.01 + Math.random() * 0.03;
+        car.userData.wobbleAmplitude = 0.05 + Math.random() * 0.05;
+        car.userData.tailLength = 5 + Math.floor(Math.random() * 8);
+        
+        // Create trailing effect for each car
+        car.userData.trail = createCarTrail(car.userData.tailLength, car.children[0].material.color);
+        group.add(car.userData.trail);
         
         group.add(car);
     }
@@ -311,12 +341,13 @@ function createFlyingCars(count) {
     return group;
 }
 
-// Create individual flying car (Jetsons style)
-function createFlyingCar() {
+// Create individual Jetsons-style flying car
+function createJetsonsCar() {
     const group = new THREE.Group();
     
     // Choose a random color for the car
-    const carColor = COLORS.cars[Math.floor(Math.random() * COLORS.cars.length)];
+    const carColorIndex = Math.floor(Math.random() * COLORS.cars.length);
+    const carColor = COLORS.cars[carColorIndex];
     
     // Car body (saucer-like shape)
     const bodyGeometry = new THREE.CapsuleGeometry(0.3, 0.4, 4, 8);
@@ -332,12 +363,12 @@ function createFlyingCar() {
     const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
     group.add(body);
     
-    // Top dome (cockpit)
+    // Bubble dome (classic Jetsons style)
     const domeGeometry = new THREE.SphereGeometry(0.25, 16, 16, 0, Math.PI * 2, 0, Math.PI / 2);
     const domeMaterial = new THREE.MeshPhongMaterial({
         color: 0xadd8e6,  // Light blue
         transparent: true,
-        opacity: 0.7,
+        opacity: 0.6,
         shininess: 100
     });
     
@@ -345,42 +376,53 @@ function createFlyingCar() {
     dome.position.y = 0.15;
     group.add(dome);
     
-    // Bottom thrusters/hover jets
-    const thrusterCount = 3;
-    for (let i = 0; i < thrusterCount; i++) {
-        const angle = (i / thrusterCount) * Math.PI * 2;
-        
-        const thrusterGeometry = new THREE.CylinderGeometry(0.05, 0.08, 0.1, 8);
-        const thrusterMaterial = new THREE.MeshPhongMaterial({
-            color: 0x808080,  // Gray
-            shininess: 50
-        });
-        
-        const thruster = new THREE.Mesh(thrusterGeometry, thrusterMaterial);
-        thruster.position.set(
-            Math.cos(angle) * 0.25,
-            -0.2,
-            Math.sin(angle) * 0.25
-        );
-        group.add(thruster);
-        
-        // Add thruster glow
-        const glowGeometry = new THREE.SphereGeometry(0.05, 8, 8);
-        const glowMaterial = new THREE.MeshPhongMaterial({
-            color: 0x00ffff,  // Cyan
-            emissive: 0x00ffff,
-            emissiveIntensity: 1,
-            transparent: true,
-            opacity: 0.8
-        });
-        
-        const glow = new THREE.Mesh(glowGeometry, glowMaterial);
-        glow.position.y = -0.05;
-        glow.userData.pulsate = true;  // Mark for animation
-        thruster.add(glow);
-    }
+    // Add tiny figures inside (simplified)
+    const figureGeometry = new THREE.SphereGeometry(0.08, 8, 8);
+    const figureMaterial = new THREE.MeshPhongMaterial({
+        color: 0x333333  // Dark gray
+    });
+    const figure = new THREE.Mesh(figureGeometry, figureMaterial);
+    figure.position.set(0, 0.05, 0);
+    dome.add(figure);
+    
+    // Bottom thrusters glow
+    const glowGeometry = new THREE.SphereGeometry(0.15, 16, 16);
+    const glowMaterial = new THREE.MeshPhongMaterial({
+        color: 0x00ffff,  // Cyan
+        emissive: 0x00ffff,
+        emissiveIntensity: 0.8,
+        transparent: true,
+        opacity: 0.6
+    });
+    
+    const glow = new THREE.Mesh(glowGeometry, glowMaterial);
+    glow.position.y = -0.2;
+    glow.scale.y = 0.5;
+    glow.userData.pulsate = true;
+    group.add(glow);
     
     return group;
+}
+
+// Create trailing effect behind cars
+function createCarTrail(length, color) {
+    const trail = new THREE.Group();
+    
+    const trailMaterial = new THREE.MeshBasicMaterial({
+        color: color,
+        transparent: true,
+        opacity: 0.4
+    });
+    
+    for (let i = 0; i < length; i++) {
+        const size = 0.08 - (i * 0.01);
+        const sphereGeometry = new THREE.SphereGeometry(Math.max(0.02, size), 8, 8);
+        const sphere = new THREE.Mesh(sphereGeometry, trailMaterial.clone());
+        sphere.material.opacity = 0.4 - (i * 0.05);
+        trail.add(sphere);
+    }
+    
+    return trail;
 }
 
 // Add ambient and directional lighting to the scene
@@ -393,14 +435,14 @@ directionalLight.castShadow = true;
 scene.add(directionalLight);
 
 // Point light in the center for the central tower
-const centerLight = new THREE.PointLight(0x5865F2, 1, 20);
+const centerLight = new THREE.PointLight(COLORS.buildingEmissive, 1, 20);
 centerLight.position.set(0, 5, 0);
 scene.add(centerLight);
 
 // Add space background with stars
 const starGeometry = new THREE.BufferGeometry();
 const starVertices = [];
-for (let i = 0; i < 5000; i++) {
+for (let i = 0; i < 3000; i++) {  // Reduced star count for better performance
     starVertices.push(
         THREE.MathUtils.randFloatSpread(500),
         THREE.MathUtils.randFloatSpread(500),
@@ -411,7 +453,7 @@ starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starVerti
 
 const starMaterial = new THREE.PointsMaterial({
     color: 0xFFFFFF,
-    size: 0.5,
+    size: isMobile ? 0.8 : 0.5,  // Bigger stars on mobile
     transparent: true,
     opacity: 0.8,
     depthWrite: false
@@ -441,6 +483,9 @@ document.addEventListener('mousemove', (event) => {
     mouseX = (event.clientX - windowHalfX) / 100;
     mouseY = (event.clientY - windowHalfY) / 100;
 });
+
+// Car positions history for trails
+const carHistory = [];
 
 // Animation loop
 function animate() {
@@ -474,11 +519,12 @@ function animate() {
         }
     });
     
-    // Animate flying cars
+    // Animate flying cars and their trails
     spacePort.children.forEach(child => {
         if (child.userData.pathRadius) {
             // Update car position along path
-            child.userData.angle += child.userData.speed;
+            child.userData.angle += child.userData.clockwise ? 
+                child.userData.speed : -child.userData.speed;
             
             // Calculate new position on the path
             child.position.x = Math.cos(child.userData.angle) * child.userData.pathRadius;
@@ -487,22 +533,29 @@ function animate() {
             // Make cars wobble/hover
             child.position.y = child.userData.height + 
                 child.userData.wobbleAmplitude * 
-                Math.sin(time * child.userData.wobbleSpeed + child.userData.wobbleOffset);
+                Math.sin(time * child.userData.wobbleSpeed + child.userData.angle);
             
             // Rotate car to face direction of movement
             child.rotation.y = -child.userData.angle + Math.PI / 2;
             
             // Slight banking on turns
-            child.rotation.z = Math.sin(time * child.userData.wobbleSpeed * 2) * 0.1;
+            child.rotation.z = Math.sin(time * child.userData.wobbleSpeed * 2) * 0.2;
             
-            // Animate thruster glows
+            // Update car trail
+            if (child.userData.trail) {
+                const trail = child.userData.trail;
+                for (let i = trail.children.length - 1; i > 0; i--) {
+                    trail.children[i].position.copy(trail.children[i-1].position);
+                }
+                trail.children[0].position.copy(child.position);
+                trail.children[0].position.y -= 0.1;
+            }
+            
+            // Animate thruster glow
             child.children.forEach(part => {
-                if (part.children) {
-                    part.children.forEach(glow => {
-                        if (glow.userData.pulsate) {
-                            glow.scale.setScalar(0.8 + 0.3 * Math.sin(time * 10 + child.userData.wobbleOffset));
-                        }
-                    });
+                if (part.userData.pulsate) {
+                    part.scale.x = 1 + 0.2 * Math.sin(time * 10);
+                    part.scale.z = 1 + 0.2 * Math.sin(time * 10);
                 }
             });
         }
