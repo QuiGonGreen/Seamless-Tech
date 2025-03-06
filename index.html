@@ -11,25 +11,53 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Cascadia+Code:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <!-- Navigation -->
     <nav class="navbar">
         <div class="nav-container">
+            <button class="hamburger" aria-label="Toggle menu">
+                <i class="fas fa-bars"></i>
+            </button>
             <div class="brand">
                 <img src="Images/logo.png" alt="Seamless Tech Logo" class="logo">
                 <span class="brand-name">Seamless Technologies</span>
             </div>
-            <button class="hamburger">☰</button>
-            <div class="nav-links">
-                <a href="index.html" class="nav-item">Home</a>
-                <a href="index.html#solutions" class="nav-item">Solutions</a>
-                <a href="index.html#cityscape" class="nav-item">Cityscape</a>
-                <a href="scroller.html" class="nav-item">Scroller</a>
-                <a href="california-wildfires.html" class="nav-item">California Wildfires</a>
-                <a href="basketball.html" class="nav-item">Basketball</a>
+            <div class="nav-links-container">
+                <div class="nav-links">
+                    <a href="index.html" class="nav-item">
+                        <i class="fas fa-home nav-icon"></i>
+                        <span>Home</span>
+                    </a>
+                    <a href="index.html#solutions" class="nav-item">
+                        <i class="fas fa-lightbulb nav-icon"></i>
+                        <span>Solutions</span>
+                    </a>
+                    <a href="index.html#cityscape" class="nav-item">
+                        <i class="fas fa-city nav-icon"></i>
+                        <span>Cityscape</span>
+                    </a>
+                    <a href="scroller.html" class="nav-item">
+                        <i class="fas fa-scroll nav-icon"></i>
+                        <span>Scroller</span>
+                    </a>
+                    <a href="california-wildfires.html" class="nav-item">
+                        <i class="fas fa-fire nav-icon"></i>
+                        <span>California Wildfires</span>
+                    </a>
+                    <a href="basketball.html" class="nav-item">
+                        <i class="fas fa-basketball-ball nav-icon"></i>
+                        <span>Basketball</span>
+                    </a>
+                </div>
+            </div>
+            <div class="nav-action">
+                <a href="#contact" class="nav-cta">Contact Us</a>
             </div>
         </div>
+        <div class="nav-backdrop"></div>
     </nav>
 
     <!-- Landing Section -->

@@ -5,6 +5,12 @@
     --github-dark: #161b22;
     --discord-blurple: #5865F2;
     --vh: 1vh; /* Added for mobile height calculation */
+    --nav-height: 70px;
+    --gold: #b8860b;
+    --gold-light: rgba(184, 134, 11, 0.8);
+    --gold-transparent: rgba(184, 134, 11, 0.2);
+    --purple-gradient: linear-gradient(135deg, #260241, #401161 60%, #521b85);
+    --purple-dark: #260241;
 }
 
 /* Base Styles */
@@ -32,133 +38,234 @@ img {
     display: block;
 }
 
-/* Navigation */
+/* ==================== New Navigation Styles ==================== */
 .navbar {
     position: fixed;
     top: 0;
     width: 100%;
-    background: linear-gradient(135deg, #260241, #401161 60%, #521b85);
+    background: var(--purple-gradient);
     backdrop-filter: blur(10px);
     z-index: 1000;
-    padding: 0;
+    height: var(--nav-height);
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
+    border-bottom: 1px solid var(--gold-transparent);
 }
 
 .nav-container {
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto;
-    padding: 0;
+    padding: 0 1.5rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
     position: relative;
+    height: 100%;
 }
 
 .brand {
     display: flex;
     align-items: center;
     gap: 1rem;
+    z-index: 1100;
 }
 
 .logo {
-    height: 50px;
+    height: 45px;
+    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.3));
+    transition: transform 0.3s ease;
+}
+
+.logo:hover {
+    transform: scale(1.05);
 }
 
 .brand-name {
     font-weight: 600;
-    font-size: 2rem;
-    color: #b8860b;
+    font-size: 1.8rem;
+    color: var(--gold);
+    text-shadow: 0 0 10px rgba(184, 134, 11, 0.3);
+    background: linear-gradient(to right, #d4af37, #b8860b, #d4af37);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Nav Links Container */
+.nav-links-container {
+    position: relative;
+    flex: 1;
+    display: flex;
+    justify-content: center;
 }
 
 .nav-links {
-    display: none;
-    flex-direction: column;
-    position: absolute;
-    top: 100%;
-    right: 0;
-    left: auto; 
-    background-color: rgba(13, 17, 23, 0.95);
-    width: 200px;
-    padding: 1rem;
-    border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    z-index: 10;
-}
-
-.nav-links.active {
     display: flex;
+    gap: 1rem;
+    align-items: center;
+    transition: all 0.3s ease;
 }
 
 .nav-item {
-    color: #b8860b;
+    color: var(--gold);
     text-decoration: none;
-    padding: 0.5rem 0;
-    font-size: 1.8rem;
+    padding: 0.5rem 1rem;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    position: relative;
+    transition: all 0.2s ease;
+    border-radius: 4px;
 }
 
-.nav-item.active {
-    color: #b8860b;
+.nav-item::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: -2px;
+    left: 50%;
+    background: var(--gold);
+    transition: all 0.3s ease;
+    transform: translateX(-50%);
+    opacity: 0;
+}
+
+.nav-item:hover::after {
+    width: 80%;
+    opacity: 1;
+}
+
+.nav-item:hover {
+    color: var(--text-primary);
+    background: rgba(184, 134, 11, 0.15);
+}
+
+.nav-icon {
+    font-size: 1rem;
+    opacity: 0.9;
+}
+
+.nav-action {
+    display: flex;
+    align-items: center;
+}
+
+.nav-cta {
+    display: inline-block;
+    padding: 0.6rem 1.5rem;
+    background: var(--gold);
+    color: var(--purple-dark);
+    text-decoration: none;
     font-weight: bold;
+    font-size: 0.9rem;
+    border-radius: 50px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
+.nav-cta:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(184, 134, 11, 0.4);
+}
+
+/* Hamburger Menu */
 .hamburger {
     background: none;
     border: none;
-    color: #b8860b;
-    font-size: 2.4rem;
+    color: var(--gold);
+    font-size: 1.5rem;
     cursor: pointer;
-    padding: 0;
+    padding: 0.5rem;
     position: relative;
     z-index: 1100;
-}
-
-/* Dropdown Styles */
-.dropdown {
-    position: relative;
-    display: inline-block;
-}
-
-.dropdown-button {
-    background-color: #4b0082;
-    color: white;
-    padding: 10px 15px;
-    font-size: 16px;
-    border: none;
-    cursor: pointer;
-    border-radius: 5px;
-}
-
-.dropdown-content {
     display: none;
-    position: absolute;
-    background-color: #f9f9f9;
-    min-width: 160px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    z-index: 1;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.hamburger:hover {
+    background: rgba(184, 134, 11, 0.2);
+}
+
+.nav-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
     right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(5px);
+    z-index: 999;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
 }
 
-/* Links inside the dropdown */
-.dropdown-content a {
-    color: black;
-    padding: 12px 16px;
-    text-decoration: none;
-    display: block;
+/* Mobile Navigation */
+@media (max-width: 992px) {
+    .hamburger {
+        display: block;
+        order: -1;
+    }
+    
+    .nav-links-container {
+        position: fixed;
+        top: 0;
+        left: -280px;
+        width: 280px;
+        bottom: 0;
+        background: var(--purple-gradient);
+        z-index: 1000;
+        box-shadow: 2px 0 20px rgba(0, 0, 0, 0.25);
+        transition: all 0.3s ease;
+        border-right: 1px solid var(--gold-transparent);
+        padding-top: var(--nav-height);
+        overflow-y: auto;
+    }
+    
+    .nav-links {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 1rem;
+        width: 100%;
+    }
+    
+    .nav-item {
+        width: 100%;
+        padding: 1rem;
+        font-size: 1.2rem;
+    }
+    
+    .nav-item::after {
+        display: none;
+    }
+    
+    .nav-links-container.active {
+        left: 0;
+    }
+    
+    .nav-backdrop.active {
+        opacity: 1;
+        visibility: visible;
+    }
+    
+    .nav-action {
+        display: none;
+    }
+    
+    .brand-name {
+        font-size: 1.5rem;
+    }
 }
 
-/* Change color of dropdown links on hover */
-.dropdown-content a:hover {
-    background-color: #ddd;
+/* Class to make nav links active */
+.nav-item.active {
+    font-weight: bold;
+    background: rgba(184, 134, 11, 0.2);
 }
 
-/* Show the dropdown menu on hover */
-.dropdown:hover .dropdown-content {
-    display: block;
-}
-
-/* Change the background color of the dropdown button when the dropdown content is shown */
-.dropdown:hover .dropdown-button {
-    background-color: #6a0dad;
-}
+/* ================= End Navigation Styles ================= */
 
 /* Landing Section */
 .Landing {
