@@ -5,18 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Seamless-Tech | Organize your environment</title>
     <link rel="stylesheet" href="css/main.css">
+    <!-- Required Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Cascadia+Code:wght@400;700&display=swap" rel="stylesheet">
     <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <!-- Loading Screen -->
-    <div class="loading-screen">
-        <div class="spinner"></div>
-        <p>Loading your experience...</p>
-    </div>
-
     <!-- Navigation -->
     <nav class="navbar">
         <div class="nav-container">
@@ -77,32 +75,32 @@
             <h2 class="section-title">Solutions</h2>
             <div class="solution-grid">
                 <!-- SOLUTION CARD 1 -->
-                <div class="solution-card">
-                    <div class="card-media">
-                      <video class="card-video" muted loop>
-                        <source src="Images/solutions/ai-demo.mp4" type="video/mp4">
-                      </video>
-                    </div>
-                    <div class="card-content">
-                      <h3>Complex Solutions</h3>
-                      <p>Discover our easy-to-understand technical consulting and system administration services. I understand that we all have a random mix of technologies making up our home and enterprise environments. Let me handle the 'configurating', so you can focus on what you Love.</p>
-                      <a href="https://forms.office.com/r/etYSWeTsyQ" class="card-cta" target="_blank">Learn More →</a>
-                    </div>
-                </div>
+<div class="solution-card">
+    <div class="card-media">
+      <video class="card-video" muted loop>
+        <source src="Images/solutions/ai-demo.mp4" type="video/mp4">
+      </video>
+    </div>
+    <div class="card-content">
+      <h3>Complex Solutions</h3>
+      <p>Discover our easy-to-understand technical consulting and system administration services. I understand that we all have a random mix of technologies making up our home and enterprise environments. Let me handle the 'configurating', so you can focus on what you Love.</p>
+      <a href="https://forms.office.com/r/etYSWeTsyQ" class="card-cta" target="_blank">Learn More →</a>
+    </div>
+  </div>
 
                 <!-- SOLUTION CARD 2 -->
-                <div class="solution-card">
-                    <div class="card-media">
-                      <video class="card-video" muted loop>
-                        <source src="Images/solutions/cloud-demo.mp4" type="video/mp4">
-                      </video>
-                    </div>
-                    <div class="card-content">
-                      <h3>Personal Solutions</h3>
-                      <p>Transform your digital chaos into organized harmony with my personal data migration, cleaning, and organizing services. I'll help you organize your files and media, making it easy to find what you need and ensure you have access across devices. Enjoy a clutter-free digital environment that promotes a peaceful mind.</p>
-                      <a href="https://forms.office.com/r/yYvV2EZ6Fd" class="card-cta" target="_blank">Learn More →</a>
-                    </div>
-                </div>
+<div class="solution-card">
+    <div class="card-media">
+      <video class="card-video" muted loop>
+        <source src="Images/solutions/cloud-demo.mp4" type="video/mp4">
+      </video>
+    </div>
+    <div class="card-content">
+      <h3>Personal Solutions</h3>
+      <p>Transform your digital chaos into organized harmony with my personal data migration, cleaning, and organizing services. I'll help you organize your files and media, making it easy to find what you need and ensure you have access across devices. Enjoy a clutter-free digital environment that promotes a peaceful mind.</p>
+      <a href="https://forms.office.com/r/yYvV2EZ6Fd" class="card-cta" target="_blank">Learn More →</a>
+    </div>
+  </div>
             </div>
         </div>
     </section>
@@ -121,12 +119,6 @@
         </div>
     </section>
 
-    <!-- Required Libraries - Load these first -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-    
-    <!-- Load custom scripts last and in the correct order -->
     <script src="js/main.js"></script>
     <script src="js/animations.js"></script>
     <script src="js/cityscape.js"></script>
