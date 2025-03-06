@@ -382,6 +382,86 @@ img {
     background: var(--github-dark);
 }
 
+/* City Skyline Section */
+.cityscape-section {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    padding: 8rem 2rem;
+    background-color: #000;
+    overflow: hidden;
+}
+
+.cityscape-container {
+    position: relative;
+    max-width: 1200px;
+    margin: 0 auto;
+    height: 100%;
+    z-index: 5;
+}
+
+.cityscape-canvas-container {
+    position: relative;
+    height: calc(100% - 100px);
+    width: 100%;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 0 30px rgba(88, 101, 242, 0.3);
+}
+
+#cityscapeCanvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+.cityscape-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 2;
+    text-align: center;
+}
+
+.cityscape-text {
+    font-size: 2.5rem;
+    color: #b8860b;
+    font-weight: bold;
+    text-shadow: 0 0 10px rgba(88, 101, 242, 0.8), 0 0 20px rgba(88, 101, 242, 0.5);
+    margin-bottom: 2rem;
+    max-width: 700px;
+}
+
+.cityscape-cta {
+    display: inline-block;
+    padding: 1rem 2rem;
+    background: linear-gradient(135deg, #260241, #401161 60%, #521b85);
+    color: #b8860b;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1.2rem;
+    border-radius: 50px;
+    transition: all 0.3s ease;
+    border: 2px solid rgba(184, 134, 11, 0.5);
+    box-shadow: 0 0 15px rgba(88, 101, 242, 0.5);
+    text-shadow: 0 0 5px rgba(0, 0, 0, 0.8);
+}
+
+.cityscape-cta:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0 20px rgba(88, 101, 242, 0.8);
+    border-color: rgba(184, 134, 11, 0.8);
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .Landing-title {
@@ -424,6 +504,20 @@ img {
 
     .nav-container {
         flex-wrap: wrap;
+    }
+
+    .cityscape-text {
+        font-size: 1.5rem;
+        padding: 0 1rem;
+    }
+    
+    .cityscape-cta {
+        padding: 0.8rem 1.5rem;
+        font-size: 1rem;
+    }
+    
+    .cityscape-section {
+        padding: 6rem 1rem;
     }
 }
 
