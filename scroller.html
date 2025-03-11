@@ -15,6 +15,7 @@
             background-color: #1a3a5f; /* Dark blue background */
             font-family: 'Times New Roman', Times, serif;
             font-size: 18px; /* Increased from 12px to 18px */
+            overflow-x: hidden; /* Prevent horizontal scrollbar */
         }
         
         /* Title font sizes */
@@ -24,13 +25,22 @@
             color: #a8e6cf; /* Light green for headings */
         }
         
+        /* Fix scrollbar issues */
+        .scroll-container {
+            height: auto;
+            overflow: visible; /* Remove the container scrollbar */
+        }
+        
         /* Override panel styling */
         .scroll-panel {
             background-color: rgba(26, 58, 95, 0.8); /* Semi-transparent dark blue */
+            overflow: visible; /* Remove any panel scrollbars */
         }
         
         .panel-content {
             border-color: #3e8e7e; /* Medium green border */
+            max-height: 85vh; /* Limit height to ensure it fits in viewport */
+            overflow: hidden; /* Hide any overflow */
         }
         
         .card-content {
