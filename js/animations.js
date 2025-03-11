@@ -19,502 +19,368 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Animation configuration
     const config = {
-        // Colors in The Jetsons style
+        // Modern construction color palette
         colors: {
-            background: '#140033',      // Deep space purple
-            stars: '#FFFFFF',           // White stars
-            buildingLight: '#64DFDF',   // Teal/aqua building lights
-            buildingDark: '#5390D9',    // Blue building base
-            saucerLight: '#FFCFD2',     // Light pink for flying saucers
-            saucerDark: '#FB6F92',      // Dark pink for flying saucers
-            platformColor: '#5F56E8',   // Purple for main platform
-            platformEdge: '#A682FF',    // Light purple for platform edge
-            supportColor: '#7678ED',    // Support column color
-            domeColor: '#7400B8',       // Purple for dome tops
-            glowColor: '#4EA8DE',       // Blue glow
-            rocketTrail: '#FF9E00'      // Orange for rocket trails
+            background: '#0a192f',          // Dark blue background
+            gridLines: '#1e3a8a',           // Dark blue grid lines
+            warningStripe: '#fcd34d',       // Yellow warning stripe
+            warningStripe2: '#18181b',      // Dark warning stripe
+            constructionOrange: '#f97316',  // Construction orange
+            constructionYellow: '#facc15',  // Construction yellow
+            highlight: '#38bdf8',           // Highlight blue
+            textGlow: '#3b82f6',            // Text glow blue
+            dust: '#94a3b8',                // Dust particles
         },
         // Animation settings
         animation: {
-            starCount: isMobile ? 80 : 150,       // Fewer stars on mobile
-            buildingCount: isMobile ? 12 : 18,    // Fewer buildings on mobile
-            saucerCount: isMobile ? 4 : 8,        // Fewer flying saucers on mobile
-            cloudCount: isMobile ? 3 : 6          // Fewer clouds on mobile
+            dustCount: isMobile ? 40 : 80,          // Fewer dust particles on mobile
+            barrierCount: isMobile ? 3 : 6          // Fewer barriers on mobile
         },
         // Performance settings
         performance: {
-            pixelSize: isMobile ? 4 : 2,          // Larger pixels (more 8-bit) on mobile
-            frameSkip: isMobile ? 2 : 1           // Skip frames on mobile for better performance
+            pixelSize: isMobile ? 3 : 2,            // Larger pixels on mobile for better performance
+            frameSkip: isMobile ? 2 : 1             // Skip frames on mobile for better performance
         }
     };
     
     // Objects for animation
-    let stars = [];
-    let buildings = [];
-    let saucers = [];
-    let clouds = [];
+    let dust = [];           // Dust particles floating in the air
+    let barriers = [];       // Construction barriers
     let frameCount = 0;
     
-    // Platform configuration - positioned to be viewed from above and to the side
-    const platform = {
-        x: canvas.width * 0.55,   // Shift right to show perspective
-        y: canvas.height * 0.75,  // Lower in view
-        radiusX: isMobile ? canvas.width * 0.4 : canvas.width * 0.32, // Horizontal radius
-        radiusY: isMobile ? canvas.width * 0.2 : canvas.width * 0.16, // Vertical radius (shorter for perspective)
-        supportWidth: isMobile ? 24 : 30,
-        supportHeight: isMobile ? 180 : 250,
-        hoverAmount: 2,
-        hoverSpeed: 0.3,
-        rotation: Math.PI * 0.1 // Slight rotation for perspective
+    // Construction site configuration
+    const constructionSite = {
+        width: canvas.width * 0.8,
+        height: canvas.height * 0.5,
+        x: canvas.width * 0.5,   // Center X position
+        y: canvas.height * 0.55, // Slightly below center
+        gridCount: isMobile ? 10 : 20,
+        messageY: canvas.height * 0.3,
+        progressBar: {
+            width: isMobile ? canvas.width * 0.7 : canvas.width * 0.5,
+            height: 25,
+            x: canvas.width * 0.5,
+            y: canvas.height * 0.7,
+            progress: 0,
+            targetProgress: 35, // Percentage of completion
+            speed: 0.3
+        }
     };
     
-    // Initialize stars
-    function initStars() {
-        stars = [];
-        for (let i = 0; i < config.animation.starCount; i++) {
-            stars.push({
+    // Initialize dust particles
+    function initDust() {
+        dust = [];
+        for (let i = 0; i < config.animation.dustCount; i++) {
+            dust.push({
                 x: Math.random() * canvas.width,
-                y: Math.random() * canvas.height * 0.85, // Stars across most of the screen
-                size: Math.random() * 2 + 1,
-                twinkle: Math.random() * 0.05 + 0.01,
-                twinkleOffset: Math.random() * Math.PI * 2
+                y: Math.random() * canvas.height,
+                size: Math.random() * 3 + 1,
+                speedX: (Math.random() - 0.5) * 0.5,
+                speedY: (Math.random() - 0.5) * 0.5,
+                opacity: Math.random() * 0.5 + 0.1
             });
         }
     }
     
-    // Initialize buildings on the circular platform - with perspective
-    function initBuildings() {
-        buildings = [];
-        const platformRadius = platform.radiusX * 0.85; // Buildings stay within platform radius
+    // Initialize construction barriers
+    function initBarriers() {
+        barriers = [];
+        const barrierWidth = 120;
+        const barrierHeight = 35;
         
-        for (let i = 0; i < config.animation.buildingCount; i++) {
-            // Distribute buildings in a circular pattern
-            const angle = (i / config.animation.buildingCount) * Math.PI * 2;
+        // Place barriers in a semi-circle around the site
+        for (let i = 0; i < config.animation.barrierCount; i++) {
+            const angle = (Math.PI * 0.8) * (i / (config.animation.barrierCount - 1)) + Math.PI * 0.1;
+            const radius = constructionSite.width * 0.5;
+            const x = constructionSite.x + Math.cos(angle) * radius;
+            const y = constructionSite.y + Math.sin(angle) * radius * 0.5;
             
-            // Random radius between 30% and 90% of platform radius
-            const radius = (Math.random() * 0.6 + 0.3) * platformRadius;
-            
-            // Calculate x and y position on the platform with perspective
-            // Apply rotation to position
-            const rotatedAngle = angle + platform.rotation;
-            
-            // Adjust ellipse equations for x and y
-            const x = platform.x + Math.cos(rotatedAngle) * radius;
-            // Multiply by radiusY/radiusX ratio for proper elliptical positioning
-            const y = platform.y + Math.sin(rotatedAngle) * radius * (platform.radiusY / platform.radiusX);
-            
-            // Different heights for variety - taller if in front (lower y), shorter if in back
-            const heightFactor = Math.random() * 0.15 + 0.1;
-            const height = canvas.height * heightFactor;
-            
-            // Perspective scaling - buildings in back (higher on screen) are smaller
-            const distanceScale = map(y, platform.y - platform.radiusY, platform.y + platform.radiusY, 0.6, 1.2);
-            
-            // Building dimensions
-            const buildingWidth = (15 + Math.random() * 15) * config.performance.pixelSize * distanceScale;
-            
-            // Some buildings have animated lights
-            const hasLight = Math.random() > 0.3;
-            
-            // Z-depth for drawing order (buildings in back should be drawn first)
-            const zDepth = Math.sin(rotatedAngle); // -1 to 1 based on angle
-            
-            buildings.push({
+            barriers.push({
                 x: x,
                 y: y,
-                angle: rotatedAngle,
-                height: height * distanceScale,
-                width: buildingWidth,
-                hasLight: hasLight,
-                lightBlinkRate: Math.random() * 0.1 + 0.02,
-                topShape: Math.random() > 0.5 ? 'dome' : 'ufo', // Two building top shapes
-                hoverOffset: Math.random() * Math.PI * 2, // For hover animation
-                hoverAmount: Math.random() * 2 + 1, // How much it hovers up/down
-                zDepth: zDepth // For drawing order
-            });
-        }
-        
-        // Sort by zDepth so buildings in back are drawn first
-        buildings.sort((a, b) => a.zDepth - b.zDepth);
-    }
-    
-    // Initialize flying saucers (Jetsons-style flying cars)
-    function initSaucers() {
-        saucers = [];
-        for (let i = 0; i < config.animation.saucerCount; i++) {
-            // Random point in the sky, more towards the center
-            const x = Math.random() * canvas.width * 0.8 + canvas.width * 0.1;
-            const y = Math.random() * (canvas.height * 0.6);
-            
-            // Size varies by height (perspective) - higher is smaller
-            const sizeScale = map(y, 0, canvas.height * 0.6, 0.7, 1.2);
-            
-            saucers.push({
-                x: x,
-                y: y,
-                size: (Math.random() * 10 + 15) * config.performance.pixelSize * sizeScale,
-                speed: (Math.random() * 1 + 0.5) * (Math.random() > 0.5 ? 1 : -1),
-                hoverOffset: Math.random() * Math.PI * 2,
-                hoverAmount: Math.random() * 2 + 1,
-                trail: [] // Array to store trail positions
+                width: barrierWidth,
+                height: barrierHeight,
+                angle: angle,
+                bobOffset: Math.random() * Math.PI * 2
             });
         }
     }
     
-    // Initialize clouds (stylized 8-bit clouds)
-    function initClouds() {
-        clouds = [];
-        for (let i = 0; i < config.animation.cloudCount; i++) {
-            // Clouds at different heights
-            const y = Math.random() * (canvas.height * 0.4) + 40;
-            
-            // Size varies by height (perspective) - higher is smaller
-            const sizeScale = map(y, 40, canvas.height * 0.4, 0.7, 1.2);
-            
-            clouds.push({
-                x: Math.random() * canvas.width,
-                y: y,
-                width: (Math.random() * 80 + 60) * config.performance.pixelSize * sizeScale,
-                height: (Math.random() * 20 + 20) * config.performance.pixelSize * sizeScale,
-                speed: (Math.random() * 0.3 + 0.1) * (Math.random() > 0.5 ? 1 : -1)
-            });
-        }
-    }
-    
-    // Utility function to map values from one range to another
-    function map(value, low1, high1, low2, high2) {
-        return low2 + (high2 - low2) * (value - low1) / (high1 - low1);
-    }
-    
-    // Draw an 8-bit star
-    function drawStar(x, y, size, alpha) {
-        ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
-        // For true 8-bit feel, we use rectangles, not circles
-        ctx.fillRect(
-            Math.floor(x / config.performance.pixelSize) * config.performance.pixelSize, 
-            Math.floor(y / config.performance.pixelSize) * config.performance.pixelSize, 
-            size * config.performance.pixelSize, 
-            size * config.performance.pixelSize
-        );
-    }
-    
-    // Draw the central platform with support column - from perspective
-    function drawPlatform(time) {
-        // Add hover effect to platform
-        const hoverY = Math.sin(time * platform.hoverSpeed) * platform.hoverAmount;
-        const platformY = platform.y + hoverY;
-        
-        // Draw support column - angled for perspective
-        ctx.fillStyle = config.colors.supportColor;
-        
-        // Column is narrower at the top for perspective
-        const topWidth = platform.supportWidth * 0.8;
-        const bottomWidth = platform.supportWidth * 1.2;
-        const columnHeight = platform.supportHeight;
-        
-        // Draw as a trapezoid
-        ctx.beginPath();
-        ctx.moveTo(platform.x - topWidth / 2, platformY);
-        ctx.lineTo(platform.x + topWidth / 2, platformY);
-        ctx.lineTo(platform.x + bottomWidth / 2, platformY + columnHeight);
-        ctx.lineTo(platform.x - bottomWidth / 2, platformY + columnHeight);
-        ctx.fill();
-        
-        // Draw platform main color
-        ctx.fillStyle = config.colors.platformColor;
-        
-        // Draw platform as an ellipse for perspective effect
-        ctx.beginPath();
-        ctx.ellipse(
-            platform.x,
-            platformY,
-            platform.radiusX,
-            platform.radiusY,
-            platform.rotation,
-            0,
-            Math.PI * 2
-        );
-        ctx.fill();
-        
-        // Draw platform edge highlight
-        ctx.strokeStyle = config.colors.platformEdge;
-        ctx.lineWidth = 4 * config.performance.pixelSize;
-        ctx.beginPath();
-        ctx.ellipse(
-            platform.x,
-            platformY,
-            platform.radiusX,
-            platform.radiusY,
-            platform.rotation,
-            0,
-            Math.PI * 2
-        );
-        ctx.stroke();
-        
-        // Draw platform top surface details - concentric ellipses
-        for (let i = 1; i <= 3; i++) {
-            const ringRadiusX = platform.radiusX * (0.3 * i);
-            const ringRadiusY = platform.radiusY * (0.3 * i);
-            
-            ctx.strokeStyle = `rgba(166, 130, 255, ${0.3 - i * 0.08})`;
-            ctx.lineWidth = 2 * config.performance.pixelSize;
-            ctx.beginPath();
-            ctx.ellipse(
-                platform.x,
-                platformY,
-                ringRadiusX,
-                ringRadiusY,
-                platform.rotation,
-                0,
-                Math.PI * 2
-            );
-            ctx.stroke();
-        }
-    }
-    
-    // Draw Jetsons-style building on the platform - with perspective
-    function drawBuilding(building, time) {
-        // Calculate hover effect for building
-        const hoverY = Math.sin(time + building.hoverOffset) * building.hoverAmount;
-        
-        // Draw the building base
-        ctx.fillStyle = config.colors.buildingDark;
-        
-        // Buildings grow upward from the platform
-        const baseHeight = building.height;
-        const baseWidth = building.width;
-        
-        // Draw the building as a rectangle topped with dome or UFO shape
-        ctx.fillRect(
-            Math.floor((building.x - baseWidth / 2) / config.performance.pixelSize) * config.performance.pixelSize,
-            Math.floor((building.y - baseHeight - hoverY) / config.performance.pixelSize) * config.performance.pixelSize,
-            baseWidth,
-            baseHeight
-        );
-        
-        // Draw the building top (dome or UFO shape)
-        const topY = building.y - baseHeight - hoverY;
-        
-        if (building.topShape === 'dome') {
-            // Draw dome with perspective (elliptical)
-            ctx.fillStyle = config.colors.domeColor;
-            ctx.beginPath();
-            ctx.ellipse(
-                building.x,
-                topY,
-                baseWidth / 2,
-                baseWidth / 3, // Flatter for perspective
-                0,
-                0,
-                Math.PI * 2
-            );
-            ctx.fill();
-            
-            // Draw windows if this building has them
-            if (building.hasLight) {
-                const lightOn = Math.sin(time * building.lightBlinkRate) > 0;
-                ctx.fillStyle = lightOn ? config.colors.buildingLight : 'rgba(100, 223, 223, 0.3)';
-                
-                // Draw windows on the building
-                const windowRows = 3;
-                const windowCols = 2;
-                const windowSize = baseWidth / 5;
-                const windowSpacing = baseHeight / (windowRows + 1);
-                
-                for (let row = 0; row < windowRows; row++) {
-                    for (let col = 0; col < windowCols; col++) {
-                        const windowX = building.x - baseWidth / 4 + col * baseWidth / 2;
-                        const windowY = building.y - baseHeight + (row + 1) * windowSpacing - hoverY;
-                        
-                        ctx.fillRect(
-                            Math.floor(windowX / config.performance.pixelSize) * config.performance.pixelSize,
-                            Math.floor(windowY / config.performance.pixelSize) * config.performance.pixelSize,
-                            windowSize,
-                            windowSize
-                        );
-                    }
-                }
-            }
-        } else {
-            // Draw UFO shaped top with perspective
-            ctx.fillStyle = config.colors.domeColor;
-            
-            // Draw UFO disk as ellipse
-            ctx.beginPath();
-            ctx.ellipse(
-                building.x,
-                topY,
-                baseWidth / 2,
-                baseWidth / 5, // Flatter for perspective
-                0,
-                0,
-                Math.PI * 2
-            );
-            ctx.fill();
-            
-            // Draw windows around the edge
-            if (building.hasLight) {
-                const lightOn = Math.sin(time * building.lightBlinkRate) > 0;
-                ctx.fillStyle = lightOn ? config.colors.buildingLight : 'rgba(100, 223, 223, 0.3)';
-                
-                const windowCount = 6;
-                const windowSize = baseWidth / 6;
-                
-                for (let i = 0; i < windowCount; i++) {
-                    const angle = (i / windowCount) * Math.PI * 2;
-                    const windowX = building.x + Math.cos(angle) * (baseWidth / 2 - windowSize / 2);
-                    const windowY = topY + Math.sin(angle) * (baseWidth / 5 - windowSize / 2) * 0.8;
-                    
-                    ctx.fillRect(
-                        Math.floor(windowX / config.performance.pixelSize) * config.performance.pixelSize,
-                        Math.floor(windowY / config.performance.pixelSize) * config.performance.pixelSize,
-                        windowSize,
-                        windowSize
-                    );
-                }
-            }
-        }
-    }
-    
-    // Draw a flying saucer (Jetsons-style) with perspective
-    function drawSaucer(saucer, time) {
-        // Calculate hover effect
-        const hoverY = Math.sin(time + saucer.hoverOffset) * saucer.hoverAmount;
-        const y = saucer.y + hoverY;
-        
-        // Draw the saucer trails
-        const trailLength = 8;
-        if (saucer.trail.length > trailLength) {
-            saucer.trail = saucer.trail.slice(-trailLength);
-        }
-        
-        // Add current position to trail
-        saucer.trail.push({x: saucer.x, y});
-        
-        // Draw the trail
-        for (let i = 0; i < saucer.trail.length; i++) {
-            const alpha = i / saucer.trail.length;
-            const trailSize = (saucer.size / 5) * alpha;
-            
-            ctx.fillStyle = `rgba(255, 158, 0, ${alpha * 0.7})`;
-            ctx.fillRect(
-                Math.floor(saucer.trail[i].x / config.performance.pixelSize) * config.performance.pixelSize,
-                Math.floor((saucer.trail[i].y + saucer.size / 4) / config.performance.pixelSize) * config.performance.pixelSize,
-                trailSize,
-                trailSize
-            );
-        }
-        
-        // Draw the saucer with perspective (elliptical)
-        // Bottom is more elliptical than top for perspective
-        
-        // Draw the saucer bottom
-        ctx.fillStyle = config.colors.saucerDark;
-        ctx.beginPath();
-        ctx.ellipse(
-            saucer.x,
-            y,
-            saucer.size / 2,
-            saucer.size / 5, // Flatter for perspective
-            0,
-            0,
-            Math.PI * 2
-        );
-        ctx.fill();
-        
-        // Draw the cockpit dome
-        ctx.fillStyle = config.colors.saucerLight;
-        ctx.beginPath();
-        ctx.ellipse(
-            saucer.x,
-            y - saucer.size / 8,
-            saucer.size / 4,
-            saucer.size / 5, // Flatter for perspective
-            0,
-            0,
-            Math.PI * 2
-        );
-        ctx.fill();
-        
-        // Draw pilot (simplified as a small rectangle)
-        ctx.fillStyle = '#333333';
-        ctx.fillRect(
-            Math.floor(saucer.x / config.performance.pixelSize) * config.performance.pixelSize - saucer.size / 12,
-            Math.floor((y - saucer.size / 8) / config.performance.pixelSize) * config.performance.pixelSize,
-            saucer.size / 6,
-            saucer.size / 12
-        );
-        
-        // Add glow under the saucer
-        ctx.fillStyle = `rgba(78, 168, 222, 0.5)`;
-        ctx.beginPath();
-        ctx.ellipse(
-            saucer.x,
-            y + saucer.size / 8,
-            saucer.size / 3,
-            saucer.size / 8,
-            0,
-            0,
-            Math.PI * 2
-        );
-        ctx.fill();
-    }
-    
-    // Draw stylized 8-bit cloud
-    function drawCloud(cloud) {
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
-        
-        // Draw main cloud body
-        const x = Math.floor(cloud.x / config.performance.pixelSize) * config.performance.pixelSize;
-        const y = Math.floor(cloud.y / config.performance.pixelSize) * config.performance.pixelSize;
-        const width = Math.floor(cloud.width / config.performance.pixelSize) * config.performance.pixelSize;
-        const height = Math.floor(cloud.height / config.performance.pixelSize) * config.performance.pixelSize;
-        
-        // Draw cloud as a flat elliptical shape for perspective
-        ctx.beginPath();
-        ctx.ellipse(
-            x + width / 2,
-            y,
-            width / 2,
-            height / 2,
-            0,
-            0,
-            Math.PI * 2
-        );
-        ctx.fill();
-        
-        // Draw additional cloud segments
-        const segments = 3;
-        for (let i = 0; i < segments; i++) {
-            const segX = x + (i * width / segments);
-            const segY = y - (i % 2) * (height / 3);
-            const segWidth = width / (segments + 1);
-            const segHeight = height * 0.8;
-            
-            ctx.beginPath();
-            ctx.ellipse(
-                segX + segWidth / 2,
-                segY,
-                segWidth / 2,
-                segHeight / 2,
-                0,
-                0,
-                Math.PI * 2
-            );
-            ctx.fill();
-        }
-    }
-    
-    // Draw background with gradient
+    // Draw background with grid
     function drawBackground() {
         // Create a gradient background
         const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
-        gradient.addColorStop(0, '#000033');   // Dark blue at top
-        gradient.addColorStop(0.5, '#140033'); // Purple in middle
-        gradient.addColorStop(1, '#290033');   // Dark magenta at bottom
+        gradient.addColorStop(0, '#0a192f');  // Darker blue at top
+        gradient.addColorStop(1, '#1e293b');  // Lighter blue at bottom
         
         ctx.fillStyle = gradient;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        // Draw grid lines
+        ctx.strokeStyle = config.colors.gridLines;
+        ctx.lineWidth = 1;
+        
+        // Draw horizontal grid lines
+        const gridSize = 40;
+        const perspectiveScale = 2; // Perspective effect multiplier
+        
+        // Perspective grid (horizontal lines)
+        for (let y = constructionSite.y; y < canvas.height; y += gridSize) {
+            const distance = (y - constructionSite.y) / canvas.height;
+            const lineSpacing = gridSize + distance * gridSize * perspectiveScale;
+            
+            ctx.beginPath();
+            ctx.moveTo(0, y);
+            ctx.lineTo(canvas.width, y);
+            ctx.globalAlpha = 0.4 - distance * 0.3;
+            ctx.stroke();
+            ctx.globalAlpha = 1;
+            
+            if (y + lineSpacing >= canvas.height) break;
+            y += lineSpacing - gridSize; // Adjust for next iteration
+        }
+        
+        // Perspective grid (vertical lines)
+        const vanishingPointX = canvas.width / 2;
+        const vanishingPointY = constructionSite.y - canvas.height * 0.2;
+        
+        for (let x = 0; x < canvas.width; x += gridSize) {
+            ctx.beginPath();
+            ctx.moveTo(x, canvas.height);
+            
+            // Calculate angle to vanishing point
+            const angle = Math.atan2(vanishingPointY - canvas.height, vanishingPointX - x);
+            const lineLength = Math.sqrt(
+                Math.pow(canvas.height - vanishingPointY, 2) + 
+                Math.pow(x - vanishingPointX, 2)
+            );
+            
+            // End point along the angle
+            const endX = x + Math.cos(angle) * lineLength * 0.7;
+            const endY = canvas.height + Math.sin(angle) * lineLength * 0.7;
+            
+            ctx.lineTo(endX, endY);
+            ctx.globalAlpha = 0.2;
+            ctx.stroke();
+            ctx.globalAlpha = 1;
+        }
+    }
+    
+    // Draw dust particles
+    function drawDust() {
+        dust.forEach(particle => {
+            ctx.fillStyle = `rgba(148, 163, 184, ${particle.opacity})`;
+            ctx.fillRect(
+                Math.floor(particle.x / config.performance.pixelSize) * config.performance.pixelSize,
+                Math.floor(particle.y / config.performance.pixelSize) * config.performance.pixelSize,
+                particle.size * config.performance.pixelSize,
+                particle.size * config.performance.pixelSize
+            );
+        });
+    }
+    
+    // Draw a construction barrier
+    function drawBarrier(barrier, time) {
+        // Add a small bobbing effect
+        const bobY = Math.sin(time * 2 + barrier.bobOffset) * 2;
+        
+        // Draw the base
+        ctx.fillStyle = config.colors.warningStripe;
+        ctx.save();
+        ctx.translate(barrier.x, barrier.y + bobY);
+        ctx.rotate(barrier.angle - Math.PI / 2);
+        
+        // Striped pattern
+        const stripeHeight = 8;
+        const stripeCount = Math.floor(barrier.height / stripeHeight);
+        
+        for (let i = 0; i < stripeCount; i++) {
+            ctx.fillStyle = i % 2 === 0 ? config.colors.warningStripe : config.colors.warningStripe2;
+            ctx.fillRect(
+                -barrier.width / 2,
+                i * stripeHeight - barrier.height / 2,
+                barrier.width,
+                stripeHeight
+            );
+        }
+        
+        // Draw top bar
+        ctx.fillStyle = config.colors.constructionOrange;
+        ctx.fillRect(-barrier.width / 2, -barrier.height / 2 - 5, barrier.width, 5);
+        
+        // Draw text
+        ctx.fillStyle = '#fff';
+        ctx.font = '12px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText('UNDER CONSTRUCTION', 0, 5);
+        
+        ctx.restore();
+    }
+    
+    // Draw under construction text
+    function drawConstructionText(time) {
+        const text = "UNDER CONSTRUCTION";
+        const y = constructionSite.messageY;
+        const x = canvas.width / 2;
+        
+        // Add slight floating animation
+        const floatY = Math.sin(time) * 5;
+        
+        // Set text style
+        ctx.font = isMobile ? "bold 32px 'Cascadia Code'" : "bold 48px 'Cascadia Code'";
+        ctx.textAlign = "center";
+        
+        // Draw glowing text
+        const pulse = Math.sin(time * 2) * 0.5 + 0.5;
+        
+        // Outer glow (shadow)
+        ctx.shadowColor = config.colors.textGlow;
+        ctx.shadowBlur = 15 + pulse * 10;
+        ctx.fillStyle = "#fff";
+        ctx.fillText(text, x, y + floatY);
+        
+        // Reset shadow
+        ctx.shadowBlur = 0;
+        
+        // Inner text
+        ctx.fillStyle = "#fff";
+        ctx.fillText(text, x, y + floatY);
+        
+        // Coming soon text
+        ctx.font = isMobile ? "bold 18px 'Cascadia Code'" : "bold 24px 'Cascadia Code'";
+        ctx.fillStyle = config.colors.constructionYellow;
+        ctx.fillText("Coming Soon", x, y + 40 + floatY);
+    }
+    
+    // Draw progress bar
+    function drawProgressBar(time) {
+        const bar = constructionSite.progressBar;
+        
+        // Animate progress
+        if (bar.progress < bar.targetProgress) {
+            bar.progress += bar.speed;
+        } else if (bar.progress > bar.targetProgress) {
+            bar.progress = bar.targetProgress;
+        }
+        
+        // Adjust position for centering
+        const x = bar.x - bar.width / 2;
+        const y = bar.y - bar.height / 2;
+        
+        // Draw outline
+        ctx.strokeStyle = config.colors.highlight;
+        ctx.lineWidth = 2;
+        ctx.strokeRect(x, y, bar.width, bar.height);
+        
+        // Draw fill
+        const fillWidth = (bar.progress / 100) * bar.width;
+        const gradient = ctx.createLinearGradient(x, y, x + fillWidth, y + bar.height);
+        gradient.addColorStop(0, config.colors.constructionYellow);
+        gradient.addColorStop(1, config.colors.constructionOrange);
+        
+        ctx.fillStyle = gradient;
+        ctx.fillRect(x, y, fillWidth, bar.height);
+        
+        // Add animated "working" dots to show activity
+        const dotCount = 3;
+        const dotText = ".".repeat(1 + Math.floor((time * 2) % dotCount));
+        
+        // Draw percentage text
+        ctx.font = "bold 14px 'Cascadia Code'";
+        ctx.textAlign = "center";
+        ctx.fillStyle = "#fff";
+        ctx.fillText(`${Math.floor(bar.progress)}% complete ${dotText}`, bar.x, bar.y + 5);
+    }
+    
+    // Update dust particles
+    function updateDust() {
+        dust.forEach(particle => {
+            // Move particle
+            particle.x += particle.speedX;
+            particle.y += particle.speedY;
+            
+            // Wrap around screen
+            if (particle.x > canvas.width) particle.x = 0;
+            if (particle.x < 0) particle.x = canvas.width;
+            if (particle.y > canvas.height) particle.y = 0;
+            if (particle.y < 0) particle.y = canvas.height;
+        });
+    }
+    
+    // Draw occasional spark effects
+    function drawSparks(time) {
+        if (Math.random() < 0.05) {
+            const x = constructionSite.x + (Math.random() - 0.5) * constructionSite.width * 0.7;
+            const y = constructionSite.y + (Math.random() - 0.5) * constructionSite.height * 0.4;
+            
+            const sparkCount = Math.floor(Math.random() * 5) + 5;
+            
+            for (let i = 0; i < sparkCount; i++) {
+                const angle = Math.random() * Math.PI * 2;
+                const distance = Math.random() * 10 + 2;
+                const sparkX = x + Math.cos(angle) * distance;
+                const sparkY = y + Math.sin(angle) * distance;
+                
+                ctx.beginPath();
+                ctx.arc(sparkX, sparkY, Math.random() * 2 + 1, 0, Math.PI * 2);
+                ctx.fillStyle = Math.random() > 0.5 ? config.colors.constructionYellow : '#fff';
+                ctx.fill();
+            }
+        }
+    }
+    
+    // Draw blueprint elements
+    function drawBlueprint(time) {
+        // Draw a circular blueprint in the center
+        const x = constructionSite.x;
+        const y = constructionSite.y;
+        const radius = constructionSite.width * 0.25;
+        
+        // Draw outer circle
+        ctx.strokeStyle = config.colors.highlight;
+        ctx.lineWidth = 1;
+        ctx.globalAlpha = 0.3 + Math.sin(time) * 0.1;
+        
+        ctx.beginPath();
+        ctx.arc(x, y, radius, 0, Math.PI * 2);
+        ctx.stroke();
+        
+        // Draw inner circles
+        ctx.beginPath();
+        ctx.arc(x, y, radius * 0.7, 0, Math.PI * 2);
+        ctx.stroke();
+        
+        ctx.beginPath();
+        ctx.arc(x, y, radius * 0.4, 0, Math.PI * 2);
+        ctx.stroke();
+        
+        // Draw crossing lines
+        ctx.beginPath();
+        ctx.moveTo(x - radius, y);
+        ctx.lineTo(x + radius, y);
+        ctx.stroke();
+        
+        ctx.beginPath();
+        ctx.moveTo(x, y - radius);
+        ctx.lineTo(x, y + radius);
+        ctx.stroke();
+        
+        // Add some measurement points that pulse
+        const points = 6;
+        for (let i = 0; i < points; i++) {
+            const angle = (i / points) * Math.PI * 2;
+            const dotX = x + Math.cos(angle) * radius * 0.7;
+            const dotY = y + Math.sin(angle) * radius * 0.7;
+            const pulse = Math.sin(time * 2 + i) * 0.5 + 0.5;
+            
+            ctx.beginPath();
+            ctx.arc(dotX, dotY, 3 + pulse * 2, 0, Math.PI * 2);
+            ctx.fillStyle = config.colors.highlight;
+            ctx.globalAlpha = 0.5 + pulse * 0.5;
+            ctx.fill();
+        }
+        
+        ctx.globalAlpha = 1;
     }
     
     // Animate all elements
@@ -536,69 +402,26 @@ document.addEventListener('DOMContentLoaded', function() {
         // Draw background
         drawBackground();
         
-        // Draw stars with twinkling effect
-        stars.forEach(star => {
-            const twinkleAmount = Math.sin(time * star.twinkle + star.twinkleOffset) * 0.5 + 0.5;
-            drawStar(star.x, star.y, star.size, 0.3 + twinkleAmount * 0.7);
+        // Draw blueprint elements
+        drawBlueprint(time);
+        
+        // Draw construction barriers
+        barriers.forEach(barrier => {
+            drawBarrier(barrier, time);
         });
         
-        // Draw clouds
-        clouds.forEach(cloud => {
-            // Move cloud
-            cloud.x += cloud.speed;
-            
-            // Wrap around screen
-            if (cloud.x > canvas.width + cloud.width / 2) {
-                cloud.x = -cloud.width / 2;
-            } else if (cloud.x < -cloud.width / 2) {
-                cloud.x = canvas.width + cloud.width / 2;
-            }
-            
-            // Draw the cloud
-            drawCloud(cloud);
-        });
+        // Draw construction text
+        drawConstructionText(time);
         
-        // Draw platform and support
-        drawPlatform(time);
+        // Draw progress bar
+        drawProgressBar(time);
         
-        // Draw buildings on platform
-        buildings.forEach(building => {
-            drawBuilding(building, time);
-        });
+        // Draw dust particles
+        updateDust();
+        drawDust();
         
-        // Draw flying saucers
-        saucers.forEach(saucer => {
-            // Move saucer
-            saucer.x += saucer.speed;
-            
-            // Wrap around screen
-            if (saucer.x > canvas.width + saucer.size / 2) {
-                saucer.x = -saucer.size / 2;
-                saucer.trail = []; // Clear trail when wrapping
-            } else if (saucer.x < -saucer.size / 2) {
-                saucer.x = canvas.width + saucer.size / 2;
-                saucer.trail = []; // Clear trail when wrapping
-            }
-            
-            // Draw the saucer
-            drawSaucer(saucer, time);
-        });
-        
-        // Add occasional shooting star
-        if (Math.random() < 0.005) {
-            const startX = Math.random() * canvas.width;
-            const startY = Math.random() * canvas.height * 0.3;
-            const length = Math.random() * 100 + 50;
-            const angle = Math.PI / 4 + Math.random() * Math.PI / 4;
-            
-            // Draw shooting star
-            ctx.strokeStyle = config.colors.stars;
-            ctx.lineWidth = 2 * config.performance.pixelSize;
-            ctx.beginPath();
-            ctx.moveTo(startX, startY);
-            ctx.lineTo(startX + Math.cos(angle) * length, startY + Math.sin(angle) * length);
-            ctx.stroke();
-        }
+        // Draw occasional spark effects
+        drawSparks(time);
         
         // Continue animation loop
         requestAnimationFrame(animate);
@@ -609,24 +432,26 @@ document.addEventListener('DOMContentLoaded', function() {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
         
-        // Update platform position for new dimensions
-        platform.x = canvas.width * 0.55;
-        platform.y = canvas.height * 0.75;
-        platform.radiusX = isMobile ? canvas.width * 0.4 : canvas.width * 0.32;
-        platform.radiusY = isMobile ? canvas.width * 0.2 : canvas.width * 0.16;
+        // Update construction site position for new dimensions
+        constructionSite.x = canvas.width * 0.5;
+        constructionSite.y = canvas.height * 0.55;
+        constructionSite.width = canvas.width * 0.8;
+        constructionSite.height = canvas.height * 0.5;
+        constructionSite.messageY = canvas.height * 0.3;
+        
+        // Update progress bar positioning
+        constructionSite.progressBar.width = isMobile ? canvas.width * 0.7 : canvas.width * 0.5;
+        constructionSite.progressBar.x = canvas.width * 0.5;
+        constructionSite.progressBar.y = canvas.height * 0.7;
         
         // Reinitialize all elements for new dimensions
-        initStars();
-        initBuildings();
-        initSaucers();
-        initClouds();
+        initDust();
+        initBarriers();
     }
     
     // Initialize all elements
-    initStars();
-    initBuildings();
-    initSaucers();
-    initClouds();
+    initDust();
+    initBarriers();
     
     // Start animation
     animate();
