@@ -34,7 +34,6 @@ document.addEventListener('DOMContentLoaded', function() {
         // Animation settings
         animation: {
             dustCount: isMobile ? 40 : 80,          // Fewer dust particles on mobile
-            barrierCount: isMobile ? 3 : 6          // Fewer barriers on mobile
         },
         // Performance settings
         performance: {
@@ -45,7 +44,6 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Objects for animation
     let dust = [];           // Dust particles floating in the air
-    let barriers = [];       // Construction barriers
     let frameCount = 0;
     
     // Construction site configuration
@@ -78,30 +76,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 speedX: (Math.random() - 0.5) * 0.5,
                 speedY: (Math.random() - 0.5) * 0.5,
                 opacity: Math.random() * 0.5 + 0.1
-            });
-        }
-    }
-    
-    // Initialize construction barriers
-    function initBarriers() {
-        barriers = [];
-        const barrierWidth = 120;
-        const barrierHeight = 35;
-        
-        // Place barriers in a semi-circle around the site
-        for (let i = 0; i < config.animation.barrierCount; i++) {
-            const angle = (Math.PI * 0.8) * (i / (config.animation.barrierCount - 1)) + Math.PI * 0.1;
-            const radius = constructionSite.width * 0.5;
-            const x = constructionSite.x + Math.cos(angle) * radius;
-            const y = constructionSite.y + Math.sin(angle) * radius * 0.5;
-            
-            barriers.push({
-                x: x,
-                y: y,
-                width: barrierWidth,
-                height: barrierHeight,
-                angle: angle,
-                bobOffset: Math.random() * Math.PI * 2
             });
         }
     }
@@ -177,44 +151,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 particle.size * config.performance.pixelSize
             );
         });
-    }
-    
-    // Draw a construction barrier
-    function drawBarrier(barrier, time) {
-        // Add a small bobbing effect
-        const bobY = Math.sin(time * 2 + barrier.bobOffset) * 2;
-        
-        // Draw the base
-        ctx.fillStyle = config.colors.warningStripe;
-        ctx.save();
-        ctx.translate(barrier.x, barrier.y + bobY);
-        ctx.rotate(barrier.angle - Math.PI / 2);
-        
-        // Striped pattern
-        const stripeHeight = 8;
-        const stripeCount = Math.floor(barrier.height / stripeHeight);
-        
-        for (let i = 0; i < stripeCount; i++) {
-            ctx.fillStyle = i % 2 === 0 ? config.colors.warningStripe : config.colors.warningStripe2;
-            ctx.fillRect(
-                -barrier.width / 2,
-                i * stripeHeight - barrier.height / 2,
-                barrier.width,
-                stripeHeight
-            );
-        }
-        
-        // Draw top bar
-        ctx.fillStyle = config.colors.constructionOrange;
-        ctx.fillRect(-barrier.width / 2, -barrier.height / 2 - 5, barrier.width, 5);
-        
-        // Draw text
-        ctx.fillStyle = '#fff';
-        ctx.font = '12px Arial';
-        ctx.textAlign = 'center';
-        ctx.fillText('UNDER CONSTRUCTION', 0, 5);
-        
-        ctx.restore();
     }
     
     // Draw under construction text
@@ -405,11 +341,6 @@ document.addEventListener('DOMContentLoaded', function() {
         // Draw blueprint elements
         drawBlueprint(time);
         
-        // Draw construction barriers
-        barriers.forEach(barrier => {
-            drawBarrier(barrier, time);
-        });
-        
         // Draw construction text
         drawConstructionText(time);
         
@@ -444,14 +375,12 @@ document.addEventListener('DOMContentLoaded', function() {
         constructionSite.progressBar.x = canvas.width * 0.5;
         constructionSite.progressBar.y = canvas.height * 0.7;
         
-        // Reinitialize all elements for new dimensions
+        // Reinitialize dust
         initDust();
-        initBarriers();
     }
     
     // Initialize all elements
     initDust();
-    initBarriers();
     
     // Start animation
     animate();
