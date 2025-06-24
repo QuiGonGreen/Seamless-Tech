@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
-    console.log("Scholar AI initialized with Azure API integration");
+    console.log("Scholar AI initialized");
     
     // This is a helper function to format API responses with proper styling
     window.formatAIResponse = function(text) {
@@ -12,11 +12,11 @@ document.addEventListener('DOMContentLoaded', function() {
             .replace(/`(.*?)`/g, '<code>$1</code>')
             .replace(/\n/g, '<br>');
     };
-    
-    // Update API testing function with better error handling
+      // Update API testing function with better error handling
     window.testAPI = async function() {
         try {
-            const functionUrl = `https://scholarai.azurewebsites.net/api/claudeChat`;
+            // TODO: Replace with your new API endpoint
+            const functionUrl = `https://your-new-api-endpoint.com/api/chat`;
 
             const response = await fetch(functionUrl, {
                 method: "POST",
@@ -104,10 +104,10 @@ document.addEventListener('DOMContentLoaded', function() {
         diagButton.onclick = async function() {
             // Run a series of diagnostic tests
             console.log("Starting diagnostics...");
-            
-            // 1. Try a basic fetch to the endpoint
+              // 1. Try a basic fetch to the endpoint
             try {
-                const checkResponse = await fetch("https://scholarai.azurewebsites.net/api/claudeChat", {
+                // TODO: Replace with your new API endpoint
+                const checkResponse = await fetch("https://your-new-api-endpoint.com/api/chat", {
                     method: "HEAD"
                 });
                 console.log("Endpoint check:", checkResponse.status, checkResponse.statusText);
