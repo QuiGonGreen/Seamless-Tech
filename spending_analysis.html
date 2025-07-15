@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spending Analysis | Seamless-Tech</title>
+    <link rel="stylesheet" href="css/main.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cascadia+Code:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .container {
+            max-width: 1200px;
+            margin: 100px auto 30px;
+            background: var(--github-dark);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 2px 20px rgba(184, 134, 11, 0.2);
+            border: 1px solid rgba(184, 134, 11, 0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: var(--gold);
+        }
+        .chart-container {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        .chart-wrapper {
+            flex: 1;
+            min-width: 400px;
+            max-width: 500px;
+        }
+        .summary {
+            flex: 1;
+            min-width: 300px;
+            background: rgba(184, 134, 11, 0.1);
+            padding: 20px;
+            border-radius: 8px;
+            color: var(--text-primary);
+        }
+        .company-breakdown {
+            margin-top: 20px;
+        }
+        .category-section {
+            margin-bottom: 25px;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #007bff;
+        }
+        .category-title {
+            font-weight: bold;
+            font-size: 16px;
+            color: var(--gold);
+            margin-bottom: 10px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+        .company-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .company-item:last-child {
+            border-bottom: none;
+        }
+        .total-spending {
+            background: rgba(184, 134, 11, 0.15);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--gold);
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="brand">
+                <img src="Images/logo.png" alt="Seamless Tech Logo" class="logo">
+                <span class="brand-name">Seamless Technologies</span>
+            </div>
+            <div class="nav-links-container">
+                <div class="nav-links">
+                    <a href="index.html" class="nav-item">
+                        <i class="fas fa-home nav-icon"></i>
+                        <span>Home</span>
+                    </a>
+                    <a href="index.html#solutions" class="nav-item">
+                        <i class="fas fa-lightbulb nav-icon"></i>
+                        <span>Solutions</span>
+                    </a>
+                    <a href="comics.html" class="nav-item">
+                        <i class="fas fa-book-open nav-icon"></i>
+                        <span>Comics</span>
+                    </a>
+                    <a href="spending_analysis.html" class="nav-item active">
+                        <i class="fas fa-chart-pie nav-icon"></i>
+                        <span>Spending Analysis</span>
+                    </a>
+                </div>
+            </div>
+            <button class="hamburger" aria-label="Toggle menu">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+        <div class="nav-backdrop"></div>
+    </nav>
+
+    <div class="container">
+        <div class="header">
+            <h1>Monthly Spending Analysis</h1>
+            <p>Breakdown of expenses by category with detailed merchant information</p>
+        </div>
+        
+        <div class="total-spending">
+            Total Monthly Spending: $3,539.62
+        </div>
+
+        <div class="chart-container">
+            <div class="chart-wrapper">
+                <canvas id="spendingChart"></canvas>
+            </div>
+            
+            <div class="summary">
+                <h3>Category Summary</h3>
+                <div id="categorySummary"></div>
+            </div>
+        </div>
+
+        <div class="company-breakdown">
+            <h2>Detailed Company Breakdown</h2>
+            <div id="companyList"></div>
+        </div>
+    </div>
+
+    <script>
+        // Data from analysis
+        const chartData = [
+            { name: "Personal/Other", value: 1560.91, percentage: "44.1" },
+            { name: "Groceries", value: 1189.04, percentage: "33.6" },
+            { name: "Food & Dining", value: 425.68, percentage: "12.0" },
+            { name: "Shopping", value: 189.43, percentage: "5.4" },
+            { name: "Transportation", value: 128.32, percentage: "3.6" },
+            { name: "Subscriptions", value: 46.24, percentage: "1.3" }
+        ];
+
+        const companyData = {
+            "Personal/Other": {
+                "Zelle Gerald Lyles": 800.00,
+                "ATM DEBIT": 400.00,
+                "ATM WITHDRAWAL": 200.00,
+                "Zelle Manuel Orellana": 70.00,
+                "USO LGBS WA STATE COUR": 55.00,
+                "AMERICO INS CO": 35.91
+            },
+            "Groceries": {
+                "WM SUPERCENTER": 287.81,
+                "WINCO": 467.02,
+                "FRED-MEYER": 268.41,
+                "WAL-MART": 131.90,
+                "WM SUPERC": 103.50
+            },
+            "Food & Dining": {
+                "DOORDASH REDLOBST": 108.47,
+                "LIMS CHOMA ZONE": 63.37,
+                "DOORDASH": 43.19,
+                "DOORDASH 7-ELEVEN": 37.87,
+                "RED LOBSTER": 31.65,
+                "DOORDASH BURGERKI": 28.06,
+                "TACO BELL": 44.88,
+                "BIG FOOT JAVA": 22.33,
+                "TACO TIME": 14.16,
+                "JACK IN THE BOX": 14.25,
+                "KFC": 9.79,
+                "STARBUCKS": 7.66
+            },
+            "Shopping": {
+                "IKEA": 87.09,
+                "THE HOME DEPOT": 70.44,
+                "HAIR PLUS BEAUTY": 31.90
+            },
+            "Transportation": {
+                "FRED M FUEL": 60.97,
+                "CF UNITED APRO": 23.21,
+                "ARCO": 20.00,
+                "BROWN BEAR": 16.52,
+                "7-ELEVEN": 7.07,
+                "SHELL OIL": 0.55
+            },
+            "Subscriptions": {
+                "NETFLIX": 27.52,
+                "Roku for Hulu": 11.02,
+                "Roku for Zeus": 7.70
+            }
+        };
+
+        // Colors for the pie chart - using gold/purple theme matching website
+        const colors = [
+            '#b8860b', '#260241', '#401161', '#521b85', '#d4af37', '#6a329f'
+        ];
+
+        // Create pie chart
+        const ctx = document.getElementById('spendingChart').getContext('2d');
+        const chart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: chartData.map(item => item.name),
+                datasets: [{
+                    data: chartData.map(item => item.value),
+                    backgroundColor: colors,
+                    borderColor: 'rgba(255, 255, 255, 0.2)',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            padding: 20,
+                            usePointStyle: true,
+                            font: {
+                                size: 12
+                            }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const label = context.label;
+                                const value = context.parsed;
+                                const percentage = chartData[context.dataIndex].percentage;
+                                return `${label}: $${value.toFixed(2)} (${percentage}%)`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Create category summary
+        const summaryDiv = document.getElementById('categorySummary');
+        chartData.forEach((item, index) => {
+            const div = document.createElement('div');
+            div.innerHTML = `
+                <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                    <div style="width: 20px; height: 20px; background-color: ${colors[index]}; margin-right: 10px; border-radius: 3px;"></div>
+                    <div>
+                        <strong>${item.name}</strong><br>
+                        $${item.value.toFixed(2)} (${item.percentage}%)
+                    </div>
+                </div>
+            `;
+            summaryDiv.appendChild(div);
+        });
+
+        // Create company breakdown
+        const companyListDiv = document.getElementById('companyList');
+        Object.keys(companyData).forEach((category, index) => {
+            const categoryDiv = document.createElement('div');
+            categoryDiv.className = 'category-section';
+            categoryDiv.style.borderLeftColor = colors[index];
+            
+            let companiesHtml = '';
+            Object.keys(companyData[category]).forEach(company => {
+                const amount = companyData[category][company];
+                companiesHtml += `
+                    <div class="company-item">
+                        <span>${company}</span>
+                        <span>$${amount.toFixed(2)}</span>
+                    </div>
+                `;
+            });
+            
+            categoryDiv.innerHTML = `
+                <div class="category-title">${category} - $${chartData.find(item => item.name === category).value.toFixed(2)}</div>
+                ${companiesHtml}
+            `;
+            
+            companyListDiv.appendChild(categoryDiv);
+        });
+    </script>
+    <script src="js/main.js"></script>
+    <script>
+        // Make the mobile navigation work
+        document.addEventListener('DOMContentLoaded', function() {
+            const hamburger = document.querySelector('.hamburger');
+            const navLinksContainer = document.querySelector('.nav-links-container');
+            const navBackdrop = document.querySelector('.nav-backdrop');
+            
+            hamburger.addEventListener('click', function() {
+                navLinksContainer.classList.toggle('active');
+                navBackdrop.classList.toggle('active');
+            });
+            
+            navBackdrop.addEventListener('click', function() {
+                navLinksContainer.classList.remove('active');
+                navBackdrop.classList.remove('active');
+            });
+        });
+    </script>
+</body>
+</html>
